@@ -100,3 +100,9 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'packages/web'
           command: pages deploy dist --project-name=scorebot-web
+
+      - name: Note about custom domain
+        run: |
+          echo "✅ Deployed to Cloudflare Pages"
+          echo "📍 Default URL: https://scorebot-web.pages.dev"
+          echo "🌐 Custom domain: https://score.kcuda.org (if configured)"

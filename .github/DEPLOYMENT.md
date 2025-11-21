@@ -94,6 +94,30 @@ cd packages/web
 npx wrangler pages project create scorebot-web
 ```
 
+### 5. Set Up Custom Domain (score.kcuda.org)
+
+After deploying for the first time:
+
+**Option A: Via Cloudflare Dashboard**
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Navigate to Workers & Pages
+3. Click on `scorebot-web`
+4. Go to "Custom domains" tab
+5. Click "Set up a custom domain"
+6. Enter: `score.kcuda.org`
+7. Click "Continue"
+
+**Option B: Via CLI**
+```bash
+cd packages/web
+npx wrangler pages domain add score.kcuda.org --project-name=scorebot-web
+```
+
+Cloudflare will automatically:
+- Create the DNS record (if kcuda.org is on Cloudflare)
+- Provision SSL/TLS certificate
+- Your existing kcuda.org site won't be affected
+
 ## TDD Workflow
 
 This project follows Test-Driven Development:
