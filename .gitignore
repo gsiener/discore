@@ -45,3 +45,6 @@ yarn-error.log*
 # Testing
 coverage/
 .nyc_output/
+
+# Chat exports
+*_chat.txt

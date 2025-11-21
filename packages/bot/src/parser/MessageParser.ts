@@ -69,10 +69,12 @@ export class MessageParser {
    */
   private parseGameEnd(normalized: string, original: string): ParsedMessage {
     const patterns = [
-      /^game\s+(over|done|finished|ended)/,
-      /^(we won|we lost|gg|good game)/,
-      /^(final|final score|that's game)/,
-      /^(game|universe|point)/,
+      /game\s+(over|done|finished|ended)/,
+      /(we won|we lost|gg|good game)/,
+      /(final|final score|that's game)/,
+      /for the game/,
+      /to win (the )?(pool|game)/,
+      /^(game|universe)$/,
     ];
 
     for (const pattern of patterns) {
@@ -93,10 +95,11 @@ export class MessageParser {
    */
   private parseHalftime(normalized: string, original: string): ParsedMessage {
     const patterns = [
-      /^halftime/,
-      /^half\s+time/,
-      /^half/,
-      /^break/,
+      /halftime/,
+      /half\s+time/,
+      /that's\s+half/,
+      /^half$/,
+      /^break$/,
     ];
 
     for (const pattern of patterns) {
@@ -142,12 +145,61 @@ export class MessageParser {
    * Check if message indicates a goal
    */
   private parseGoal(normalized: string, original: string): ParsedMessage {
-    // Patterns indicating we scored
+    // Check if it's a defensive play (should NOT be a goal)
+    const defensivePatterns = [
+      /\bsteal\b/,
+      /\bblock\b/,
+      /\bend zone d\b/,
+      /\bd\b(!|$)/,
+      /\bturn\b/,
+    ];
+
+    for (const pattern of defensivePatterns) {
+      if (pattern.test(normalized)) {
+        return { type: null, confidence: 0, rawMessage: original };
+      }
+    }
+
+    // Check if opponent team name is mentioned
+    const opponentPatterns = [
+      /(columbia|westfield|montclair|beacon)\b.*\b(on the board|score)/i,
+    ];
+
+    for (const pattern of opponentPatterns) {
+      if (pattern.test(normalized)) {
+        // Opponent scored
+        return {
+          type: EventType.GOAL,
+          team: TeamSide.THEM,
+          confidence: 0.75,
+          rawMessage: original,
+        };
+      }
+    }
+
+    // Patterns indicating we scored (with player names)
+    const scoringPatterns = [
+      /\bto\b.+\b\d+-\d+/,  // "player to player 5-3"
+      /\d+-\d+\b.+\bto\b/,  // "5-3 player to player"
+    ];
+
+    for (const pattern of scoringPatterns) {
+      if (pattern.test(normalized)) {
+        return {
+          type: EventType.GOAL,
+          team: TeamSide.US,
+          confidence: 0.85,
+          rawMessage: original,
+        };
+      }
+    }
+
+    // Patterns indicating we scored (general)
     const ourPatterns = [
       /^(goal|score|scored)/,
       /^we (score|got|scored)/,
       /^(nice|great|awesome)/,
-      /^(point|pt)/,
+      /^(point|pt)(!|$)/,
       /^(yes|yeah|yay)/,
       /^[🎯🔥💪🙌]/,
     ];
@@ -191,14 +243,24 @@ export class MessageParser {
     normalized: string,
     original: string
   ): ParsedMessage {
+    // Check if message is ONLY a score (no other context)
+    const justScorePattern = /^[\d-]+\s*$/;
+    if (justScorePattern.test(normalized)) {
+      return {
+        type: EventType.NOTE,
+        confidence: 0.65,
+        rawMessage: original,
+      };
+    }
+
     const score = parseScore(normalized);
 
     if (score) {
-      // If we found a score, this is likely a score update
-      // We'll need context from the game state to determine if it's us or them
+      // If we found a score with other text, it's lower confidence
+      // Likely just commentary mentioning the score
       return {
         type: EventType.NOTE,
-        confidence: 0.6,
+        confidence: 0.5,
         rawMessage: original,
       };
     }
