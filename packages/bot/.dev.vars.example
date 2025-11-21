@@ -1,0 +1,6 @@
+# Cloudflare Worker development environment variables
+ENVIRONMENT=development
+
+# For WhatsApp client (separate Node.js process)
+API_URL=http://localhost:8787
+WHATSAPP_CHAT_ID=

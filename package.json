@@ -1,0 +1,21 @@
+{
+  "name": "scorebot",
+  "version": "1.0.0",
+  "description": "WhatsApp bot for tracking ultimate frisbee scores",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev": "npm run dev --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": ["ultimate", "frisbee", "whatsapp", "scorebot"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

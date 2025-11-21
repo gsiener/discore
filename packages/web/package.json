@@ -1,0 +1,23 @@
+{
+  "name": "@scorebot/web",
+  "version": "1.0.0",
+  "description": "Web interface for scorebot",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler pages deploy dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@scorebot/shared": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "wrangler": "^3.22.1"
+  }
+}
