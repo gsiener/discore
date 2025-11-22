@@ -48,3 +48,6 @@ coverage/
 
 # Chat exports
 *_chat.txt
+
+# Screenshots
+Screenshot*.png
