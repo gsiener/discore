@@ -8,11 +8,6 @@
   </head>
   <body>
     <div id="app">
-      <header>
-        <h1>Scorebot</h1>
-        <p class="subtitle">Live Ultimate Frisbee Score Tracking</p>
-      </header>
-
       <main id="main-content">
         <div id="game-selector">
           <label for="game-select">Select Game:</label>
@@ -22,21 +17,38 @@
         </div>
 
         <div id="game-view" class="hidden">
+          <div class="game-meta">
+            <div id="game-date" class="game-date"></div>
+            <div id="game-field" class="game-field"></div>
+          </div>
+
           <div class="game-header">
-            <div class="team-info">
+            <div class="team-section team-left">
               <h2 id="team-us" class="team-name">Our Team</h2>
-              <div id="score-us" class="score">0</div>
             </div>
-            <div class="vs">vs</div>
-            <div class="team-info">
+            <div class="score-section">
+              <div class="score-display">
+                <span id="score-us" class="score">0</span>
+                <span class="score-separator">-</span>
+                <span id="score-them" class="score score-secondary">0</span>
+              </div>
+              <div id="game-status-badge" class="status-badge">Not Started</div>
+            </div>
+            <div class="team-section team-right">
               <h2 id="team-them" class="team-name">Their Team</h2>
-              <div id="score-them" class="score">0</div>
             </div>
           </div>
 
-          <div class="game-status">
-            <span id="game-status-badge" class="status-badge">Not Started</span>
-            <span id="game-duration" class="duration"></span>
+          <div id="progression-table-container" class="progression-table-container">
+            <table id="progression-table" class="progression-table">
+              <thead>
+                <tr>
+                  <th>Team</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
           </div>
 
           <div class="timeline-container">
