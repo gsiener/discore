@@ -4,7 +4,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["@cloudflare/workers-types"],
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@scorebot/shared": ["../../node_modules/@scorebot/shared/dist/index"]
+    }
   },
   "include": ["src/**/*"]
 }

@@ -26,6 +26,11 @@ export class GameState {
     const path = url.pathname;
 
     try {
+      // Allow /init to create a new game
+      if (request.method === 'POST' && path === '/init') {
+        return await this.initGame(request);
+      }
+
       // Initialize game if not already loaded
       if (!this.game) {
         this.game = await this.state.storage.get<Game>('game');
@@ -45,9 +50,6 @@ export class GameState {
           break;
 
         case 'POST':
-          if (path === '/init') {
-            return await this.initGame(request);
-          }
           if (path === '/events') {
             return await this.addEvent(request);
           }
@@ -149,7 +151,7 @@ export class GameState {
       });
     }
 
-    const { type, team, message, parsedBy } = await request.json();
+    const { type, team, message, parsedBy, defensivePlay, startingOnOffense } = await request.json();
 
     // Update score if it's a goal
     if (type === EventType.GOAL && team) {
@@ -157,7 +159,14 @@ export class GameState {
     }
 
     // Update game status based on event type
-    if (type === EventType.HALFTIME) {
+    if (type === EventType.GAME_START) {
+      this.game.status = GameStatus.FIRST_HALF;
+      this.game.startedAt = Date.now();
+      // Store whether we're starting on offense
+      if (startingOnOffense !== undefined) {
+        this.game.startingOnOffense = startingOnOffense;
+      }
+    } else if (type === EventType.HALFTIME) {
       this.game.status = GameStatus.HALFTIME;
     } else if (type === EventType.SECOND_HALF_START) {
       this.game.status = GameStatus.SECOND_HALF;
@@ -175,6 +184,7 @@ export class GameState {
       team: team as TeamSide,
       message,
       parsedBy,
+      defensivePlay,
     };
 
     this.game.events.push(event);

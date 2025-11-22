@@ -128,24 +128,29 @@ export class Router {
   }
 
   private async getGame(gameId: string): Promise<Response> {
-    // Try to get from Durable Object first
-    try {
-      const id = this.env.GAME_STATE.idFromName(gameId);
-      const stub = this.env.GAME_STATE.get(id);
-      return await stub.fetch('https://fake-host/');
-    } catch {
-      // Fall back to database
-      const game = await this.db.getGame(gameId);
-      if (!game) {
-        return new Response(JSON.stringify({ error: 'Game not found' }), {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      return new Response(JSON.stringify({ game }), {
+    // Get game from database to find chatId
+    const game = await this.db.getGame(gameId);
+    if (!game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+
+    // Try to get fresh state from Durable Object if chatId exists
+    if (game.chatId) {
+      try {
+        const id = this.env.GAME_STATE.idFromName(game.chatId);
+        const stub = this.env.GAME_STATE.get(id);
+        return await stub.fetch('https://fake-host/');
+      } catch {
+        // Fall back to database version
+      }
+    }
+
+    return new Response(JSON.stringify({ game }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   private async listGames(request: Request): Promise<Response> {
@@ -165,8 +170,17 @@ export class Router {
   ): Promise<Response> {
     const eventData = await request.json();
 
-    // Add event via Durable Object
-    const id = this.env.GAME_STATE.idFromName(gameId);
+    // Get game from database to find chatId
+    const game = await this.db.getGame(gameId);
+    if (!game || !game.chatId) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Add event via Durable Object (keyed by chatId)
+    const id = this.env.GAME_STATE.idFromName(game.chatId);
     const stub = this.env.GAME_STATE.get(id);
 
     const response = await stub.fetch(
@@ -187,7 +201,16 @@ export class Router {
   }
 
   private async undoLastEvent(gameId: string): Promise<Response> {
-    const id = this.env.GAME_STATE.idFromName(gameId);
+    // Get game from database to find chatId
+    const game = await this.db.getGame(gameId);
+    if (!game || !game.chatId) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const id = this.env.GAME_STATE.idFromName(game.chatId);
     const stub = this.env.GAME_STATE.get(id);
 
     const response = await stub.fetch(

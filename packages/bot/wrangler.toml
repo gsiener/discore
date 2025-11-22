@@ -1,8 +1,15 @@
 # Cloudflare Workers configuration for Scorebot
 
 name = "scorebot-api"
-main = "src/index.ts"
+main = "dist/index.js"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+# Custom domain routes
+[[routes]]
+pattern = "api.score.kcuda.org/*"
+zone_name = "kcuda.org"
 
 # Durable Objects for game state management
 [[durable_objects.bindings]]
@@ -18,7 +25,7 @@ new_classes = ["GameState"]
 [[d1_databases]]
 binding = "DB"
 database_name = "scorebot"
-database_id = "placeholder" # Will be filled after creating the database
+database_id = "bace02d0-5f6c-49d9-99c0-4a28d7b9a83b"
 
 # KV namespace for caching (optional)
 # [[kv_namespaces]]
@@ -28,7 +35,3 @@ database_id = "placeholder" # Will be filled after creating the database
 # Environment variables (use .dev.vars for local development)
 [vars]
 ENVIRONMENT = "production"
-
-# Limits
-[limits]
-cpu_ms = 50
