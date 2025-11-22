@@ -41,9 +41,10 @@ export interface GameEvent {
   type: EventType;
   timestamp: number; // Unix timestamp in milliseconds
   score: Score; // Score after this event
-  team?: TeamSide; // Which team (for goals)
+  team?: TeamSide; // Which team (for goals, timeouts)
   message?: string; // Original message or note
   parsedBy?: string; // Who/what created this event (e.g., 'whatsapp:+1234567890' or 'command')
+  defensivePlay?: 'block' | 'steal'; // For goals scored off defensive plays
 }
 
 export interface Game {
@@ -58,6 +59,7 @@ export interface Game {
   startedAt?: number; // Unix timestamp in milliseconds
   finishedAt?: number; // Unix timestamp in milliseconds
   chatId?: string; // WhatsApp chat ID
+  startingOnOffense?: boolean; // True if our team started on offense
   createdAt: number;
   updatedAt: number;
 }
@@ -100,6 +102,8 @@ export interface AddEventRequest {
   type: EventType;
   team?: TeamSide;
   message?: string;
+  defensivePlay?: 'block' | 'steal';
+  startingOnOffense?: boolean;
 }
 
 export interface AddEventResponse {
