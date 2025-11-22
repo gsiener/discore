@@ -6,7 +6,11 @@ A WhatsApp chatbot that automatically tracks ultimate frisbee game scores in rea
 
 - **Natural Language Processing**: Recognizes score updates from casual chat messages
   - "goal!" → Records a goal for your team
-  - "they scored" → Records a goal for the opponent
+  - "Jake to Mason 5-3" → Records goal with players and score
+  - "Ellis block" → Records defensive block
+  - "Cyrus steal" → Records defensive steal
+  - "Timeout Tech" → Records timeout for team
+  - "Tech starting on O" → Records starting offense/defense
   - "halftime" → Records halftime
   - "game over" → Ends the game
 
@@ -18,10 +22,15 @@ A WhatsApp chatbot that automatically tracks ultimate frisbee game scores in rea
   - `/undo` - Undo last event
   - `/score` - Show current score
 
-- **Live Web Interface**: Real-time game updates with timeline view
-  - Auto-refreshing score display
-  - Event timeline with timestamps
-  - Game status tracking
+- **Live Web Interface**: WFDF-style game display at https://score.kcuda.org
+  - **Timeline View**: Three-cell layout with colored bars, event details, and scores
+  - **Progression Table**: Point-by-point score evolution with visual indicators
+  - **Break Detection**: Accurate offensive hold vs break score identification
+  - **Defensive Stats**: Display blocks (🛡️) and steals (🏃) in timeline
+  - **Timeout Tracking**: Show timeout events with team attribution
+  - **Winner Indicators**: Arrows pointing to winning score for finished games
+  - **Game Metadata**: Date, time, and field information
+  - Auto-refreshing every 3 seconds
   - Mobile-responsive design
 
 ## Architecture
@@ -121,8 +130,11 @@ npm run whatsapp
 
 The bot automatically recognizes natural language:
 - "Goal!" or "We scored!" → Records a goal for your team
-- "They scored" → Records a goal for opponent
+- "Jake to Mason" → Records goal with assist and scorer
 - "5-3" → Records the current score
+- "Ellis block" → Records defensive block leading to turnover
+- "Cyrus steal" → Records defensive steal
+- "Timeout Tech" → Records timeout for your team
 - "Halftime" → Marks halftime
 - "Game over" or "Final" → Ends the game
 
@@ -130,13 +142,33 @@ Or use explicit commands:
 - `/goal` → Goal for your team
 - `/goal them` → Goal for opponent
 
+### Advanced Tracking
+
+For accurate break vs hold detection, specify starting possession:
+- "Tech starting on O" → Indicates team started on offense
+- "Tech starting on D" → Indicates team started on defense
+
+The system automatically tracks:
+- Offensive holds (scoring when expected)
+- Break scores (scoring after defensive turnover)
+- Defensive plays (blocks and steals)
+- Timeouts by team
+
 ### Viewing Games
 
-Open the web interface URL to see:
-- Live score updates
-- Game timeline with all events
-- Game status (first half, halftime, second half, finished)
-- Game duration
+Open https://score.kcuda.org to see:
+- **Live score updates** with winner indicators (for finished games)
+- **WFDF-style timeline** with event-by-event breakdown
+  - Colored bars indicating scoring team (green for your team, orange for opponent)
+  - Event types: Offensive Hold, Break Score, Halftime, Timeouts
+  - Defensive play indicators (blocks 🛡️ and steals 🏃)
+  - Player names for assists and scorers
+- **Progression table** showing point-by-point score evolution
+  - Bold numbers indicate which team scored
+  - Underlined scores indicate break scores
+  - Vertical separators for game start, halftime, and final
+- **Game metadata**: Date, time, and status
+- Auto-refreshes every 3 seconds for live updates
 
 ## Deployment
 
@@ -155,7 +187,9 @@ npx wrangler d1 execute scorebot --file=./migrations/0001_initial_schema.sql
 # Deploy
 npm run deploy
 
-# Note the Worker URL (e.g., https://scorebot-api.your-subdomain.workers.dev)
+# Deployed to:
+# - https://scorebot-api.siener.workers.dev
+# - https://api.score.kcuda.org (custom domain)
 ```
 
 ### Deploy Web Interface
@@ -164,14 +198,22 @@ npm run deploy
 cd packages/web
 
 # Update .env with production Worker URL
-echo "VITE_API_URL=https://scorebot-api.your-subdomain.workers.dev" > .env
+echo "VITE_API_URL=https://scorebot-api.siener.workers.dev" > .env
 
 # Build and deploy
 npm run build
 npm run deploy
 
-# Or deploy to any static host (Netlify, Vercel, GitHub Pages, etc.)
+# Deployed to: https://score.kcuda.org
 ```
+
+### Custom Domain Setup
+
+The project uses custom domains for professional URLs:
+- API: `api.score.kcuda.org`
+- Web: `score.kcuda.org`
+
+See `CUSTOM_DOMAIN_SETUP.md` for configuration details.
 
 ### Deploy WhatsApp Client
 

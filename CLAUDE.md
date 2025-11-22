@@ -14,16 +14,24 @@ The project is organized as a TypeScript monorepo with three main packages:
 Core types and utilities shared across all packages. Key exports:
 - Type definitions: `Game`, `GameEvent`, `EventType`, `GameStatus`, `TeamSide`, `Score`
 - Utility functions: `generateId()`, `parseScore()`, `formatScore()`, `calculateScoreFromEvents()`
+- Enhanced `GameEvent` includes: `defensivePlay` ('block' | 'steal'), for tracking defensive plays
+- Enhanced `Game` includes: `startingOnOffense` (boolean), for accurate break detection
 
 ### packages/bot
 Cloudflare Workers application with Durable Objects for real-time game state and D1 for persistent storage.
 
 **Key components:**
 - `src/durable-objects/GameState.ts` - Durable Object managing in-memory game state with methods for game lifecycle (init, start, addEvent, end, undo)
-- `src/parser/MessageParser.ts` - Natural language parser that recognizes game events from chat messages (goals, halftime, game start/end)
+- `src/parser/MessageParser.ts` - Natural language parser that recognizes game events from chat messages:
+  - Goals with player names (e.g., "Jake to Mason 5-3")
+  - Defensive plays: blocks and steals (e.g., "Ellis block")
+  - Timeouts with team detection (e.g., "Timeout Tech")
+  - Starting offense/defense (e.g., "Tech starting on O")
+  - Halftime, game start/end
 - `src/api/router.ts` - HTTP API router handling REST endpoints
 - `src/db/database.ts` - D1 database service for persistent storage
 - `src/whatsapp/client.ts` - WhatsApp client (runs separately as Node.js process, not in Workers)
+- `scripts/reload-tournament-games.ts` - Utility to bulk load historical games with enhanced data
 
 **Data flow:**
 1. WhatsApp messages → MessageParser → Event detection
@@ -31,7 +39,17 @@ Cloudflare Workers application with Durable Objects for real-time game state and
 3. Web interface polls API → reads from Durable Object or D1
 
 ### packages/web
-Static web interface built with Vite, vanilla TypeScript, and HTML/CSS. Polls the API every 3 seconds for updates and displays a timeline view of game events.
+Static web interface built with Vite, vanilla TypeScript, and HTML/CSS. Polls the API every 3 seconds for updates and displays:
+
+**Features:**
+- WFDF-style timeline with three-cell layout (colored bar, event details, score cells)
+- Point-by-point progression table showing score evolution
+- Break vs hold detection (using starting O/D info)
+- Defensive play indicators (blocks 🛡️, steals 🏃)
+- Timeout events in timeline
+- Winner indicators (arrows) for finished games
+- Mobile-responsive design
+- Deployed to score.kcuda.org
 
 ## Development Commands
 
@@ -172,11 +190,19 @@ curl -X POST http://localhost:8787/games/{gameId}/events \
 ## Deployment Checklist
 
 1. Deploy Worker: `cd packages/bot && npm run deploy`
-2. Note the Worker URL (e.g., `https://scorebot-api.your-subdomain.workers.dev`)
+2. Note the Worker URL:
+   - Default: `https://scorebot-api.siener.workers.dev`
+   - Custom domain: `api.score.kcuda.org` (configured in wrangler.toml)
 3. Update `packages/web/.env` with the Worker URL
 4. Deploy web interface: `cd packages/web && npm run deploy`
+   - Deployed to: `https://score.kcuda.org`
 5. Set up WhatsApp client on a server/computer that stays online
 6. Configure WhatsApp client with production Worker URL
+
+### Custom Domain Setup
+See `CUSTOM_DOMAIN_SETUP.md` for detailed instructions on configuring:
+- `api.score.kcuda.org` for the API
+- `score.kcuda.org` for the web interface
 
 ## Project Structure Notes
 
