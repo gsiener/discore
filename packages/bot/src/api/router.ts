@@ -104,7 +104,7 @@ export class Router {
   }
 
   private async createGame(request: Request): Promise<Response> {
-    const { chatId, ourTeamName, opponentName } = await request.json() as CreateGameRequest;
+    const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = await request.json() as CreateGameRequest;
 
     // Get or create Durable Object for this game
     const id = this.env.GAME_STATE.idFromName(chatId);
@@ -114,7 +114,7 @@ export class Router {
     const response = await stub.fetch(
       new Request('https://fake-host/init', {
         method: 'POST',
-        body: JSON.stringify({ chatId, ourTeamName, opponentName }),
+        body: JSON.stringify({ chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder }),
       })
     );
 

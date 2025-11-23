@@ -17,8 +17,9 @@ export class DatabaseService {
         `INSERT OR REPLACE INTO games (
           id, status, our_team_name, their_team_name,
           score_us, score_them, started_at, finished_at,
-          chat_id, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          chat_id, tournament_name, game_date, game_order,
+          created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         game.id,
@@ -30,6 +31,9 @@ export class DatabaseService {
         game.startedAt || null,
         game.finishedAt || null,
         game.chatId || null,
+        game.tournamentName || null,
+        game.gameDate || null,
+        game.gameOrder || 0,
         game.createdAt,
         game.updatedAt
       )
@@ -107,11 +111,19 @@ export class DatabaseService {
   }
 
   /**
-   * List all games
+   * List all games, sorted by date (newest first), then by order within day
    */
   async listGames(limit: number = 50): Promise<GameSummary[]> {
     const result = await this.db
-      .prepare('SELECT * FROM games ORDER BY created_at DESC LIMIT ?')
+      .prepare(`
+        SELECT * FROM games
+        WHERE status = 'finished'
+        ORDER BY
+          COALESCE(game_date, DATE(finished_at / 1000, 'unixepoch')) DESC,
+          game_order ASC,
+          finished_at DESC
+        LIMIT ?
+      `)
       .bind(limit)
       .all();
 
@@ -157,6 +169,9 @@ export class DatabaseService {
       startedAt: gameRow.started_at,
       finishedAt: gameRow.finished_at,
       chatId: gameRow.chat_id,
+      tournamentName: gameRow.tournament_name,
+      gameDate: gameRow.game_date,
+      gameOrder: gameRow.game_order,
       createdAt: gameRow.created_at,
       updatedAt: gameRow.updated_at,
     };
@@ -179,6 +194,9 @@ export class DatabaseService {
       },
       startedAt: row.started_at,
       finishedAt: row.finished_at,
+      tournamentName: row.tournament_name,
+      gameDate: row.game_date,
+      gameOrder: row.game_order,
     };
   }
 }

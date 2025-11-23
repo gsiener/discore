@@ -60,6 +60,9 @@ export interface Game {
   finishedAt?: number; // Unix timestamp in milliseconds
   chatId?: string; // WhatsApp chat ID
   startingOnOffense?: boolean; // True if our team started on offense
+  tournamentName?: string; // Tournament name (e.g., "Fall Flock 2024")
+  gameDate?: string; // Game date in YYYY-MM-DD format
+  gameOrder?: number; // Order within the same day/tournament
   createdAt: number;
   updatedAt: number;
 }
@@ -74,6 +77,9 @@ export interface GameSummary {
   score: Score;
   startedAt?: number;
   finishedAt?: number;
+  tournamentName?: string;
+  gameDate?: string;
+  gameOrder?: number;
 }
 
 /**
@@ -84,6 +90,9 @@ export interface CreateGameRequest {
   chatId: string;
   ourTeamName: string;
   opponentName: string;
+  tournamentName?: string;
+  gameDate?: string;
+  gameOrder?: number;
 }
 
 export interface CreateGameResponse {

@@ -84,7 +84,7 @@ export class GameState implements DurableObject {
   }
 
   private async initGame(request: Request): Promise<Response> {
-    const { chatId, ourTeamName, opponentName } = await request.json() as CreateGameRequest;
+    const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = await request.json() as CreateGameRequest;
 
     this.game = {
       id: generateId('game'),
@@ -96,6 +96,9 @@ export class GameState implements DurableObject {
       score: { us: 0, them: 0 },
       events: [],
       chatId,
+      tournamentName,
+      gameDate,
+      gameOrder,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };

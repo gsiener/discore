@@ -70,11 +70,55 @@ class ScorebotApp {
       return;
     }
 
+    // Group games by tournament and date
+    const grouped = new Map<string, Map<string, any[]>>();
+
     games.forEach((game) => {
-      const option = document.createElement('option');
-      option.value = game.id;
-      option.textContent = `${game.teams.us.name} vs ${game.teams.them.name} (${formatScore(game.score)})`;
-      select.appendChild(option);
+      const tournament = game.tournamentName || 'Other Games';
+      const date = game.gameDate || 'Unknown Date';
+
+      if (!grouped.has(tournament)) {
+        grouped.set(tournament, new Map());
+      }
+
+      const tournamentGroup = grouped.get(tournament)!;
+      if (!tournamentGroup.has(date)) {
+        tournamentGroup.set(date, []);
+      }
+
+      tournamentGroup.get(date)!.push(game);
+    });
+
+    // Render grouped games
+    grouped.forEach((dateGroups, tournament) => {
+      dateGroups.forEach((dateGames, date) => {
+        const optgroup = document.createElement('optgroup');
+
+        // Format date for display
+        let dateLabel = date;
+        if (date !== 'Unknown Date') {
+          const dateObj = new Date(date + 'T00:00:00');
+          dateLabel = dateObj.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          });
+        }
+
+        optgroup.label = `${tournament} - ${dateLabel}`;
+
+        // Sort games by gameOrder within the date group
+        dateGames.sort((a, b) => (a.gameOrder || 0) - (b.gameOrder || 0));
+
+        dateGames.forEach((game) => {
+          const option = document.createElement('option');
+          option.value = game.id;
+          option.textContent = `${game.teams.us.name} vs ${game.teams.them.name} (${formatScore(game.score)})`;
+          optgroup.appendChild(option);
+        });
+
+        select.appendChild(optgroup);
+      });
     });
   }
 
@@ -427,8 +471,15 @@ class ScorebotApp {
     header.appendChild(type);
     leftCol.appendChild(header);
 
-    // Show defensive play indicator if present
-    if (event.defensivePlay && event.team === 'us') {
+    // Show message as subtext for NOTE events with defensive plays
+    if (event.type === EventType.NOTE && event.defensivePlay && event.message) {
+      const message = document.createElement('div');
+      message.className = 'event-details';
+      message.textContent = event.message;
+      leftCol.appendChild(message);
+    }
+    // Show defensive play indicator for GOAL events
+    else if (event.type === EventType.GOAL && event.defensivePlay && event.team === 'us') {
       const defensivePlayEl = document.createElement('div');
       defensivePlayEl.className = 'event-details defensive-play';
       defensivePlayEl.textContent = event.defensivePlay === 'block' ? '🛡️ Block' : '🏃 Steal';
@@ -436,7 +487,7 @@ class ScorebotApp {
     }
 
     // Only show message for our team's goals (as secondary details)
-    if (event.message && event.team === 'us') {
+    if (event.type === EventType.GOAL && event.message && event.team === 'us') {
       const message = document.createElement('div');
       message.className = 'event-details';
       message.textContent = event.message;
@@ -481,6 +532,9 @@ class ScorebotApp {
       case EventType.TIMEOUT:
         return '⏱️';
       case EventType.NOTE:
+        // Show defensive play icon if present
+        if (event.defensivePlay === 'block') return '🛡️';
+        if (event.defensivePlay === 'steal') return '🏃';
         return '📝';
       default:
         return '•';
@@ -511,6 +565,9 @@ class ScorebotApp {
         const timeoutTeam = event.team === 'us' ? game.teams.us.name : event.team === 'them' ? game.teams.them.name : 'Unknown';
         return `Timeout - ${timeoutTeam}`;
       case EventType.NOTE:
+        // Show defensive play type if present
+        if (event.defensivePlay === 'block') return 'Block';
+        if (event.defensivePlay === 'steal') return 'Steal';
         return 'Note';
       default:
         return event.type;
