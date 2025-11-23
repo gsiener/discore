@@ -1,9 +1,9 @@
-name: CI
+name: CI - Test
 
 on:
-  pull_request:
-    branches: [main]
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 jobs:
@@ -32,12 +32,12 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Type check bot package
+      - name: Type check bot
         run: |
           cd packages/bot
-          npm run build
+          npx tsc --noEmit
 
-      - name: Build web package
+      - name: Build web
         run: |
           cd packages/web
           npm run build
