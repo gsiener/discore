@@ -57,7 +57,7 @@ jobs:
       - name: Build bot package
         run: |
           cd packages/bot
-          npm run build
+          node build.js
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
@@ -65,40 +65,40 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'packages/bot'
-          command: deploy
+          command: deploy dist/index.js
 
-  deploy-web:
-    name: Deploy Web to Cloudflare Pages
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build shared package
-        run: |
-          cd packages/shared
-          npm run build
-
-      - name: Build web
-        run: |
-          cd packages/web
-          npm run build
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: 'packages/web'
-          command: pages deploy dist --project-name=scorebot-web
+  # deploy-web:
+  #   name: Deploy Web to Cloudflare Pages
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'npm'
+  #
+  #     - name: Install dependencies
+  #       run: npm ci
+  #
+  #     - name: Build shared package
+  #       run: |
+  #         cd packages/shared
+  #         npm run build
+  #
+  #     - name: Build web
+  #       run: |
+  #         cd packages/web
+  #         npm run build
+  #
+  #     - name: Deploy to Cloudflare Pages
+  #       uses: cloudflare/wrangler-action@v3
+  #       with:
+  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  #         workingDirectory: 'packages/web'
+  #         command: pages deploy dist --project-name=scorebot-web
