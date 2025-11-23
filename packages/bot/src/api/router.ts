@@ -6,6 +6,7 @@
 import { Env } from '../types';
 import { DatabaseService } from '../db/database';
 import { GameState } from '../durable-objects/GameState';
+import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse } from '@scorebot/shared';
 
 export class Router {
   private db: DatabaseService;
@@ -103,7 +104,7 @@ export class Router {
   }
 
   private async createGame(request: Request): Promise<Response> {
-    const { chatId, ourTeamName, opponentName } = await request.json();
+    const { chatId, ourTeamName, opponentName } = await request.json() as CreateGameRequest;
 
     // Get or create Durable Object for this game
     const id = this.env.GAME_STATE.idFromName(chatId);
@@ -117,7 +118,7 @@ export class Router {
       })
     );
 
-    const data = await response.json();
+    const data = await response.json() as CreateGameResponse;
 
     // Save to database
     await this.db.saveGame(data.game);
@@ -168,7 +169,7 @@ export class Router {
     gameId: string,
     request: Request
   ): Promise<Response> {
-    const eventData = await request.json();
+    const eventData = await request.json() as AddEventRequest;
 
     // Get game from database to find chatId
     const game = await this.db.getGame(gameId);
@@ -190,7 +191,7 @@ export class Router {
       })
     );
 
-    const data = await response.json();
+    const data = await response.json() as AddEventResponse;
 
     // Save to database
     await this.db.saveGame(data.game);
@@ -219,7 +220,7 @@ export class Router {
       })
     );
 
-    const data = await response.json();
+    const data = await response.json() as AddEventResponse;
 
     // Update database
     await this.db.saveGame(data.game);

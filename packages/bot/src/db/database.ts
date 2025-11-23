@@ -3,7 +3,7 @@
  * Handles D1 database operations
  */
 
-import { Game, GameEvent, GameSummary } from '@scorebot/shared';
+import { Game, GameEvent, GameSummary, TeamSide } from '@scorebot/shared';
 
 export class DatabaseService {
   constructor(private db: D1Database) {}
@@ -134,8 +134,8 @@ export class DatabaseService {
       id: gameRow.id,
       status: gameRow.status,
       teams: {
-        us: { name: gameRow.our_team_name, side: 'us' },
-        them: { name: gameRow.their_team_name, side: 'them' },
+        us: { name: gameRow.our_team_name, side: TeamSide.US },
+        them: { name: gameRow.their_team_name, side: TeamSide.THEM },
       },
       score: {
         us: gameRow.score_us,
@@ -170,8 +170,8 @@ export class DatabaseService {
       id: row.id,
       status: row.status,
       teams: {
-        us: { name: row.our_team_name, side: 'us' },
-        them: { name: row.their_team_name, side: 'them' },
+        us: { name: row.our_team_name, side: TeamSide.US },
+        them: { name: row.their_team_name, side: TeamSide.THEM },
       },
       score: {
         us: row.score_us,

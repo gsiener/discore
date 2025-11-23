@@ -8,7 +8,7 @@
 
 import { Client, LocalAuth, Message } from 'whatsapp-web.js';
 import { MessageParser } from '../parser/MessageParser';
-import { EventType } from '@scorebot/shared';
+import { EventType, CreateGameResponse, AddEventResponse } from '@scorebot/shared';
 import qrcode from 'qrcode-terminal';
 
 interface Config {
@@ -178,7 +178,7 @@ export class WhatsAppClient {
       return;
     }
 
-    const data = await response.json();
+    const data = await response.json() as CreateGameResponse;
     this.activeGames.set(chatId, data.game.id);
 
     await msg.reply(
@@ -280,7 +280,7 @@ export class WhatsAppClient {
       return;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { game: any };
     const game = data.game;
 
     await msg.reply(

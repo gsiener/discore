@@ -27,6 +27,7 @@
     "esbuild-plugin-alias": "^0.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^1.2.0",
     "wrangler": "^4.50.0"
   }

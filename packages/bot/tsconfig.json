@@ -5,9 +5,9 @@
     "rootDir": "./src",
     "types": ["@cloudflare/workers-types"],
     "noEmit": true,
-    "paths": {
-      "@scorebot/shared": ["../../node_modules/@scorebot/shared/dist/index"]
-    }
+    "composite": false,
+    "incremental": false
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "node_modules", "dist"]
 }

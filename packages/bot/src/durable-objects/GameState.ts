@@ -11,9 +11,14 @@ import {
   TeamSide,
   Score,
   generateId,
+  CreateGameRequest,
+  CreateGameResponse,
+  AddEventRequest,
+  AddEventResponse,
 } from '@scorebot/shared';
+import { Env } from '../types';
 
-export class GameState {
+export class GameState implements DurableObject {
   private state: DurableObjectState;
   private game: Game | null = null;
 
@@ -33,7 +38,7 @@ export class GameState {
 
       // Initialize game if not already loaded
       if (!this.game) {
-        this.game = await this.state.storage.get<Game>('game');
+        this.game = (await this.state.storage.get<Game>('game')) || null;
         if (!this.game) {
           return new Response(JSON.stringify({ error: 'Game not found' }), {
             status: 404,
@@ -79,7 +84,7 @@ export class GameState {
   }
 
   private async initGame(request: Request): Promise<Response> {
-    const { chatId, ourTeamName, opponentName } = await request.json();
+    const { chatId, ourTeamName, opponentName } = await request.json() as CreateGameRequest;
 
     this.game = {
       id: generateId('game'),
@@ -151,7 +156,7 @@ export class GameState {
       });
     }
 
-    const { type, team, message, parsedBy, defensivePlay, startingOnOffense } = await request.json();
+    const { type, team, message, parsedBy, defensivePlay, startingOnOffense } = await request.json() as AddEventRequest & { parsedBy?: string };
 
     // Update score if it's a goal
     if (type === EventType.GOAL && team) {
