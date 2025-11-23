@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## General Instructions
+
+Your context window will be automatically compacted as it approaches its limit. Never stop tasks early due to token budget concerns. Always complete tasks fully, even if the end of your budget is approaching.
+
 ## Project Overview
 
 Scorebot is a WhatsApp chatbot that monitors group chat messages to automatically track ultimate frisbee game scores in real-time. The system includes a web interface where people can follow along with live game updates.
