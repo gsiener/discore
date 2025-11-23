@@ -54,6 +54,11 @@ jobs:
           cd packages/shared
           npm run build
 
+      - name: Build bot package
+        run: |
+          cd packages/bot
+          npm run build
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
@@ -79,6 +84,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build shared package
+        run: |
+          cd packages/shared
+          npm run build
 
       - name: Build web
         run: |
