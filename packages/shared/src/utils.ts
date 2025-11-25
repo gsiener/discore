@@ -6,10 +6,11 @@ import { Game, GameEvent, Score, TeamSide, LineStats, EventType } from './types.
 
 /**
  * Generate a unique ID for games and events
+ * Uses base-36 encoding for compact, URL-safe identifiers
  */
 export function generateId(prefix: string = ''): string {
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 9);
+  const timestamp = Date.now().toString(36); // Base-36 timestamp
+  const random = Math.random().toString(36).substring(2, 9); // Base-36 random string
   return prefix ? `${prefix}_${timestamp}_${random}` : `${timestamp}_${random}`;
 }
 

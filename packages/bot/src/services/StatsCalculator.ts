@@ -21,10 +21,13 @@ import {
   OpponentRecord,
   StreakInfo,
   PlayerChemistry,
-  Score,
 } from '@scorebot/shared';
 
 export class StatsCalculator {
+  // Game classification constants
+  private static readonly CLOSE_GAME_THRESHOLD = 2; // Points within to consider "close"
+  private static readonly BLOWOUT_THRESHOLD = 5; // Point margin to consider "blowout"
+
   /**
    * Calculate advanced stats for a single game
    */
@@ -432,7 +435,7 @@ export class StatsCalculator {
 
       // Check if score was close before this goal
       const prevDiff = Math.abs(prevScore.us - prevScore.them);
-      if (prevDiff <= 2) {
+      if (prevDiff <= StatsCalculator.CLOSE_GAME_THRESHOLD) {
         pointsPlayedWithin2++;
         if (event.team === TeamSide.US) {
           ourScoreWithin2++;
@@ -640,12 +643,12 @@ export class StatsCalculator {
       // Track margins
       if (margin > 0) {
         victoriesMargins.push(margin);
-        if (margin >= 5) blowoutWins++;
-        if (margin <= 2) closeWins++;
+        if (margin >= StatsCalculator.BLOWOUT_THRESHOLD) blowoutWins++;
+        if (margin <= StatsCalculator.CLOSE_GAME_THRESHOLD) closeWins++;
       } else if (margin < 0) {
         defeatMargins.push(absMargin);
-        if (absMargin >= 5) blowoutLosses++;
-        if (absMargin <= 2) closeLosses++;
+        if (absMargin >= StatsCalculator.BLOWOUT_THRESHOLD) blowoutLosses++;
+        if (absMargin <= StatsCalculator.CLOSE_GAME_THRESHOLD) closeLosses++;
       }
 
       // Find longest scoring run in this game

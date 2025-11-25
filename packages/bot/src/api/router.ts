@@ -18,6 +18,29 @@ export class Router {
     this.statsCalculator = new StatsCalculator();
   }
 
+  /**
+   * Extract game ID from URL path
+   */
+  private getGameIdFromPath(path: string): string {
+    return path.split('/')[2];
+  }
+
+  /**
+   * Add CORS headers to a response
+   */
+  private addCorsHeaders(response: Response, corsHeaders: Record<string, string>): Response {
+    const headers = new Headers(response.headers);
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
   async handle(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -54,17 +77,17 @@ export class Router {
       }
       // Get specific game
       else if (path.startsWith('/games/') && request.method === 'GET') {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.getGame(gameId);
       }
       // Update game (PATCH)
       else if (path.match(/^\/games\/[^/]+$/) && request.method === 'PATCH') {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.updateGame(gameId, request);
       }
       // Delete game
       else if (path.match(/^\/games\/[^/]+$/) && request.method === 'DELETE') {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.deleteGame(gameId);
       }
       // Add event to game
@@ -72,7 +95,7 @@ export class Router {
         path.match(/^\/games\/[^/]+\/events$/) &&
         request.method === 'POST'
       ) {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.addEvent(gameId, request);
       }
       // Undo last event
@@ -80,7 +103,7 @@ export class Router {
         path.match(/^\/games\/[^/]+\/undo$/) &&
         request.method === 'POST'
       ) {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.undoLastEvent(gameId);
       }
       // Get advanced stats for a game
@@ -88,7 +111,7 @@ export class Router {
         path.match(/^\/games\/[^/]+\/stats$/) &&
         request.method === 'GET'
       ) {
-        const gameId = path.split('/')[2];
+        const gameId = this.getGameIdFromPath(path);
         response = await this.getGameStats(gameId);
       }
       // Get aggregated stats across games
@@ -102,17 +125,7 @@ export class Router {
         response = new Response('Not Found', { status: 404 });
       }
 
-      // Add CORS headers to response
-      const headers = new Headers(response.headers);
-      Object.entries(corsHeaders).forEach(([key, value]) => {
-        headers.set(key, value);
-      });
-
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      });
+      return this.addCorsHeaders(response, corsHeaders);
     } catch (error) {
       console.error('Router error:', error);
       return new Response(
