@@ -233,6 +233,100 @@ export interface GetAdvancedStatsResponse {
   stats: AdvancedStats;
 }
 
+/**
+ * Scoring run information
+ */
+export interface ScoringRun {
+  startScore: Score;
+  endScore: Score;
+  length: number; // Number of consecutive points
+  events: GameEvent[]; // Events during the run
+}
+
+/**
+ * Scoring patterns across games
+ */
+export interface ScoringPatterns {
+  averagePointsScored: number;
+  averagePointsAllowed: number;
+  longestScoringRun: ScoringRun | null;
+  longestScoringDrought: number; // Most consecutive points allowed without scoring
+  mostCommonMarginOfVictory: number;
+  mostCommonMarginOfDefeat: number;
+  blowoutWins: number; // Wins by 5+ points
+  blowoutLosses: number; // Losses by 5+ points
+  closeWins: number; // Wins by 1-2 points
+  closeLosses: number; // Losses by 1-2 points
+}
+
+/**
+ * Head-to-head record against specific opponent
+ */
+export interface OpponentRecord {
+  opponentName: string;
+  wins: number;
+  losses: number;
+  totalPointsScored: number;
+  totalPointsAllowed: number;
+  averagePointsScored: number;
+  averagePointsAllowed: number;
+  lastGameDate?: string;
+  lastGameResult: 'win' | 'loss' | null;
+  winStreak: number; // Current consecutive wins (0 if not winning)
+  lossStreak: number; // Current consecutive losses (0 if not losing)
+}
+
+/**
+ * Win/loss streak information
+ */
+export interface StreakInfo {
+  currentStreak: number; // Positive for wins, negative for losses
+  longestWinStreak: number;
+  longestLossStreak: number;
+  currentStreakGames: string[]; // Game IDs in current streak
+}
+
+/**
+ * Team performance trends over time
+ */
+export interface TeamTrends {
+  overallRecord: {
+    wins: number;
+    losses: number;
+    winPercentage: number;
+  };
+  streaks: StreakInfo;
+  scoringPatterns: ScoringPatterns;
+  opponentRecords: OpponentRecord[];
+  tournamentPerformance: Array<{
+    tournamentName: string;
+    wins: number;
+    losses: number;
+    avgPointsScored: number;
+    avgPointsAllowed: number;
+  }>;
+  recentForm: Array<{
+    gameId: string;
+    gameDate?: string;
+    opponent: string;
+    result: 'win' | 'loss';
+    score: Score;
+    margin: number;
+  }>;
+}
+
+/**
+ * Player chemistry stats - which players perform well together
+ */
+export interface PlayerChemistry {
+  player1: string;
+  player2: string;
+  gamesPlayedTogether: number;
+  goalsCombined: number; // Total goals when both played
+  assistsToEachOther: number; // Assists between the two
+  plusMinusTogether: number;
+}
+
 export interface GetAggregatedStatsResponse {
   players: AggregatedPlayerStats[];
   totalGames: number;
@@ -240,4 +334,6 @@ export interface GetAggregatedStatsResponse {
     from: string;
     to: string;
   };
+  teamTrends?: TeamTrends;
+  playerChemistry?: PlayerChemistry[];
 }

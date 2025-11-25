@@ -59,6 +59,115 @@
             </div>
           </section>
 
+          <section id="team-trends-section" class="stats-section hidden">
+            <h2>Team Trends</h2>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <h3>Overall Record</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Record:</span>
+                    <span id="record-wins-losses" class="stat-value">0-0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Win %:</span>
+                    <span id="record-win-pct" class="stat-value">0.0%</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Avg Scored:</span>
+                    <span id="record-avg-scored" class="stat-value">0.0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Avg Allowed:</span>
+                    <span id="record-avg-allowed" class="stat-value">0.0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <h3>Streaks</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Current Streak:</span>
+                    <span id="streak-current" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Longest Win Streak:</span>
+                    <span id="streak-longest-win" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Longest Loss Streak:</span>
+                    <span id="streak-longest-loss" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <h3>Scoring Patterns</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Longest Run:</span>
+                    <span id="pattern-longest-run" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Longest Drought:</span>
+                    <span id="pattern-longest-drought" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Close Wins:</span>
+                    <span id="pattern-close-wins" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Blowout Wins:</span>
+                    <span id="pattern-blowout-wins" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="opponent-records-container" class="subsection">
+              <h3>Head-to-Head Records</h3>
+              <table id="opponent-records-table" class="stats-table">
+                <thead>
+                  <tr>
+                    <th>Opponent</th>
+                    <th>W-L</th>
+                    <th>Avg Scored</th>
+                    <th>Avg Allowed</th>
+                    <th class="mobile-hidden">Last Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="recent-form-container" class="subsection">
+              <h3>Recent Form (Last 10 Games)</h3>
+              <div id="recent-form-list" class="recent-form-list">
+              </div>
+            </div>
+          </section>
+
+          <section id="player-chemistry-section" class="stats-section hidden">
+            <h2>Player Chemistry</h2>
+            <p class="section-description">Top player combinations based on assists to each other</p>
+            <table id="player-chemistry-table" class="stats-table">
+              <thead>
+                <tr>
+                  <th>Player 1</th>
+                  <th>Player 2</th>
+                  <th>Games Together</th>
+                  <th>Goals Combined</th>
+                  <th>Assists Together</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </section>
+
           <section id="game-context-section" class="stats-section hidden">
             <h2>Game Context Stats</h2>
 

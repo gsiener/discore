@@ -7,6 +7,8 @@ import {
   AggregatedPlayerStats,
   AdvancedStats,
   GameSummary,
+  TeamTrends,
+  PlayerChemistry,
 } from '@scorebot/shared';
 
 const API_BASE_URL =
@@ -167,7 +169,7 @@ class StatsApp {
 
     const data = await response.json();
 
-    this.renderAggregatedStats(data.players, data.totalGames);
+    this.renderAggregatedStats(data.players, data.totalGames, data.teamTrends, data.playerChemistry);
   }
 
   private renderGameStats(stats: AdvancedStats) {
@@ -187,12 +189,45 @@ class StatsApp {
     }
   }
 
-  private renderAggregatedStats(players: AggregatedPlayerStats[], totalGames: number) {
+  private renderAggregatedStats(
+    players: AggregatedPlayerStats[],
+    totalGames: number,
+    teamTrends?: TeamTrends,
+    playerChemistry?: PlayerChemistry[]
+  ) {
     // Show stats view
     this.showStats();
 
     // Render player stats
     this.renderPlayerStatsTable(players, true);
+
+    // Render team trends if available
+    if (teamTrends) {
+      this.renderTeamTrends(teamTrends);
+      const trendsSection = document.getElementById('team-trends-section');
+      if (trendsSection) {
+        trendsSection.classList.remove('hidden');
+      }
+    } else {
+      const trendsSection = document.getElementById('team-trends-section');
+      if (trendsSection) {
+        trendsSection.classList.add('hidden');
+      }
+    }
+
+    // Render player chemistry if available
+    if (playerChemistry && playerChemistry.length > 0) {
+      this.renderPlayerChemistry(playerChemistry);
+      const chemistrySection = document.getElementById('player-chemistry-section');
+      if (chemistrySection) {
+        chemistrySection.classList.remove('hidden');
+      }
+    } else {
+      const chemistrySection = document.getElementById('player-chemistry-section');
+      if (chemistrySection) {
+        chemistrySection.classList.add('hidden');
+      }
+    }
 
     // Hide game context section for aggregated view
     const gameContextSection = document.getElementById('game-context-section');
@@ -361,6 +396,187 @@ class StatsApp {
       statsView.classList.add('hidden');
       loadingView.classList.add('hidden');
     }
+  }
+
+  private renderTeamTrends(trends: TeamTrends) {
+    // Overall Record
+    this.setTextContent(
+      'record-wins-losses',
+      `${trends.overallRecord.wins}-${trends.overallRecord.losses}`
+    );
+    this.setTextContent('record-win-pct', `${trends.overallRecord.winPercentage.toFixed(1)}%`);
+    this.setTextContent(
+      'record-avg-scored',
+      trends.scoringPatterns.averagePointsScored.toFixed(1)
+    );
+    this.setTextContent(
+      'record-avg-allowed',
+      trends.scoringPatterns.averagePointsAllowed.toFixed(1)
+    );
+
+    // Streaks
+    const currentStreak = trends.streaks.currentStreak;
+    const streakText =
+      currentStreak > 0
+        ? `W${currentStreak}`
+        : currentStreak < 0
+        ? `L${Math.abs(currentStreak)}`
+        : '0';
+    this.setTextContent('streak-current', streakText);
+    this.setTextContent('streak-longest-win', trends.streaks.longestWinStreak);
+    this.setTextContent('streak-longest-loss', trends.streaks.longestLossStreak);
+
+    // Scoring Patterns
+    this.setTextContent(
+      'pattern-longest-run',
+      trends.scoringPatterns.longestScoringRun?.length || 0
+    );
+    this.setTextContent('pattern-longest-drought', trends.scoringPatterns.longestScoringDrought);
+    this.setTextContent('pattern-close-wins', trends.scoringPatterns.closeWins);
+    this.setTextContent('pattern-blowout-wins', trends.scoringPatterns.blowoutWins);
+
+    // Opponent Records
+    this.renderOpponentRecords(trends.opponentRecords);
+
+    // Recent Form
+    this.renderRecentForm(trends.recentForm);
+  }
+
+  private renderOpponentRecords(records: any[]) {
+    const tbody = document.querySelector('#opponent-records-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (records.length === 0) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 5;
+      cell.textContent = 'No opponent records available';
+      cell.style.textAlign = 'center';
+      row.appendChild(cell);
+      tbody.appendChild(row);
+      return;
+    }
+
+    records.forEach(record => {
+      const row = document.createElement('tr');
+
+      // Opponent
+      const opponentCell = document.createElement('td');
+      opponentCell.textContent = record.opponentName;
+      opponentCell.className = 'player-name';
+      row.appendChild(opponentCell);
+
+      // W-L
+      const recordCell = document.createElement('td');
+      recordCell.textContent = `${record.wins}-${record.losses}`;
+      row.appendChild(recordCell);
+
+      // Avg Scored
+      const scoredCell = document.createElement('td');
+      scoredCell.textContent = record.averagePointsScored.toFixed(1);
+      row.appendChild(scoredCell);
+
+      // Avg Allowed
+      const allowedCell = document.createElement('td');
+      allowedCell.textContent = record.averagePointsAllowed.toFixed(1);
+      row.appendChild(allowedCell);
+
+      // Last Result
+      const resultCell = document.createElement('td');
+      resultCell.className = 'mobile-hidden';
+      if (record.lastGameResult) {
+        resultCell.textContent = record.lastGameResult === 'win' ? 'W' : 'L';
+        resultCell.className = record.lastGameResult === 'win' ? 'positive mobile-hidden' : 'negative mobile-hidden';
+      } else {
+        resultCell.textContent = '-';
+      }
+      row.appendChild(resultCell);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  private renderRecentForm(recentGames: any[]) {
+    const container = document.getElementById('recent-form-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (recentGames.length === 0) {
+      container.innerHTML = '<p>No recent games available</p>';
+      return;
+    }
+
+    recentGames.forEach(game => {
+      const gameEl = document.createElement('div');
+      gameEl.className = `recent-game ${game.result}`;
+
+      const resultBadge = document.createElement('span');
+      resultBadge.className = `result-badge ${game.result}`;
+      resultBadge.textContent = game.result === 'win' ? 'W' : 'L';
+
+      const infoEl = document.createElement('span');
+      infoEl.className = 'game-info';
+      infoEl.textContent = `vs ${game.opponent} (${game.score.us}-${game.score.them})`;
+
+      gameEl.appendChild(resultBadge);
+      gameEl.appendChild(infoEl);
+      container.appendChild(gameEl);
+    });
+  }
+
+  private renderPlayerChemistry(chemistry: PlayerChemistry[]) {
+    const tbody = document.querySelector('#player-chemistry-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (chemistry.length === 0) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 5;
+      cell.textContent = 'No player chemistry data available';
+      cell.style.textAlign = 'center';
+      row.appendChild(cell);
+      tbody.appendChild(row);
+      return;
+    }
+
+    // Show top 10 pairs
+    chemistry.slice(0, 10).forEach(pair => {
+      const row = document.createElement('tr');
+
+      // Player 1
+      const p1Cell = document.createElement('td');
+      p1Cell.textContent = pair.player1;
+      p1Cell.className = 'player-name';
+      row.appendChild(p1Cell);
+
+      // Player 2
+      const p2Cell = document.createElement('td');
+      p2Cell.textContent = pair.player2;
+      p2Cell.className = 'player-name';
+      row.appendChild(p2Cell);
+
+      // Games Together
+      const gamesCell = document.createElement('td');
+      gamesCell.textContent = pair.gamesPlayedTogether.toString();
+      row.appendChild(gamesCell);
+
+      // Goals Combined
+      const goalsCell = document.createElement('td');
+      goalsCell.textContent = pair.goalsCombined.toString();
+      row.appendChild(goalsCell);
+
+      // Assists Together
+      const assistsCell = document.createElement('td');
+      assistsCell.textContent = pair.assistsToEachOther.toString();
+      row.appendChild(assistsCell);
+
+      tbody.appendChild(row);
+    });
   }
 }
 

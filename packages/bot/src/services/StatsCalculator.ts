@@ -15,6 +15,13 @@ import {
   HalfPerformance,
   TimeoutEfficiency,
   AggregatedPlayerStats,
+  TeamTrends,
+  ScoringPatterns,
+  ScoringRun,
+  OpponentRecord,
+  StreakInfo,
+  PlayerChemistry,
+  Score,
 } from '@scorebot/shared';
 
 export class StatsCalculator {
@@ -499,5 +506,489 @@ export class StatsCalculator {
       if (b.goals !== a.goals) return b.goals - a.goals;
       return b.assists - a.assists;
     });
+  }
+
+  /**
+   * Calculate team trends across multiple games
+   */
+  calculateTeamTrends(games: Game[]): TeamTrends {
+    // Sort games by date (oldest first)
+    const sortedGames = [...games].sort((a, b) => {
+      if (!a.gameDate || !b.gameDate) return 0;
+      return a.gameDate.localeCompare(b.gameDate);
+    });
+
+    const overallRecord = this.calculateOverallRecord(sortedGames);
+    const streaks = this.calculateStreaks(sortedGames);
+    const scoringPatterns = this.calculateScoringPatterns(sortedGames);
+    const opponentRecords = this.calculateOpponentRecords(sortedGames);
+    const tournamentPerformance = this.calculateTournamentPerformance(sortedGames);
+    const recentForm = this.calculateRecentForm(sortedGames, 10); // Last 10 games
+
+    return {
+      overallRecord,
+      streaks,
+      scoringPatterns,
+      opponentRecords,
+      tournamentPerformance,
+      recentForm,
+    };
+  }
+
+  /**
+   * Calculate overall win/loss record
+   */
+  private calculateOverallRecord(games: Game[]): {
+    wins: number;
+    losses: number;
+    winPercentage: number;
+  } {
+    let wins = 0;
+    let losses = 0;
+
+    games.forEach(game => {
+      if (game.score.us > game.score.them) {
+        wins++;
+      } else if (game.score.them > game.score.us) {
+        losses++;
+      }
+    });
+
+    const totalGames = wins + losses;
+    const winPercentage = totalGames > 0 ? (wins / totalGames) * 100 : 0;
+
+    return { wins, losses, winPercentage };
+  }
+
+  /**
+   * Calculate win/loss streaks
+   */
+  private calculateStreaks(games: Game[]): StreakInfo {
+    let currentStreak = 0;
+    let longestWinStreak = 0;
+    let longestLossStreak = 0;
+    const currentStreakGames: string[] = [];
+
+    let tempWinStreak = 0;
+    let tempLossStreak = 0;
+
+    games.forEach(game => {
+      const isWin = game.score.us > game.score.them;
+      const isLoss = game.score.them > game.score.us;
+
+      if (isWin) {
+        tempWinStreak++;
+        tempLossStreak = 0;
+
+        if (currentStreak >= 0) {
+          currentStreak++;
+          currentStreakGames.push(game.id);
+        } else {
+          currentStreak = 1;
+          currentStreakGames.length = 0;
+          currentStreakGames.push(game.id);
+        }
+
+        longestWinStreak = Math.max(longestWinStreak, tempWinStreak);
+      } else if (isLoss) {
+        tempLossStreak++;
+        tempWinStreak = 0;
+
+        if (currentStreak <= 0) {
+          currentStreak--;
+          currentStreakGames.push(game.id);
+        } else {
+          currentStreak = -1;
+          currentStreakGames.length = 0;
+          currentStreakGames.push(game.id);
+        }
+
+        longestLossStreak = Math.max(longestLossStreak, tempLossStreak);
+      }
+    });
+
+    return {
+      currentStreak,
+      longestWinStreak,
+      longestLossStreak,
+      currentStreakGames,
+    };
+  }
+
+  /**
+   * Calculate scoring patterns across games
+   */
+  private calculateScoringPatterns(games: Game[]): ScoringPatterns {
+    let totalPointsScored = 0;
+    let totalPointsAllowed = 0;
+    let longestRun: ScoringRun | null = null;
+    let longestDrought = 0;
+    const victoriesMargins: number[] = [];
+    const defeatMargins: number[] = [];
+    let blowoutWins = 0;
+    let blowoutLosses = 0;
+    let closeWins = 0;
+    let closeLosses = 0;
+
+    games.forEach(game => {
+      totalPointsScored += game.score.us;
+      totalPointsAllowed += game.score.them;
+
+      const margin = game.score.us - game.score.them;
+      const absMargin = Math.abs(margin);
+
+      // Track margins
+      if (margin > 0) {
+        victoriesMargins.push(margin);
+        if (margin >= 5) blowoutWins++;
+        if (margin <= 2) closeWins++;
+      } else if (margin < 0) {
+        defeatMargins.push(absMargin);
+        if (absMargin >= 5) blowoutLosses++;
+        if (absMargin <= 2) closeLosses++;
+      }
+
+      // Find longest scoring run in this game
+      const gameRun = this.findLongestScoringRun(game);
+      if (gameRun && (!longestRun || gameRun.length > longestRun.length)) {
+        longestRun = gameRun;
+      }
+
+      // Find longest drought in this game
+      const gameDrought = this.findLongestScoringDrought(game);
+      longestDrought = Math.max(longestDrought, gameDrought);
+    });
+
+    const averagePointsScored = games.length > 0 ? totalPointsScored / games.length : 0;
+    const averagePointsAllowed = games.length > 0 ? totalPointsAllowed / games.length : 0;
+
+    // Find most common margins
+    const mostCommonMarginOfVictory = this.findMostCommonMargin(victoriesMargins);
+    const mostCommonMarginOfDefeat = this.findMostCommonMargin(defeatMargins);
+
+    return {
+      averagePointsScored,
+      averagePointsAllowed,
+      longestScoringRun: longestRun,
+      longestScoringDrought: longestDrought,
+      mostCommonMarginOfVictory,
+      mostCommonMarginOfDefeat,
+      blowoutWins,
+      blowoutLosses,
+      closeWins,
+      closeLosses,
+    };
+  }
+
+  /**
+   * Find the longest scoring run (consecutive points) in a game
+   */
+  private findLongestScoringRun(game: Game): ScoringRun | null {
+    let longestRun: ScoringRun | null = null;
+    let currentRun: { start: Score; events: GameEvent[]; length: number } | null = null;
+    let prevScore = { us: 0, them: 0 };
+
+    for (const event of game.events) {
+      if (event.type !== EventType.GOAL) continue;
+
+      if (event.team === TeamSide.US) {
+        if (!currentRun) {
+          currentRun = {
+            start: { ...prevScore },
+            events: [event],
+            length: 1,
+          };
+        } else {
+          currentRun.events.push(event);
+          currentRun.length++;
+        }
+      } else {
+        // Opponent scored, end current run
+        if (currentRun && (!longestRun || currentRun.length > longestRun.length)) {
+          longestRun = {
+            startScore: currentRun.start,
+            endScore: { ...prevScore },
+            length: currentRun.length,
+            events: currentRun.events,
+          };
+        }
+        currentRun = null;
+      }
+
+      prevScore = { ...event.score };
+    }
+
+    // Check final run
+    if (currentRun && (!longestRun || currentRun.length > longestRun.length)) {
+      longestRun = {
+        startScore: currentRun.start,
+        endScore: { ...game.score },
+        length: currentRun.length,
+        events: currentRun.events,
+      };
+    }
+
+    return longestRun;
+  }
+
+  /**
+   * Find the longest scoring drought (consecutive points allowed) in a game
+   */
+  private findLongestScoringDrought(game: Game): number {
+    let longestDrought = 0;
+    let currentDrought = 0;
+
+    for (const event of game.events) {
+      if (event.type !== EventType.GOAL) continue;
+
+      if (event.team === TeamSide.THEM) {
+        currentDrought++;
+        longestDrought = Math.max(longestDrought, currentDrought);
+      } else {
+        currentDrought = 0;
+      }
+    }
+
+    return longestDrought;
+  }
+
+  /**
+   * Find the most common margin in a list of margins
+   */
+  private findMostCommonMargin(margins: number[]): number {
+    if (margins.length === 0) return 0;
+
+    const counts = new Map<number, number>();
+    margins.forEach(margin => {
+      counts.set(margin, (counts.get(margin) || 0) + 1);
+    });
+
+    let mostCommon = margins[0];
+    let maxCount = 0;
+
+    counts.forEach((count, margin) => {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommon = margin;
+      }
+    });
+
+    return mostCommon;
+  }
+
+  /**
+   * Calculate head-to-head records against each opponent
+   */
+  private calculateOpponentRecords(games: Game[]): OpponentRecord[] {
+    const recordMap = new Map<string, OpponentRecord>();
+
+    games.forEach(game => {
+      const opponentName = game.teams.them.name;
+      let record = recordMap.get(opponentName);
+
+      if (!record) {
+        record = {
+          opponentName,
+          wins: 0,
+          losses: 0,
+          totalPointsScored: 0,
+          totalPointsAllowed: 0,
+          averagePointsScored: 0,
+          averagePointsAllowed: 0,
+          lastGameResult: null,
+          winStreak: 0,
+          lossStreak: 0,
+        };
+        recordMap.set(opponentName, record);
+      }
+
+      const isWin = game.score.us > game.score.them;
+      const isLoss = game.score.them > game.score.us;
+
+      record.totalPointsScored += game.score.us;
+      record.totalPointsAllowed += game.score.them;
+
+      if (isWin) {
+        record.wins++;
+        record.lastGameResult = 'win';
+        record.lossStreak = 0;
+        record.winStreak++;
+      } else if (isLoss) {
+        record.losses++;
+        record.lastGameResult = 'loss';
+        record.winStreak = 0;
+        record.lossStreak++;
+      }
+
+      if (game.gameDate) {
+        record.lastGameDate = game.gameDate;
+      }
+    });
+
+    // Calculate averages
+    recordMap.forEach(record => {
+      const totalGames = record.wins + record.losses;
+      record.averagePointsScored = totalGames > 0 ? record.totalPointsScored / totalGames : 0;
+      record.averagePointsAllowed = totalGames > 0 ? record.totalPointsAllowed / totalGames : 0;
+    });
+
+    return Array.from(recordMap.values()).sort((a, b) => {
+      // Sort by total games played
+      const aTotal = a.wins + a.losses;
+      const bTotal = b.wins + b.losses;
+      return bTotal - aTotal;
+    });
+  }
+
+  /**
+   * Calculate performance by tournament
+   */
+  private calculateTournamentPerformance(games: Game[]): Array<{
+    tournamentName: string;
+    wins: number;
+    losses: number;
+    avgPointsScored: number;
+    avgPointsAllowed: number;
+  }> {
+    const tournamentMap = new Map<string, {
+      wins: number;
+      losses: number;
+      totalPointsScored: number;
+      totalPointsAllowed: number;
+      gamesPlayed: number;
+    }>();
+
+    games.forEach(game => {
+      const tournamentName = game.tournamentName || 'Unknown';
+      let stats = tournamentMap.get(tournamentName);
+
+      if (!stats) {
+        stats = {
+          wins: 0,
+          losses: 0,
+          totalPointsScored: 0,
+          totalPointsAllowed: 0,
+          gamesPlayed: 0,
+        };
+        tournamentMap.set(tournamentName, stats);
+      }
+
+      stats.totalPointsScored += game.score.us;
+      stats.totalPointsAllowed += game.score.them;
+      stats.gamesPlayed++;
+
+      if (game.score.us > game.score.them) {
+        stats.wins++;
+      } else if (game.score.them > game.score.us) {
+        stats.losses++;
+      }
+    });
+
+    return Array.from(tournamentMap.entries())
+      .map(([tournamentName, stats]) => ({
+        tournamentName,
+        wins: stats.wins,
+        losses: stats.losses,
+        avgPointsScored: stats.totalPointsScored / stats.gamesPlayed,
+        avgPointsAllowed: stats.totalPointsAllowed / stats.gamesPlayed,
+      }))
+      .sort((a, b) => (b.wins + b.losses) - (a.wins + a.losses));
+  }
+
+  /**
+   * Get recent game results
+   */
+  private calculateRecentForm(games: Game[], limit: number): Array<{
+    gameId: string;
+    gameDate?: string;
+    opponent: string;
+    result: 'win' | 'loss';
+    score: Score;
+    margin: number;
+  }> {
+    return games
+      .slice(-limit)
+      .reverse()
+      .map(game => ({
+        gameId: game.id,
+        gameDate: game.gameDate,
+        opponent: game.teams.them.name,
+        result: game.score.us > game.score.them ? 'win' as const : 'loss' as const,
+        score: { ...game.score },
+        margin: Math.abs(game.score.us - game.score.them),
+      }));
+  }
+
+  /**
+   * Calculate player chemistry - which players assist/score with each other
+   */
+  calculatePlayerChemistry(games: Game[]): PlayerChemistry[] {
+    const chemistryMap = new Map<string, PlayerChemistry>();
+
+    games.forEach(game => {
+      // Track which players appear in each game
+      const gamePlayers = new Set<string>();
+      const playerGoals = new Map<string, number>();
+      const assistPairs: Array<{ assister: string; scorer: string }> = [];
+
+      game.events.forEach(event => {
+        if (event.type !== EventType.GOAL || event.team !== TeamSide.US) return;
+
+        const { scorer, assister } = this.parseGoalEvent(event.message || '', game);
+
+        if (scorer) {
+          gamePlayers.add(scorer);
+          playerGoals.set(scorer, (playerGoals.get(scorer) || 0) + 1);
+        }
+
+        if (assister) {
+          gamePlayers.add(assister);
+        }
+
+        if (scorer && assister) {
+          assistPairs.push({ assister, scorer });
+        }
+      });
+
+      // For each pair of players in this game, update chemistry stats
+      const players = Array.from(gamePlayers);
+      for (let i = 0; i < players.length; i++) {
+        for (let j = i + 1; j < players.length; j++) {
+          const p1 = players[i];
+          const p2 = players[j];
+          const key = [p1, p2].sort().join('|');
+
+          let chemistry = chemistryMap.get(key);
+          if (!chemistry) {
+            chemistry = {
+              player1: p1,
+              player2: p2,
+              gamesPlayedTogether: 0,
+              goalsCombined: 0,
+              assistsToEachOther: 0,
+              plusMinusTogether: 0,
+            };
+            chemistryMap.set(key, chemistry);
+          }
+
+          chemistry.gamesPlayedTogether++;
+          chemistry.goalsCombined += (playerGoals.get(p1) || 0) + (playerGoals.get(p2) || 0);
+
+          // Count assists between these two players
+          assistPairs.forEach(pair => {
+            if (
+              (pair.assister === p1 && pair.scorer === p2) ||
+              (pair.assister === p2 && pair.scorer === p1)
+            ) {
+              chemistry.assistsToEachOther++;
+            }
+          });
+        }
+      }
+    });
+
+    return Array.from(chemistryMap.values())
+      .filter(c => c.gamesPlayedTogether >= 2) // Only show pairs that played together multiple times
+      .sort((a, b) => b.assistsToEachOther - a.assistsToEachOther);
   }
 }

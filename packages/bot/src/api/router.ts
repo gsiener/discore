@@ -384,6 +384,8 @@ export class Router {
 
     // Calculate aggregated stats
     const players = this.statsCalculator.aggregatePlayerStats(validGames);
+    const teamTrends = validGames.length > 0 ? this.statsCalculator.calculateTeamTrends(validGames) : undefined;
+    const playerChemistry = validGames.length > 0 ? this.statsCalculator.calculatePlayerChemistry(validGames) : undefined;
 
     // Determine date range
     let dateRange: { from: string; to: string } | undefined;
@@ -405,6 +407,8 @@ export class Router {
       players,
       totalGames: validGames.length,
       dateRange,
+      teamTrends,
+      playerChemistry,
     };
 
     return new Response(JSON.stringify(response), {
