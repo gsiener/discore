@@ -22,7 +22,7 @@ export class Router {
     // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
@@ -53,6 +53,16 @@ export class Router {
       else if (path.startsWith('/games/') && request.method === 'GET') {
         const gameId = path.split('/')[2];
         response = await this.getGame(gameId);
+      }
+      // Update game (PATCH)
+      else if (path.match(/^\/games\/[^/]+$/) && request.method === 'PATCH') {
+        const gameId = path.split('/')[2];
+        response = await this.updateGame(gameId, request);
+      }
+      // Delete game
+      else if (path.match(/^\/games\/[^/]+$/) && request.method === 'DELETE') {
+        const gameId = path.split('/')[2];
+        response = await this.deleteGame(gameId);
       }
       // Add event to game
       else if (
@@ -226,6 +236,71 @@ export class Router {
     await this.db.saveGame(data.game);
 
     return new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async updateGame(
+    gameId: string,
+    request: Request
+  ): Promise<Response> {
+    const updates = await request.json() as { startingOnOffense?: boolean };
+
+    // Get game from database
+    const game = await this.db.getGame(gameId);
+    if (!game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Update fields
+    if (updates.startingOnOffense !== undefined) {
+      game.startingOnOffense = updates.startingOnOffense;
+    }
+
+    game.updatedAt = Date.now();
+
+    // Update in database
+    await this.db.saveGame(game);
+
+    // If game has a chatId, also update the Durable Object
+    if (game.chatId) {
+      try {
+        const id = this.env.GAME_STATE.idFromName(game.chatId);
+        const stub = this.env.GAME_STATE.get(id);
+        await stub.fetch(
+          new Request('https://fake-host/update', {
+            method: 'PATCH',
+            body: JSON.stringify(updates),
+          })
+        );
+      } catch (error) {
+        // Continue even if Durable Object update fails
+        console.warn('Failed to update Durable Object:', error);
+      }
+    }
+
+    return new Response(JSON.stringify({ game }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async deleteGame(gameId: string): Promise<Response> {
+    // Get game from database first
+    const game = await this.db.getGame(gameId);
+    if (!game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Delete from database (will cascade delete events)
+    await this.db.deleteGame(gameId);
+
+    return new Response(JSON.stringify({ success: true, deleted: gameId }), {
       headers: { 'Content-Type': 'application/json' },
     });
   }

@@ -11,6 +11,7 @@ import {
   formatTime,
   formatScore,
   getGameDuration,
+  calculateLineStats,
 } from '@scorebot/shared';
 
 const API_BASE_URL =
@@ -209,6 +210,9 @@ class ScorebotApp {
     // Update progression table
     this.renderProgressionTable(game);
 
+    // Update efficiency stats
+    this.renderEfficiencyStats(game);
+
     // Update timeline
     this.renderTimeline(game.events, game);
   }
@@ -398,6 +402,37 @@ class ScorebotApp {
       themFinalCell.textContent = game.score.them.toString();
       themRow.appendChild(themFinalCell);
       tbody.appendChild(themRow);
+    }
+  }
+
+  private renderEfficiencyStats(game: Game) {
+    const container = document.getElementById('efficiency-stats-container');
+    if (!container) return;
+
+    const lineStats = calculateLineStats(game);
+
+    // Hide if we can't calculate stats
+    if (!lineStats || lineStats.oLinePoints === 0 && lineStats.dLinePoints === 0) {
+      container.classList.add('hidden');
+      return;
+    }
+
+    container.classList.remove('hidden');
+
+    // Update O-line stats
+    const oLinePercentage = document.getElementById('o-line-percentage');
+    const oLineRecord = document.getElementById('o-line-record');
+    if (oLinePercentage && oLineRecord) {
+      oLinePercentage.textContent = `${lineStats.oLineHoldPercentage}%`;
+      oLineRecord.textContent = `(${lineStats.oLineHolds}/${lineStats.oLinePoints})`;
+    }
+
+    // Update D-line stats
+    const dLinePercentage = document.getElementById('d-line-percentage');
+    const dLineRecord = document.getElementById('d-line-record');
+    if (dLinePercentage && dLineRecord) {
+      dLinePercentage.textContent = `${lineStats.dLineBreakPercentage}%`;
+      dLineRecord.textContent = `(${lineStats.dLineBreaks}/${lineStats.dLinePoints})`;
     }
   }
 

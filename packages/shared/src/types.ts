@@ -77,6 +77,7 @@ export interface GameSummary {
   score: Score;
   startedAt?: number;
   finishedAt?: number;
+  startingOnOffense?: boolean;
   tournamentName?: string;
   gameDate?: string;
   gameOrder?: number;
@@ -113,9 +114,23 @@ export interface AddEventRequest {
   message?: string;
   defensivePlay?: 'block' | 'steal';
   startingOnOffense?: boolean;
+  timestamp?: number; // Optional custom timestamp for backfilling events
+  score?: Score; // Optional score for backfilling events (score at time of event)
 }
 
 export interface AddEventResponse {
   event: GameEvent;
   game: Game;
+}
+
+/**
+ * O-line/D-line efficiency statistics
+ */
+export interface LineStats {
+  oLinePoints: number; // Total O-line points played
+  oLineHolds: number; // O-line points that resulted in holds
+  oLineHoldPercentage: number; // Percentage of O-line holds
+  dLinePoints: number; // Total D-line points played
+  dLineBreaks: number; // D-line points that resulted in breaks
+  dLineBreakPercentage: number; // Percentage of D-line breaks
 }

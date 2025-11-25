@@ -2,7 +2,7 @@
  * Shared utility functions
  */
 
-import { Game, GameEvent, Score, TeamSide } from './types.js';
+import { Game, GameEvent, Score, TeamSide, LineStats, EventType } from './types.js';
 
 /**
  * Generate a unique ID for games and events
@@ -74,4 +74,72 @@ export function getGameDuration(game: Game): number | null {
   if (!game.startedAt) return null;
   const endTime = game.finishedAt || Date.now();
   return Math.floor((endTime - game.startedAt) / 1000 / 60);
+}
+
+/**
+ * Calculate O-line/D-line efficiency statistics from game events
+ */
+export function calculateLineStats(game: Game): LineStats | null {
+  // Can't calculate without knowing starting possession
+  if (game.startingOnOffense === undefined) {
+    return null;
+  }
+
+  const goalEvents = game.events.filter(e => e.type === EventType.GOAL);
+
+  if (goalEvents.length === 0) {
+    return {
+      oLinePoints: 0,
+      oLineHolds: 0,
+      oLineHoldPercentage: 0,
+      dLinePoints: 0,
+      dLineBreaks: 0,
+      dLineBreakPercentage: 0,
+    };
+  }
+
+  let oLinePoints = 0;
+  let oLineHolds = 0;
+  let dLinePoints = 0;
+  let dLineBreaks = 0;
+
+  // Track who has possession at the start of each point
+  let weHavePossession = game.startingOnOffense;
+
+  goalEvents.forEach((event) => {
+    // Determine if this is an O-line or D-line point for us
+    if (weHavePossession) {
+      // We're on offense
+      oLinePoints++;
+      if (event.team === 'us') {
+        // We scored while on offense = hold
+        oLineHolds++;
+      }
+      // If they scored, we didn't hold (no increment)
+    } else {
+      // We're on defense
+      dLinePoints++;
+      if (event.team === 'us') {
+        // We scored while on defense = break
+        dLineBreaks++;
+      }
+      // If they scored, we didn't break (no increment)
+    }
+
+    // After each goal, possession switches to the team that didn't score
+    if (event.team === 'us') {
+      weHavePossession = false; // They receive next
+    } else {
+      weHavePossession = true; // We receive next
+    }
+  });
+
+  return {
+    oLinePoints,
+    oLineHolds,
+    oLineHoldPercentage: oLinePoints > 0 ? Math.round((oLineHolds / oLinePoints) * 100) : 0,
+    dLinePoints,
+    dLineBreaks,
+    dLineBreakPercentage: dLinePoints > 0 ? Math.round((dLineBreaks / dLinePoints) * 100) : 0,
+  };
 }

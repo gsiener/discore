@@ -66,6 +66,12 @@ export class GameState implements DurableObject {
           }
           break;
 
+        case 'PATCH':
+          if (path === '/update') {
+            return await this.updateFields(request);
+          }
+          break;
+
         case 'DELETE':
           if (path === '/events/last') {
             return await this.undoLastEvent();
@@ -159,10 +165,10 @@ export class GameState implements DurableObject {
       });
     }
 
-    const { type, team, message, parsedBy, defensivePlay, startingOnOffense } = await request.json() as AddEventRequest & { parsedBy?: string };
+    const { type, team, message, parsedBy, defensivePlay, startingOnOffense, timestamp, score } = await request.json() as AddEventRequest & { parsedBy?: string };
 
-    // Update score if it's a goal
-    if (type === EventType.GOAL && team) {
+    // Update score if it's a goal (and no custom score provided for backfilling)
+    if (type === EventType.GOAL && team && !score) {
       this.game.score[team as TeamSide]++;
     }
 
@@ -187,8 +193,8 @@ export class GameState implements DurableObject {
       id: generateId('event'),
       gameId: this.game.id,
       type,
-      timestamp: Date.now(),
-      score: { ...this.game.score },
+      timestamp: timestamp || Date.now(), // Use provided timestamp or current time
+      score: score || { ...this.game.score }, // Use provided score or current score
       team: team as TeamSide,
       message,
       parsedBy,
@@ -196,6 +202,8 @@ export class GameState implements DurableObject {
     };
 
     this.game.events.push(event);
+    // Re-sort events by timestamp to maintain chronological order
+    this.game.events.sort((a, b) => a.timestamp - b.timestamp);
     this.game.updatedAt = Date.now();
     await this.saveGame();
 
@@ -279,6 +287,28 @@ export class GameState implements DurableObject {
       JSON.stringify({ game: this.game, undone: lastEvent }),
       { headers: { 'Content-Type': 'application/json' } }
     );
+  }
+
+  private async updateFields(request: Request): Promise<Response> {
+    if (!this.game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const updates = await request.json() as { startingOnOffense?: boolean };
+
+    if (updates.startingOnOffense !== undefined) {
+      this.game.startingOnOffense = updates.startingOnOffense;
+    }
+
+    this.game.updatedAt = Date.now();
+    await this.saveGame();
+
+    return new Response(JSON.stringify({ game: this.game }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   private async saveGame(): Promise<void> {
