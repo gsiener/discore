@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Stats - Discore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./stats-style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <nav class="nav">
+        <a href="/index.html">← Back to Games</a>
+        <h1>Advanced Stats</h1>
+      </nav>
+
+      <main id="main-content">
+        <div id="stats-filters" class="stats-filters">
+          <div class="filter-group">
+            <label for="tournament-filter">Tournament:</label>
+            <select id="tournament-filter">
+              <option value="">All Tournaments</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="game-filter">Game:</label>
+            <select id="game-filter">
+              <option value="">All Games (Aggregated)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="loading-view" class="loading-view">
+          <p>Loading stats...</p>
+        </div>
+
+        <div id="stats-view" class="hidden">
+          <section class="stats-section">
+            <h2>Player Statistics</h2>
+            <div id="player-stats-container">
+              <table id="player-stats-table" class="stats-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
+                    <th>Points Played</th>
+                    <th>+/-</th>
+                    <th class="mobile-hidden">G/Game</th>
+                    <th class="mobile-hidden">A/Game</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="game-context-section" class="stats-section hidden">
+            <h2>Game Context Stats</h2>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <h3>Momentum</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Largest Lead:</span>
+                    <span id="momentum-largest-lead" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Largest Deficit:</span>
+                    <span id="momentum-largest-deficit" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Lead Changes:</span>
+                    <span id="momentum-lead-changes" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Max Comeback From:</span>
+                    <span id="momentum-max-comeback" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <h3>Half Performance</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">1st Half Score:</span>
+                    <span id="half-first-score" class="stat-value">0-0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">1st Half Diff:</span>
+                    <span id="half-first-diff" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">2nd Half Score:</span>
+                    <span id="half-second-score" class="stat-value">0-0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">2nd Half Diff:</span>
+                    <span id="half-second-diff" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <h3>Timeout Efficiency</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Total Timeouts:</span>
+                    <span id="timeout-total" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Conversion Rate:</span>
+                    <span id="timeout-conversion" class="stat-value">0%</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Scored After:</span>
+                    <span id="timeout-scored-after" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Allowed After:</span>
+                    <span id="timeout-allowed-after" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <h3>Close Game Performance</h3>
+                <div class="stat-rows">
+                  <div class="stat-row">
+                    <span class="stat-label">Points Within 2:</span>
+                    <span id="close-points-played" class="stat-value">0</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-label">Score Differential:</span>
+                    <span id="close-score-diff" class="stat-value">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div id="error-view" class="hidden error-message">
+          <p id="error-text"></p>
+        </div>
+      </main>
+
+      <footer>
+        <p>Advanced statistics powered by Discore</p>
+      </footer>
+    </div>
+
+    <script type="module" src="./stats.ts"></script>
+  </body>
+</html>

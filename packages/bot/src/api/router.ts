@@ -6,13 +6,16 @@
 import { Env } from '../types';
 import { DatabaseService } from '../db/database';
 import { GameState } from '../durable-objects/GameState';
-import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse } from '@scorebot/shared';
+import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse, GetAdvancedStatsResponse, GetAggregatedStatsResponse } from '@scorebot/shared';
+import { StatsCalculator } from '../services/StatsCalculator';
 
 export class Router {
   private db: DatabaseService;
+  private statsCalculator: StatsCalculator;
 
   constructor(private env: Env) {
     this.db = new DatabaseService(env.DB);
+    this.statsCalculator = new StatsCalculator();
   }
 
   async handle(request: Request): Promise<Response> {
@@ -79,6 +82,18 @@ export class Router {
       ) {
         const gameId = path.split('/')[2];
         response = await this.undoLastEvent(gameId);
+      }
+      // Get advanced stats for a game
+      else if (
+        path.match(/^\/games\/[^/]+\/stats$/) &&
+        request.method === 'GET'
+      ) {
+        const gameId = path.split('/')[2];
+        response = await this.getGameStats(gameId);
+      }
+      // Get aggregated stats across games
+      else if (path === '/stats/aggregated' && request.method === 'GET') {
+        response = await this.getAggregatedStats(request);
       }
       // Process WhatsApp message
       else if (path === '/whatsapp/message' && request.method === 'POST') {
@@ -311,5 +326,89 @@ export class Router {
       JSON.stringify({ message: 'WhatsApp integration coming soon' }),
       { headers: { 'Content-Type': 'application/json' } }
     );
+  }
+
+  private async getGameStats(gameId: string): Promise<Response> {
+    // Get game from database
+    const game = await this.db.getGame(gameId);
+    if (!game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Calculate stats
+    const stats = this.statsCalculator.calculateGameStats(game);
+
+    const response: GetAdvancedStatsResponse = { stats };
+
+    return new Response(JSON.stringify(response), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async getAggregatedStats(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    const limit = parseInt(url.searchParams.get('limit') || '50', 10);
+    const tournamentName = url.searchParams.get('tournament');
+    const fromDate = url.searchParams.get('from');
+    const toDate = url.searchParams.get('to');
+
+    // Get games from database
+    let games = await this.db.listGames(limit);
+
+    // Filter by tournament if specified
+    if (tournamentName) {
+      games = games.filter(g => g.tournamentName === tournamentName);
+    }
+
+    // Filter by date range if specified
+    if (fromDate) {
+      games = games.filter(g => g.gameDate && g.gameDate >= fromDate);
+    }
+    if (toDate) {
+      games = games.filter(g => g.gameDate && g.gameDate <= toDate);
+    }
+
+    // Fetch full game data for each game
+    const fullGames = await Promise.all(
+      games.map(async g => {
+        const game = await this.db.getGame(g.id);
+        return game;
+      })
+    );
+
+    // Filter out nulls
+    const validGames = fullGames.filter(g => g !== null);
+
+    // Calculate aggregated stats
+    const players = this.statsCalculator.aggregatePlayerStats(validGames);
+
+    // Determine date range
+    let dateRange: { from: string; to: string } | undefined;
+    if (validGames.length > 0) {
+      const dates = validGames
+        .filter(g => g.gameDate)
+        .map(g => g.gameDate!)
+        .sort();
+
+      if (dates.length > 0) {
+        dateRange = {
+          from: dates[0],
+          to: dates[dates.length - 1],
+        };
+      }
+    }
+
+    const response: GetAggregatedStatsResponse = {
+      players,
+      totalGames: validGames.length,
+      dateRange,
+    };
+
+    return new Response(JSON.stringify(response), {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

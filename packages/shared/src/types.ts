@@ -134,3 +134,110 @@ export interface LineStats {
   dLineBreaks: number; // D-line points that resulted in breaks
   dLineBreakPercentage: number; // Percentage of D-line breaks
 }
+
+/**
+ * Player-level statistics
+ */
+export interface PlayerStats {
+  name: string;
+  goals: number; // Total goals scored
+  assists: number; // Total assists (thrower on scoring plays)
+  blocks: number; // Total blocks
+  steals: number; // Total steals
+  pointsPlayed: number; // Approximate count of points played (based on event appearances)
+  plusMinus: number; // Score differential when player was on field
+  touches: number; // Total times player is mentioned in events
+}
+
+/**
+ * Momentum tracking information
+ */
+export interface MomentumInfo {
+  largestLead: number; // Largest lead our team had
+  largestDeficit: number; // Largest deficit our team faced
+  leadChanges: number; // Number of times the lead changed
+  comebackPoints: number; // Points scored after being down
+  maxComebackFrom: number; // Largest deficit we came back from
+}
+
+/**
+ * Half performance breakdown
+ */
+export interface HalfPerformance {
+  firstHalf: {
+    ourScore: number;
+    theirScore: number;
+    scoreDifferential: number;
+  };
+  secondHalf: {
+    ourScore: number;
+    theirScore: number;
+    scoreDifferential: number;
+  };
+}
+
+/**
+ * Timeout efficiency stats
+ */
+export interface TimeoutEfficiency {
+  totalTimeouts: number; // Total timeouts called by our team
+  timeoutsInFirstHalf: number;
+  timeoutsInSecondHalf: number;
+  pointsScoredAfterTimeout: number; // Points we scored immediately after our timeout
+  pointsAllowedAfterTimeout: number; // Points opponent scored immediately after our timeout
+  conversionRate: number; // Percentage of timeouts that led to us scoring the next point
+}
+
+/**
+ * Game context statistics
+ */
+export interface GameContextStats {
+  momentum: MomentumInfo;
+  halfPerformance: HalfPerformance;
+  timeoutEfficiency: TimeoutEfficiency;
+  closeGamePerformance: {
+    pointsPlayedWithin2: number; // Points played when within 2 points
+    scoreDifferentialWithin2: number; // Our scoring diff in close situations
+  };
+}
+
+/**
+ * Advanced statistics for a game
+ */
+export interface AdvancedStats {
+  gameId: string;
+  gameDate?: string;
+  tournamentName?: string;
+  ourTeamName: string;
+  opponentName: string;
+  finalScore: Score;
+  playerStats: PlayerStats[];
+  gameContext: GameContextStats;
+}
+
+/**
+ * Aggregated player statistics across multiple games
+ */
+export interface AggregatedPlayerStats extends PlayerStats {
+  gamesPlayed: number;
+  goalsPerGame: number;
+  assistsPerGame: number;
+  blocksPerGame: number;
+  stealsPerGame: number;
+}
+
+/**
+ * Response for advanced stats endpoints
+ */
+export interface GetAdvancedStatsResponse {
+  stats: AdvancedStats;
+}
+
+export interface GetAggregatedStatsResponse {
+  players: AggregatedPlayerStats[];
+  totalGames: number;
+  dateRange?: {
+    from: string;
+    to: string;
+  };
+}
