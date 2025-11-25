@@ -351,19 +351,24 @@ export class GameState implements DurableObject {
       }
 
       if (threshold > 0) {
-        // Find the correct halftime event
-        const correctHalftime = halftimeEvents.find(e =>
+        // Find all halftime events with correct score
+        const correctHalftimes = halftimeEvents.filter(e =>
           e.score.us === threshold || e.score.them === threshold
         );
 
-        if (correctHalftime) {
-          // Remove all halftime events except the correct one
+        if (correctHalftimes.length > 0) {
+          // Keep only the earliest one by timestamp
+          const earliestHalftime = correctHalftimes.reduce((earliest, current) =>
+            current.timestamp < earliest.timestamp ? current : earliest
+          );
+
+          // Remove all halftime events except the earliest correct one
           this.game.events = this.game.events.filter(e =>
-            e.type !== EventType.HALFTIME || e.id === correctHalftime.id
+            e.type !== EventType.HALFTIME || e.id === earliestHalftime.id
           );
 
           needsSave = true;
-          console.log(`Cleaned up halftime events for game ${this.game.id}, kept ${correctHalftime.score.us}-${correctHalftime.score.them}`);
+          console.log(`Cleaned up halftime events for game ${this.game.id}, kept earliest at ${earliestHalftime.score.us}-${earliestHalftime.score.them}`);
         }
       }
     }

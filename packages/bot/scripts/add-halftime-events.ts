@@ -60,9 +60,17 @@ async function findHalftimePoint(game: Game): Promise<number | null> {
 async function addHalftimeEvent(gameId: string, goalEventIndex: number, game: Game): Promise<void> {
   const goalEvents = game.events.filter(e => e.type === 'goal');
   const halftimeGoal = goalEvents[goalEventIndex];
+  const nextGoal = goalEvents[goalEventIndex + 1];
 
-  // Add halftime event with timestamp slightly after the goal
-  const halftimeTimestamp = halftimeGoal.timestamp + 1000; // 1 second after
+  // Calculate halftime timestamp to be between this goal and the next
+  let halftimeTimestamp: number;
+  if (nextGoal) {
+    // Place halftime halfway between this goal and the next
+    halftimeTimestamp = halftimeGoal.timestamp + Math.floor((nextGoal.timestamp - halftimeGoal.timestamp) / 2);
+  } else {
+    // No next goal, just add 1 second
+    halftimeTimestamp = halftimeGoal.timestamp + 1000;
+  }
 
   try {
     const response = await fetch(`${API_URL}/games/${gameId}/events`, {
