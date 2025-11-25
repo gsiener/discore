@@ -71,6 +71,7 @@ async function addHalftimeEvent(gameId: string, goalEventIndex: number, game: Ga
       body: JSON.stringify({
         type: 'halftime',
         timestamp: halftimeTimestamp,
+        score: { us: halftimeGoal.score.us, them: halftimeGoal.score.them },
       }),
     });
 
@@ -78,7 +79,7 @@ async function addHalftimeEvent(gameId: string, goalEventIndex: number, game: Ga
       throw new Error(`Failed to add halftime: ${response.statusText}`);
     }
 
-    console.log(`  ✅ Added halftime after ${halftimeGoal.score.us}-${halftimeGoal.score.them}`);
+    console.log(`  ✅ Added halftime at ${halftimeGoal.score.us}-${halftimeGoal.score.them}`);
   } catch (error) {
     console.error(`  ❌ Error:`, error);
   }

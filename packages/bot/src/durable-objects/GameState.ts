@@ -45,6 +45,8 @@ export class GameState implements DurableObject {
             headers: { 'Content-Type': 'application/json' },
           });
         }
+        // Clean up duplicate/incorrect halftime events on load
+        await this.cleanupHalftimeEvents();
       }
 
       switch (request.method) {
@@ -172,21 +174,28 @@ export class GameState implements DurableObject {
       this.game.score[team as TeamSide]++;
     }
 
-    // Update game status based on event type
-    if (type === EventType.GAME_START) {
-      this.game.status = GameStatus.FIRST_HALF;
-      this.game.startedAt = Date.now();
-      // Store whether we're starting on offense
-      if (startingOnOffense !== undefined) {
+    // Update game status based on event type (only if not backfilling)
+    if (!timestamp) {
+      if (type === EventType.GAME_START) {
+        this.game.status = GameStatus.FIRST_HALF;
+        this.game.startedAt = Date.now();
+        // Store whether we're starting on offense
+        if (startingOnOffense !== undefined) {
+          this.game.startingOnOffense = startingOnOffense;
+        }
+      } else if (type === EventType.HALFTIME) {
+        this.game.status = GameStatus.HALFTIME;
+      } else if (type === EventType.SECOND_HALF_START) {
+        this.game.status = GameStatus.SECOND_HALF;
+      } else if (type === EventType.GAME_END) {
+        this.game.status = GameStatus.FINISHED;
+        this.game.finishedAt = Date.now();
+      }
+    } else {
+      // When backfilling with custom timestamp, only update startingOnOffense if provided
+      if (type === EventType.GAME_START && startingOnOffense !== undefined) {
         this.game.startingOnOffense = startingOnOffense;
       }
-    } else if (type === EventType.HALFTIME) {
-      this.game.status = GameStatus.HALFTIME;
-    } else if (type === EventType.SECOND_HALF_START) {
-      this.game.status = GameStatus.SECOND_HALF;
-    } else if (type === EventType.GAME_END) {
-      this.game.status = GameStatus.FINISHED;
-      this.game.finishedAt = Date.now();
     }
 
     const event: GameEvent = {
@@ -314,6 +323,61 @@ export class GameState implements DurableObject {
   private async saveGame(): Promise<void> {
     if (this.game) {
       await this.state.storage.put('game', this.game);
+    }
+  }
+
+  /**
+   * Clean up duplicate or incorrect halftime events
+   * Keeps only the halftime event with correct score (7 for 13-point, 8 for 15-point)
+   * Also fixes game status if it's stuck at halftime but should be finished
+   */
+  private async cleanupHalftimeEvents(): Promise<void> {
+    if (!this.game) return;
+
+    let needsSave = false;
+
+    const halftimeEvents = this.game.events.filter(e => e.type === EventType.HALFTIME);
+
+    if (halftimeEvents.length > 1) {
+      const finalScore = Math.max(this.game.score.us, this.game.score.them);
+      let threshold: number;
+
+      if (finalScore === 15) {
+        threshold = 8;
+      } else if (finalScore === 13) {
+        threshold = 7;
+      } else {
+        threshold = 0; // Not a standard game
+      }
+
+      if (threshold > 0) {
+        // Find the correct halftime event
+        const correctHalftime = halftimeEvents.find(e =>
+          e.score.us === threshold || e.score.them === threshold
+        );
+
+        if (correctHalftime) {
+          // Remove all halftime events except the correct one
+          this.game.events = this.game.events.filter(e =>
+            e.type !== EventType.HALFTIME || e.id === correctHalftime.id
+          );
+
+          needsSave = true;
+          console.log(`Cleaned up halftime events for game ${this.game.id}, kept ${correctHalftime.score.us}-${correctHalftime.score.them}`);
+        }
+      }
+    }
+
+    // Fix status if game has game_end event but status is stuck at halftime
+    const hasGameEnd = this.game.events.some(e => e.type === EventType.GAME_END);
+    if (hasGameEnd && this.game.status === GameStatus.HALFTIME) {
+      this.game.status = GameStatus.FINISHED;
+      needsSave = true;
+      console.log(`Fixed status for game ${this.game.id} from halftime to finished`);
+    }
+
+    if (needsSave) {
+      await this.saveGame();
     }
   }
 }
