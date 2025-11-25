@@ -8,6 +8,7 @@ import {
   GameEvent,
   EventType,
   TeamSide,
+  Score,
   AdvancedStats,
   PlayerStats,
   GameContextStats,
