@@ -1,5 +1,5 @@
 /**
- * Web interface for Scorebot
+ * Web interface for Discore
  * Polls API for game updates and displays timeline
  */
 
@@ -18,7 +18,7 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:8787';
 const POLL_INTERVAL = 3000; // 3 seconds
 
-class ScorebotApp {
+class DiscoreApp {
   private currentGameId: string | null = null;
   private pollInterval: number | null = null;
 
@@ -657,4 +657,4 @@ class ScorebotApp {
 }
 
 // Initialize app when DOM is ready
-new ScorebotApp();
+new DiscoreApp();
