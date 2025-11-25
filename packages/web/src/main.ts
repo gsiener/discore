@@ -506,6 +506,15 @@ class DiscoreApp {
     header.appendChild(type);
     leftCol.appendChild(header);
 
+    // Show starting team for GAME_START events
+    if (event.type === EventType.GAME_START && game.startingOnOffense !== undefined) {
+      const startingTeamEl = document.createElement('div');
+      startingTeamEl.className = 'event-details';
+      const teamName = game.startingOnOffense ? game.teams.us.name : game.teams.them.name;
+      startingTeamEl.textContent = `${teamName} begins on offense`;
+      leftCol.appendChild(startingTeamEl);
+    }
+
     // Show message as subtext for NOTE events with defensive plays
     if (event.type === EventType.NOTE && event.defensivePlay && event.message) {
       const message = document.createElement('div');
@@ -579,7 +588,7 @@ class DiscoreApp {
   private formatEventType(event: GameEvent, game: Game, allEvents: GameEvent[]): string {
     switch (event.type) {
       case EventType.GAME_START:
-        return 'Game Started';
+        return 'Game Start';
       case EventType.GOAL:
         if (!event.team) return 'Goal';
 

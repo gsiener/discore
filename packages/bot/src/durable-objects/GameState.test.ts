@@ -169,6 +169,68 @@ describe.skip('GameState', () => {
     });
   });
 
+  describe('startingOnOffense', () => {
+    beforeEach(async () => {
+      const request = new Request('http://localhost/init', {
+        method: 'POST',
+        body: JSON.stringify({
+          chatId: 'chat123',
+          ourTeamName: 'Team A',
+          opponentName: 'Team B',
+        }),
+      });
+      await gameState.fetch(request);
+    });
+
+    it('should store startingOnOffense when adding GAME_START event', async () => {
+      const request = new Request('http://localhost/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: EventType.GAME_START,
+          startingOnOffense: true,
+        }),
+      });
+
+      const response = await gameState.fetch(request);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.startingOnOffense).toBe(true);
+      expect(data.game.status).toBe(GameStatus.FIRST_HALF);
+    });
+
+    it('should store startingOnOffense=false when opponent starts on offense', async () => {
+      const request = new Request('http://localhost/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: EventType.GAME_START,
+          startingOnOffense: false,
+        }),
+      });
+
+      const response = await gameState.fetch(request);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.startingOnOffense).toBe(false);
+    });
+
+    it('should allow updating startingOnOffense field', async () => {
+      const request = new Request('http://localhost/update', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          startingOnOffense: true,
+        }),
+      });
+
+      const response = await gameState.fetch(request);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.startingOnOffense).toBe(true);
+    });
+  });
+
   describe('addEvent', () => {
     beforeEach(async () => {
       // Initialize and start game
