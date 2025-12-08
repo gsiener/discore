@@ -11,6 +11,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/index.html'),
+        games: resolve(__dirname, 'src/games.html'),
         stats: resolve(__dirname, 'src/stats.html'),
       },
     },

@@ -1,0 +1,375 @@
+:root {
+  --color-primary: #2563eb;
+  --color-secondary: #64748b;
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
+  --color-live: #3b82f6;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-light: #94a3b8;
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+#app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.nav h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+  background: var(--color-background);
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.page-description {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Tournament Section */
+.tournament-section {
+  margin-bottom: 3rem;
+}
+
+.tournament-header {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+/* Games Table */
+.games-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.games-table thead {
+  background: #f8f9fa;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.games-table th {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.games-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.games-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.games-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.games-table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+/* Column Specific Styles */
+.col-time {
+  width: 180px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.col-time div:first-child {
+  font-weight: 500;
+}
+
+.col-time div:last-child {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.125rem;
+}
+
+.live-indicator {
+  color: var(--color-live);
+  font-size: 0.75rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.col-team1,
+.col-team2 {
+  width: 25%;
+}
+
+.col-team1 {
+  text-align: right;
+  padding-right: 1.25rem;
+}
+
+.col-team2 {
+  text-align: left;
+  padding-left: 1.25rem;
+}
+
+.team-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.col-score {
+  text-align: center;
+  width: 140px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.score {
+  color: var(--color-text-secondary);
+}
+
+.score-winner {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.winner-arrow {
+  font-size: 0.75rem;
+  margin: 0 0.25rem;
+}
+
+.score-separator {
+  color: var(--color-text-light);
+  font-weight: 400;
+  margin: 0 0.25rem;
+}
+
+.col-tournament {
+  width: 180px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Loading and Error States */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 3rem;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.error-message {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+  color: #991b1b;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .col-tournament {
+    display: none;
+  }
+
+  .col-team1,
+  .col-team2 {
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding: 12px;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .games-table th,
+  .games-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .col-time {
+    width: 140px;
+    font-size: 0.8rem;
+  }
+
+  .col-time div:last-child {
+    font-size: 0.75rem;
+  }
+
+  .col-score {
+    width: 100px;
+    font-size: 0.85rem;
+  }
+
+  .col-team1 {
+    padding-right: 0.75rem;
+  }
+
+  .col-team2 {
+    padding-left: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .games-table th {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  .games-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .col-time {
+    width: 100px;
+  }
+
+  .col-time div:first-child {
+    font-size: 0.75rem;
+  }
+
+  .col-time div:last-child {
+    font-size: 0.7rem;
+  }
+
+  .team-name {
+    font-size: 0.8rem;
+  }
+
+  .col-score {
+    width: 80px;
+    font-size: 0.8rem;
+  }
+
+  .col-team1 {
+    padding-right: 0.5rem;
+  }
+
+  .col-team2 {
+    padding-left: 0.5rem;
+  }
+}

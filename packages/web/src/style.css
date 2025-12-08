@@ -47,6 +47,11 @@ body {
   color: var(--color-primary);
 }
 
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .nav-link {
   color: var(--color-text-secondary);
   text-decoration: none;

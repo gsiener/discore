@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Games - Discore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./games-style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <nav class="nav">
+        <h1>Discore</h1>
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">Live Games</a>
+          <a href="/stats.html" class="nav-link">Advanced Stats</a>
+        </div>
+      </nav>
+
+      <main id="main-content">
+        <div class="page-header">
+          <h2>Schedule & Results</h2>
+          <p class="page-description" id="game-count">Loading games...</p>
+        </div>
+
+        <div id="games-container" class="games-container">
+          <div class="loading">Loading games...</div>
+        </div>
+
+        <div id="error-view" class="hidden error-message">
+          <p id="error-text"></p>
+        </div>
+      </main>
+
+      <footer>
+        <p>Updates every 10 seconds</p>
+      </footer>
+    </div>
+
+    <script type="module" src="./games.ts"></script>
+  </body>
+</html>

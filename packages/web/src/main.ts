@@ -29,6 +29,19 @@ class DiscoreApp {
   async init() {
     await this.loadGames();
     this.setupEventListeners();
+    this.checkUrlParams();
+  }
+
+  private checkUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get('game');
+    if (gameId) {
+      const select = document.getElementById('game-select') as HTMLSelectElement;
+      if (select) {
+        select.value = gameId;
+        this.selectGame(gameId);
+      }
+    }
   }
 
   private setupEventListeners() {
