@@ -23,39 +23,14 @@ import {
   StreakInfo,
   PlayerChemistry,
 } from '@scorebot/shared';
+import { PlayerNameParser } from './PlayerNameParser.js';
 
 export class StatsCalculator {
   // Game classification constants
   private static readonly CLOSE_GAME_THRESHOLD = 2; // Points within to consider "close"
   private static readonly BLOWOUT_THRESHOLD = 5; // Point margin to consider "blowout"
 
-  // Throw/play descriptors that are not player names
-  private static readonly THROW_DESCRIPTORS = [
-    'hammer', 'deep', 'greatest', 'blade', 'huck', 'diving', 'tipped', 'sky',
-  ];
-
-  // Pre-compiled patterns for parseGoalEvent
-  private static readonly THROW_DESCRIPTOR_PATTERN = StatsCalculator.THROW_DESCRIPTORS.join('|');
-  private static readonly ASSIST_PATTERN = new RegExp(
-    `\\b([A-Z][a-z]+)\\s+(?:(?:${StatsCalculator.THROW_DESCRIPTOR_PATTERN})\\s+)?to\\s+([A-Z][a-z]+)\\b`,
-    'i'
-  );
-  private static readonly DESCRIPTOR_CHECK = new RegExp(
-    `^(?:${StatsCalculator.THROW_DESCRIPTOR_PATTERN})$`,
-    'i'
-  );
-
-  // Common words that aren't player names (hoisted to avoid per-call Set creation)
-  private static readonly COMMON_WORDS = new Set([
-    'Goal', 'Score', 'Point', 'Block', 'Steal', 'Timeout', 'Halftime',
-    'Game', 'Nice', 'Great', 'Awesome', 'Tech', 'We', 'They', 'Us', 'Them',
-    'The', 'And', 'For', 'With', 'From', 'Break', 'Hold', 'Line',
-    'End', 'Zone', 'Opponent', 'Magic', 'Bard', 'Pool', 'Universe',
-    'Final', 'Good', 'Win', 'Lost', 'First', 'Second', 'Half',
-    'Columbia', 'Westfield', 'Montclair', 'Beacon',
-    ...StatsCalculator.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
-    'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
-  ]);
+  private nameParser = new PlayerNameParser();
 
   /**
    * Calculate advanced stats for a single game
@@ -90,7 +65,7 @@ export class StatsCalculator {
       if (!event.message) continue;
 
       // Extract player names from messages
-      const players = this.extractPlayerNames(event.message, game);
+      const players = this.nameParser.extractPlayerNames(event.message, game);
 
       // Add players to current point tracking
       players.forEach(name => currentPointPlayers.add(name));
@@ -98,7 +73,7 @@ export class StatsCalculator {
       // Process based on event type
       if (event.type === EventType.GOAL && event.team === TeamSide.US) {
         // Parse goal and assist
-        const { scorer, assister } = this.parseGoalEvent(event.message, game);
+        const { scorer, assister } = this.nameParser.parseGoalEvent(event.message, game);
 
         if (scorer) {
           const stats = this.getOrCreatePlayerStats(playerMap, scorer);
@@ -166,61 +141,6 @@ export class StatsCalculator {
       if (b.goals !== a.goals) return b.goals - a.goals;
       return b.assists - a.assists;
     });
-  }
-
-  /**
-   * Extract player names from message text
-   * Handles patterns like "Jake to Mason 5-3" or "Ellis block"
-   */
-  private extractPlayerNames(message: string, game: Game): string[] {
-    const names: string[] = [];
-
-    // Add team names to exclusion list
-    const teamWords = new Set<string>();
-    game.teams.us.name.split(/\s+/).forEach(word => {
-      if (word.length > 2 && /^[A-Z]/.test(word)) {
-        teamWords.add(word);
-      }
-    });
-    game.teams.them.name.split(/\s+/).forEach(word => {
-      if (word.length > 2 && /^[A-Z]/.test(word)) {
-        teamWords.add(word);
-      }
-    });
-
-    // Match capitalized words
-    const words = message.match(/\b[A-Z][a-z]+\b/g) || [];
-
-    for (const word of words) {
-      if (!StatsCalculator.COMMON_WORDS.has(word) && !teamWords.has(word) && word.length > 2) {
-        names.push(word);
-      }
-    }
-
-    return names;
-  }
-
-  /**
-   * Parse a goal event to extract scorer and assister
-   * Handles patterns like "Jake to Mason", "Mason hammer to Alex", "Nico deep to Cyrus"
-   */
-  private parseGoalEvent(message: string, game: Game): { scorer: string | null; assister: string | null } {
-    const match = message.match(StatsCalculator.ASSIST_PATTERN);
-
-    if (match && !StatsCalculator.DESCRIPTOR_CHECK.test(match[1])) {
-      return { assister: match[1], scorer: match[2] };
-    }
-
-    // Pattern: just a name (scorer only)
-    const names = this.extractPlayerNames(message, game);
-    if (names.length > 0) {
-      return {
-        scorer: names[0],
-        assister: null,
-      };
-    }
-
-    return { scorer: null, assister: null };
   }
 
   /**
@@ -951,7 +871,7 @@ export class StatsCalculator {
       game.events.forEach(event => {
         if (event.type !== EventType.GOAL || event.team !== TeamSide.US) return;
 
-        const { scorer, assister } = this.parseGoalEvent(event.message || '', game);
+        const { scorer, assister } = this.nameParser.parseGoalEvent(event.message || '', game);
 
         if (scorer) {
           gamePlayers.add(scorer);
