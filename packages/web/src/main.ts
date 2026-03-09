@@ -300,26 +300,8 @@ class DiscoreApp {
       }
     }
 
-    // Detect breaks (same team scores consecutively)
     const isBreak = (index: number): boolean => {
-      const currentEvent = goalEvents[index];
-
-      // For the first goal, check if we have startingOnOffense info
-      if (index === 0 && game.startingOnOffense !== undefined && currentEvent.team === 'us') {
-        // If we started on offense and we scored first, it's a hold
-        // If we started on defense and we scored first, it's a break
-        return !game.startingOnOffense;
-      }
-
-      if (index === 0) return false;
-
-      const prevEvent = goalEvents[index - 1];
-      const sameTeam = currentEvent.team === prevEvent.team;
-
-      // Check if halftime occurred between these two goals
-      const crossedHalftime = halftimePointIndex !== null && index === halftimePointIndex + 1;
-
-      return crossedHalftime ? !sameTeam : sameTeam;
+      return this.isBreakScore(goalEvents[index], game.events, game);
     };
 
     // Build header row with point numbers

@@ -29,6 +29,34 @@ export class StatsCalculator {
   private static readonly CLOSE_GAME_THRESHOLD = 2; // Points within to consider "close"
   private static readonly BLOWOUT_THRESHOLD = 5; // Point margin to consider "blowout"
 
+  // Throw/play descriptors that are not player names
+  private static readonly THROW_DESCRIPTORS = [
+    'hammer', 'deep', 'greatest', 'blade', 'huck', 'diving', 'tipped', 'sky',
+  ];
+
+  // Pre-compiled patterns for parseGoalEvent
+  private static readonly THROW_DESCRIPTOR_PATTERN = StatsCalculator.THROW_DESCRIPTORS.join('|');
+  private static readonly ASSIST_PATTERN = new RegExp(
+    `\\b([A-Z][a-z]+)\\s+(?:(?:${StatsCalculator.THROW_DESCRIPTOR_PATTERN})\\s+)?to\\s+([A-Z][a-z]+)\\b`,
+    'i'
+  );
+  private static readonly DESCRIPTOR_CHECK = new RegExp(
+    `^(?:${StatsCalculator.THROW_DESCRIPTOR_PATTERN})$`,
+    'i'
+  );
+
+  // Common words that aren't player names (hoisted to avoid per-call Set creation)
+  private static readonly COMMON_WORDS = new Set([
+    'Goal', 'Score', 'Point', 'Block', 'Steal', 'Timeout', 'Halftime',
+    'Game', 'Nice', 'Great', 'Awesome', 'Tech', 'We', 'They', 'Us', 'Them',
+    'The', 'And', 'For', 'With', 'From', 'Break', 'Hold', 'Line',
+    'End', 'Zone', 'Opponent', 'Magic', 'Bard', 'Pool', 'Universe',
+    'Final', 'Good', 'Win', 'Lost', 'First', 'Second', 'Half',
+    'Columbia', 'Westfield', 'Montclair', 'Beacon',
+    ...StatsCalculator.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
+    'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
+  ]);
+
   /**
    * Calculate advanced stats for a single game
    */
@@ -147,18 +175,6 @@ export class StatsCalculator {
   private extractPlayerNames(message: string, game: Game): string[] {
     const names: string[] = [];
 
-    // Common words that aren't player names
-    const commonWords = new Set([
-      'Goal', 'Score', 'Point', 'Block', 'Steal', 'Timeout', 'Halftime',
-      'Game', 'Nice', 'Great', 'Awesome', 'Tech', 'We', 'They', 'Us', 'Them',
-      'The', 'And', 'For', 'With', 'From', 'Break', 'Hold', 'Line',
-      'End', 'Zone', 'Opponent', 'Magic', 'Bard', 'Pool', 'Universe',
-      'Final', 'Good', 'Win', 'Lost', 'First', 'Second', 'Half',
-      'Columbia', 'Westfield', 'Montclair', 'Beacon', // Common opponent names
-      'Hammer', 'Deep', 'Greatest', 'Blade', 'Huck', 'Diving', // Throw/play descriptions
-      'Sky', 'Tipped', 'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
-    ]);
-
     // Add team names to exclusion list
     const teamWords = new Set<string>();
     game.teams.us.name.split(/\s+/).forEach(word => {
@@ -176,7 +192,7 @@ export class StatsCalculator {
     const words = message.match(/\b[A-Z][a-z]+\b/g) || [];
 
     for (const word of words) {
-      if (!commonWords.has(word) && !teamWords.has(word) && word.length > 2) {
+      if (!StatsCalculator.COMMON_WORDS.has(word) && !teamWords.has(word) && word.length > 2) {
         names.push(word);
       }
     }
@@ -189,25 +205,10 @@ export class StatsCalculator {
    * Handles patterns like "Jake to Mason", "Mason hammer to Alex", "Nico deep to Cyrus"
    */
   private parseGoalEvent(message: string, game: Game): { scorer: string | null; assister: string | null } {
-    // Throw/play descriptors that appear between assister name and "to"
-    const throwDescriptors = /(?:hammer|deep|greatest|blade|huck|diving|tipped|sky)\s+/i;
+    const match = message.match(StatsCalculator.ASSIST_PATTERN);
 
-    // Pattern: "Name [descriptor] to Name" (assister to scorer)
-    const assistPattern = new RegExp(
-      `\\b([A-Z][a-z]+)\\s+(?:${throwDescriptors.source})?to\\s+([A-Z][a-z]+)\\b`,
-      'i'
-    );
-    const match = message.match(assistPattern);
-
-    if (match) {
-      const assister = match[1];
-      const scorer = match[2];
-      // Verify assister isn't itself a descriptor (e.g. if pattern matched oddly)
-      if (/^(?:hammer|deep|greatest|blade|huck|diving|tipped|sky)$/i.test(assister)) {
-        // Fall through to name extraction
-      } else {
-        return { assister, scorer };
-      }
+    if (match && !StatsCalculator.DESCRIPTOR_CHECK.test(match[1])) {
+      return { assister: match[1], scorer: match[2] };
     }
 
     // Pattern: just a name (scorer only)
