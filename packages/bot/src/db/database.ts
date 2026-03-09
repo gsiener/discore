@@ -54,8 +54,8 @@ export class DatabaseService {
       .prepare(
         `INSERT OR REPLACE INTO events (
           id, game_id, type, timestamp, score_us, score_them,
-          team, message, parsed_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          team, message, parsed_by, defensive_play
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         event.id,
@@ -66,7 +66,8 @@ export class DatabaseService {
         event.score.them,
         event.team || null,
         event.message || null,
-        event.parsedBy || null
+        event.parsedBy || null,
+        event.defensivePlay || null
       )
       .run();
   }
@@ -166,6 +167,7 @@ export class DatabaseService {
         team: row.team,
         message: row.message,
         parsedBy: row.parsed_by,
+        defensivePlay: row.defensive_play,
       })),
       startedAt: gameRow.started_at,
       finishedAt: gameRow.finished_at,
