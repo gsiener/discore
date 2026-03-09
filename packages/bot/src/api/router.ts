@@ -75,8 +75,8 @@ export class Router {
       else if (path === '/games' && request.method === 'GET') {
         response = await this.listGames(request);
       }
-      // Get specific game
-      else if (path.startsWith('/games/') && request.method === 'GET') {
+      // Get specific game (only match /games/{id}, not /games/{id}/stats etc.)
+      else if (path.match(/^\/games\/[^/]+$/) && request.method === 'GET') {
         const gameId = this.getGameIdFromPath(path);
         response = await this.getGame(gameId);
       }
