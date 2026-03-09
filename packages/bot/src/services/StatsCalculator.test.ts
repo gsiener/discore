@@ -62,6 +62,69 @@ describe('StatsCalculator', () => {
       expect(jake?.goals).toBe(0);
     });
 
+    it('should parse "Name descriptor to Name" patterns correctly', () => {
+      const game = createMockGame();
+      game.events = [
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.GOAL,
+          timestamp: Date.now(),
+          score: { us: 1, them: 0 },
+          team: TeamSide.US,
+          message: 'Mason hammer to Asher',
+        },
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.GOAL,
+          timestamp: Date.now() + 1000,
+          score: { us: 2, them: 0 },
+          team: TeamSide.US,
+          message: 'Nico deep to Cyrus',
+        },
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.GOAL,
+          timestamp: Date.now() + 2000,
+          score: { us: 3, them: 0 },
+          team: TeamSide.US,
+          message: 'Ellis blade to Alex',
+        },
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.GOAL,
+          timestamp: Date.now() + 3000,
+          score: { us: 4, them: 0 },
+          team: TeamSide.US,
+          message: 'Mason greatest to Nico',
+        },
+      ];
+      game.score = { us: 4, them: 0 };
+
+      const stats = calculator.calculateGameStats(game);
+
+      // Throw descriptors should NOT appear as players
+      expect(stats.playerStats.find(p => p.name === 'Hammer')).toBeUndefined();
+      expect(stats.playerStats.find(p => p.name === 'Deep')).toBeUndefined();
+      expect(stats.playerStats.find(p => p.name === 'Blade')).toBeUndefined();
+      expect(stats.playerStats.find(p => p.name === 'Greatest')).toBeUndefined();
+
+      // Actual players should be correctly parsed
+      const mason = stats.playerStats.find(p => p.name === 'Mason');
+      expect(mason?.assists).toBe(2); // hammer to Asher, greatest to Nico
+      expect(mason?.goals).toBe(0);
+
+      const asher = stats.playerStats.find(p => p.name === 'Asher');
+      expect(asher?.goals).toBe(1);
+
+      const nico = stats.playerStats.find(p => p.name === 'Nico');
+      expect(nico?.assists).toBe(1); // deep to Cyrus
+      expect(nico?.goals).toBe(1); // greatest to Nico
+    });
+
     it('should track blocks and steals', () => {
       const game = createMockGame();
       game.events = [
