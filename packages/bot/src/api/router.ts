@@ -6,8 +6,9 @@
 import { Env } from '../types';
 import { DatabaseService } from '../db/database';
 import { GameState } from '../durable-objects/GameState';
-import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse, GetAdvancedStatsResponse, GetAggregatedStatsResponse } from '@scorebot/shared';
+import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse, GetAdvancedStatsResponse, GetAggregatedStatsResponse, Game } from '@scorebot/shared';
 import { StatsCalculator } from '../services/StatsCalculator';
+import { CreateGameRequestSchema, AddEventRequestSchema } from './validation';
 
 export class Router {
   private db: DatabaseService;
@@ -46,8 +47,11 @@ export class Router {
     const path = url.pathname;
 
     // CORS headers
+    const allowedOrigins = ['https://score.kcuda.org', 'http://localhost:3000'];
+    const requestOrigin = request.headers.get('Origin') || '';
+    const corsOrigin = allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
@@ -142,7 +146,15 @@ export class Router {
   }
 
   private async createGame(request: Request): Promise<Response> {
-    const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = await request.json() as CreateGameRequest;
+    const body = await request.json();
+    const parsed = CreateGameRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = parsed.data;
 
     // Get or create Durable Object for this game
     const id = this.env.GAME_STATE.idFromName(chatId);
@@ -166,6 +178,38 @@ export class Router {
     });
   }
 
+  /**
+   * Ensure a Durable Object has game state, rehydrating from D1 if needed.
+   * Returns the DO stub ready for use, or null if rehydration failed.
+   */
+  private async ensureDOHydrated(
+    chatId: string,
+    game: Game
+  ): Promise<DurableObjectStub | null> {
+    const id = this.env.GAME_STATE.idFromName(chatId);
+    const stub = this.env.GAME_STATE.get(id);
+
+    // Check if DO already has state
+    const checkResponse = await stub.fetch('https://fake-host/');
+    if (checkResponse.status !== 404) {
+      return stub;
+    }
+
+    // DO was evicted — rehydrate from D1 data
+    const rehydrateResponse = await stub.fetch(
+      new Request('https://fake-host/rehydrate', {
+        method: 'POST',
+        body: JSON.stringify(game),
+      })
+    );
+
+    if (rehydrateResponse.ok) {
+      return stub;
+    }
+
+    return null;
+  }
+
   private async getGame(gameId: string): Promise<Response> {
     // Get game from database to find chatId
     const game = await this.db.getGame(gameId);
@@ -179,9 +223,10 @@ export class Router {
     // Try to get fresh state from Durable Object if chatId exists
     if (game.chatId) {
       try {
-        const id = this.env.GAME_STATE.idFromName(game.chatId);
-        const stub = this.env.GAME_STATE.get(id);
-        return await stub.fetch('https://fake-host/');
+        const stub = await this.ensureDOHydrated(game.chatId, game);
+        if (stub) {
+          return await stub.fetch('https://fake-host/');
+        }
       } catch {
         // Fall back to database version
       }
@@ -207,7 +252,15 @@ export class Router {
     gameId: string,
     request: Request
   ): Promise<Response> {
-    const eventData = await request.json() as AddEventRequest;
+    const body = await request.json();
+    const parsed = AddEventRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const eventData = parsed.data;
 
     // Get game from database to find chatId
     const game = await this.db.getGame(gameId);
@@ -218,9 +271,14 @@ export class Router {
       });
     }
 
-    // Add event via Durable Object (keyed by chatId)
-    const id = this.env.GAME_STATE.idFromName(game.chatId);
-    const stub = this.env.GAME_STATE.get(id);
+    // Ensure DO is hydrated before adding event
+    const stub = await this.ensureDOHydrated(game.chatId, game);
+    if (!stub) {
+      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const response = await stub.fetch(
       new Request('https://fake-host/events', {
@@ -249,8 +307,14 @@ export class Router {
       });
     }
 
-    const id = this.env.GAME_STATE.idFromName(game.chatId);
-    const stub = this.env.GAME_STATE.get(id);
+    // Ensure DO is hydrated before undoing
+    const stub = await this.ensureDOHydrated(game.chatId, game);
+    if (!stub) {
+      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     const response = await stub.fetch(
       new Request('https://fake-host/events/last', {
@@ -293,17 +357,18 @@ export class Router {
     // Update in database
     await this.db.saveGame(game);
 
-    // If game has a chatId, also update the Durable Object
+    // If game has a chatId, also update the Durable Object (rehydrating if needed)
     if (game.chatId) {
       try {
-        const id = this.env.GAME_STATE.idFromName(game.chatId);
-        const stub = this.env.GAME_STATE.get(id);
-        await stub.fetch(
-          new Request('https://fake-host/update', {
-            method: 'PATCH',
-            body: JSON.stringify(updates),
-          })
-        );
+        const stub = await this.ensureDOHydrated(game.chatId, game);
+        if (stub) {
+          await stub.fetch(
+            new Request('https://fake-host/update', {
+              method: 'PATCH',
+              body: JSON.stringify(updates),
+            })
+          );
+        }
       } catch (error) {
         // Continue even if Durable Object update fails
         console.warn('Failed to update Durable Object:', error);
