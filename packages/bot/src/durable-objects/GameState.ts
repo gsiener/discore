@@ -174,28 +174,21 @@ export class GameState implements DurableObject {
       this.game.score[team as TeamSide]++;
     }
 
-    // Update game status based on event type (only if not backfilling)
-    if (!timestamp) {
-      if (type === EventType.GAME_START) {
-        this.game.status = GameStatus.FIRST_HALF;
-        this.game.startedAt = Date.now();
-        // Store whether we're starting on offense
-        if (startingOnOffense !== undefined) {
-          this.game.startingOnOffense = startingOnOffense;
-        }
-      } else if (type === EventType.HALFTIME) {
-        this.game.status = GameStatus.HALFTIME;
-      } else if (type === EventType.SECOND_HALF_START) {
-        this.game.status = GameStatus.SECOND_HALF;
-      } else if (type === EventType.GAME_END) {
-        this.game.status = GameStatus.FINISHED;
-        this.game.finishedAt = Date.now();
-      }
-    } else {
-      // When backfilling with custom timestamp, only update startingOnOffense if provided
-      if (type === EventType.GAME_START && startingOnOffense !== undefined) {
+    // Update game status based on event type
+    const eventTime = timestamp || Date.now();
+    if (type === EventType.GAME_START) {
+      this.game.status = GameStatus.FIRST_HALF;
+      this.game.startedAt = eventTime;
+      if (startingOnOffense !== undefined) {
         this.game.startingOnOffense = startingOnOffense;
       }
+    } else if (type === EventType.HALFTIME) {
+      this.game.status = GameStatus.HALFTIME;
+    } else if (type === EventType.SECOND_HALF_START) {
+      this.game.status = GameStatus.SECOND_HALF;
+    } else if (type === EventType.GAME_END) {
+      this.game.status = GameStatus.FINISHED;
+      this.game.finishedAt = eventTime;
     }
 
     const event: GameEvent = {
