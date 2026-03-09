@@ -25,9 +25,7 @@ class MockDurableObjectState {
   }
 }
 
-// TODO: These tests need Cloudflare Workers runtime (Miniflare or vitest-environment-miniflare)
-// Temporarily skipped to allow CI/CD setup
-describe.skip('GameState', () => {
+describe('GameState', () => {
   let gameState: GameState;
   let mockState: MockDurableObjectState;
   let mockEnv: any;
