@@ -50,7 +50,16 @@ class DiscoreApp {
     ) as HTMLSelectElement;
     gameSelect.addEventListener('change', (e) => {
       const target = e.target as HTMLSelectElement;
-      this.selectGame(target.value);
+      const gameId = target.value;
+      this.selectGame(gameId);
+      // Update URL so refresh stays on this game
+      const url = new URL(window.location.href);
+      if (gameId) {
+        url.searchParams.set('game', gameId);
+      } else {
+        url.searchParams.delete('game');
+      }
+      window.history.replaceState({}, '', url.toString());
     });
   }
 
@@ -305,7 +314,12 @@ class DiscoreApp {
       if (index === 0) return false;
 
       const prevEvent = goalEvents[index - 1];
-      return currentEvent.team === prevEvent.team;
+      const sameTeam = currentEvent.team === prevEvent.team;
+
+      // Check if halftime occurred between these two goals
+      const crossedHalftime = halftimePointIndex !== null && index === halftimePointIndex + 1;
+
+      return crossedHalftime ? !sameTeam : sameTeam;
     };
 
     // Build header row with point numbers
@@ -625,7 +639,7 @@ class DiscoreApp {
         // Show defensive play type if present
         if (event.defensivePlay === 'block') return 'Block';
         if (event.defensivePlay === 'steal') return 'Steal';
-        return 'Note';
+        return event.message || 'Note';
       default:
         return event.type;
     }
@@ -645,13 +659,18 @@ class DiscoreApp {
       return false; // Can't determine without more info
     }
 
-    // Look backwards for the previous goal
+    // Look backwards for the previous goal, checking if halftime occurred in between
+    let crossedHalftime = false;
     for (let i = eventIndex - 1; i >= 0; i--) {
       const prevEvent = allEvents[i];
+      if (prevEvent.type === EventType.HALFTIME) {
+        crossedHalftime = true;
+      }
       if (prevEvent.type === EventType.GOAL && prevEvent.team) {
-        // If same team scored previously, this is a break
-        // (they were on defense after the other team received)
-        return prevEvent.team === event.team;
+        // Same team scoring consecutively = break (they were on defense after pull)
+        // But if halftime occurred, receiving team flips, so same team = hold
+        const sameTeam = prevEvent.team === event.team;
+        return crossedHalftime ? !sameTeam : sameTeam;
       }
     }
 
