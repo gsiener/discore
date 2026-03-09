@@ -36,6 +36,11 @@ export class GameState implements DurableObject {
         return await this.initGame(request);
       }
 
+      // Allow /rehydrate to restore game state from D1 data
+      if (request.method === 'POST' && path === '/rehydrate') {
+        return await this.rehydrateGame(request);
+      }
+
       // Initialize game if not already loaded
       if (!this.game) {
         this.game = (await this.state.storage.get<Game>('game')) || null;
@@ -45,8 +50,6 @@ export class GameState implements DurableObject {
             headers: { 'Content-Type': 'application/json' },
           });
         }
-        // Clean up duplicate/incorrect halftime events on load
-        await this.cleanupHalftimeEvents();
       }
 
       switch (request.method) {
@@ -118,6 +121,21 @@ export class GameState implements DurableObject {
     });
   }
 
+  /**
+   * Rehydrate game state from D1 data
+   * Called by the router when the DO has been evicted and needs to restore state
+   */
+  private async rehydrateGame(request: Request): Promise<Response> {
+    const game = await request.json() as Game;
+
+    this.game = game;
+    await this.saveGame();
+
+    return new Response(JSON.stringify({ game: this.game }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   private getGame(): Response {
     return new Response(JSON.stringify({ game: this.game }), {
       headers: { 'Content-Type': 'application/json' },
@@ -168,6 +186,17 @@ export class GameState implements DurableObject {
     }
 
     const { type, team, message, parsedBy, defensivePlay, startingOnOffense, timestamp, score } = await request.json() as AddEventRequest & { parsedBy?: string };
+
+    // Prevent duplicate halftime events
+    if (type === EventType.HALFTIME) {
+      const existingHalftime = this.game.events.some(e => e.type === EventType.HALFTIME);
+      if (existingHalftime) {
+        return new Response(
+          JSON.stringify({ error: 'Halftime already recorded' }),
+          { status: 409, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
 
     // Update score if it's a goal (and no custom score provided for backfilling)
     if (type === EventType.GOAL && team && !score) {
@@ -319,63 +348,4 @@ export class GameState implements DurableObject {
     }
   }
 
-  /**
-   * Clean up duplicate or incorrect halftime events
-   * Keeps only the halftime event with correct score (7 for 13-point, 8 for 15-point)
-   * Also fixes game status if it's stuck at halftime but should be finished
-   */
-  private async cleanupHalftimeEvents(): Promise<void> {
-    if (!this.game) return;
-
-    let needsSave = false;
-
-    const halftimeEvents = this.game.events.filter(e => e.type === EventType.HALFTIME);
-
-    if (halftimeEvents.length > 1) {
-      const finalScore = Math.max(this.game.score.us, this.game.score.them);
-      let threshold: number;
-
-      if (finalScore === 15) {
-        threshold = 8;
-      } else if (finalScore === 13) {
-        threshold = 7;
-      } else {
-        threshold = 0; // Not a standard game
-      }
-
-      if (threshold > 0) {
-        // Find all halftime events with correct score
-        const correctHalftimes = halftimeEvents.filter(e =>
-          e.score.us === threshold || e.score.them === threshold
-        );
-
-        if (correctHalftimes.length > 0) {
-          // Keep only the earliest one by timestamp
-          const earliestHalftime = correctHalftimes.reduce((earliest, current) =>
-            current.timestamp < earliest.timestamp ? current : earliest
-          );
-
-          // Remove all halftime events except the earliest correct one
-          this.game.events = this.game.events.filter(e =>
-            e.type !== EventType.HALFTIME || e.id === earliestHalftime.id
-          );
-
-          needsSave = true;
-          console.log(`Cleaned up halftime events for game ${this.game.id}, kept earliest at ${earliestHalftime.score.us}-${earliestHalftime.score.them}`);
-        }
-      }
-    }
-
-    // Fix status if game has game_end event but status is stuck at halftime
-    const hasGameEnd = this.game.events.some(e => e.type === EventType.GAME_END);
-    if (hasGameEnd && this.game.status === GameStatus.HALFTIME) {
-      this.game.status = GameStatus.FINISHED;
-      needsSave = true;
-      console.log(`Fixed status for game ${this.game.id} from halftime to finished`);
-    }
-
-    if (needsSave) {
-      await this.saveGame();
-    }
-  }
 }

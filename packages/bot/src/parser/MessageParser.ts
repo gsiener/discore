@@ -108,9 +108,9 @@ export class MessageParser {
    */
   private parseHalftime(normalized: string, original: string): ParsedMessage {
     const patterns = [
-      /halftime/,
-      /half\s+time/,
-      /that's\s+half/,
+      /^halftime\W*$/,
+      /^half\s+time\W*$/,
+      /^that's\s+half\W*$/,
       /^half$/,
       /^break$/,
     ];
