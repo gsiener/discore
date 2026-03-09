@@ -155,6 +155,8 @@ export class StatsCalculator {
       'End', 'Zone', 'Opponent', 'Magic', 'Bard', 'Pool', 'Universe',
       'Final', 'Good', 'Win', 'Lost', 'First', 'Second', 'Half',
       'Columbia', 'Westfield', 'Montclair', 'Beacon', // Common opponent names
+      'Hammer', 'Deep', 'Greatest', 'Blade', 'Huck', 'Diving', // Throw/play descriptions
+      'Sky', 'Tipped', 'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
     ]);
 
     // Add team names to exclusion list
@@ -184,18 +186,28 @@ export class StatsCalculator {
 
   /**
    * Parse a goal event to extract scorer and assister
-   * Handles patterns like "Jake to Mason 5-3" or "Mason goal!"
+   * Handles patterns like "Jake to Mason", "Mason hammer to Alex", "Nico deep to Cyrus"
    */
   private parseGoalEvent(message: string, game: Game): { scorer: string | null; assister: string | null } {
-    // Pattern: "Name to Name" (assister to scorer)
-    const assistPattern = /\b([A-Z][a-z]+)\s+to\s+([A-Z][a-z]+)\b/i;
+    // Throw/play descriptors that appear between assister name and "to"
+    const throwDescriptors = /(?:hammer|deep|greatest|blade|huck|diving|tipped|sky)\s+/i;
+
+    // Pattern: "Name [descriptor] to Name" (assister to scorer)
+    const assistPattern = new RegExp(
+      `\\b([A-Z][a-z]+)\\s+(?:${throwDescriptors.source})?to\\s+([A-Z][a-z]+)\\b`,
+      'i'
+    );
     const match = message.match(assistPattern);
 
     if (match) {
-      return {
-        assister: match[1],
-        scorer: match[2],
-      };
+      const assister = match[1];
+      const scorer = match[2];
+      // Verify assister isn't itself a descriptor (e.g. if pattern matched oddly)
+      if (/^(?:hammer|deep|greatest|blade|huck|diving|tipped|sky)$/i.test(assister)) {
+        // Fall through to name extraction
+      } else {
+        return { assister, scorer };
+      }
     }
 
     // Pattern: just a name (scorer only)
