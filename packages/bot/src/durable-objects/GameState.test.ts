@@ -561,6 +561,166 @@ describe('GameState', () => {
     });
   });
 
+  describe('duplicate halftime guard', () => {
+    beforeEach(async () => {
+      // Initialize and start game
+      const initRequest = new Request('http://localhost/init', {
+        method: 'POST',
+        body: JSON.stringify({
+          chatId: 'chat123',
+          ourTeamName: 'Team A',
+          opponentName: 'Team B',
+        }),
+      });
+      await gameState.fetch(initRequest);
+
+      const startRequest = new Request('http://localhost/start', {
+        method: 'POST',
+      });
+      await gameState.fetch(startRequest);
+    });
+
+    it('should reject a second halftime event with 409', async () => {
+      // Add first halftime
+      const halftimeRequest = new Request('http://localhost/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: EventType.HALFTIME,
+        }),
+      });
+
+      const firstResponse = await gameState.fetch(halftimeRequest);
+      expect(firstResponse.status).toBe(200);
+
+      // Try to add another halftime
+      const secondResponse = await gameState.fetch(
+        new Request('http://localhost/events', {
+          method: 'POST',
+          body: JSON.stringify({
+            type: EventType.HALFTIME,
+          }),
+        })
+      );
+
+      expect(secondResponse.status).toBe(409);
+      const data = await secondResponse.json();
+      expect(data.error).toBe('Halftime already recorded');
+    });
+  });
+
+  describe('rehydrate endpoint', () => {
+    it('should restore game state from a full Game object', async () => {
+      const mockGame: any = {
+        id: 'game_rehydrated123',
+        status: GameStatus.FIRST_HALF,
+        teams: {
+          us: { name: 'Rehydrated A', side: TeamSide.US },
+          them: { name: 'Rehydrated B', side: TeamSide.THEM },
+        },
+        score: { us: 3, them: 2 },
+        events: [
+          {
+            id: 'event_1',
+            gameId: 'game_rehydrated123',
+            type: EventType.GAME_START,
+            timestamp: 1000,
+            score: { us: 0, them: 0 },
+          },
+        ],
+        chatId: 'chat_rehydrated',
+        startedAt: 1000,
+        createdAt: 1000,
+        updatedAt: 2000,
+      };
+
+      const rehydrateRequest = new Request('http://localhost/rehydrate', {
+        method: 'POST',
+        body: JSON.stringify(mockGame),
+      });
+
+      const response = await gameState.fetch(rehydrateRequest);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.id).toBe('game_rehydrated123');
+      expect(data.game.status).toBe(GameStatus.FIRST_HALF);
+      expect(data.game.score).toEqual({ us: 3, them: 2 });
+      expect(data.game.teams.us.name).toBe('Rehydrated A');
+
+      // Verify GET / returns the rehydrated game
+      const getRequest = new Request('http://localhost/', {
+        method: 'GET',
+      });
+      const getResponse = await gameState.fetch(getRequest);
+      expect(getResponse.status).toBe(200);
+
+      const getData = await getResponse.json();
+      expect(getData.game.id).toBe('game_rehydrated123');
+      expect(getData.game.score).toEqual({ us: 3, them: 2 });
+    });
+  });
+
+  describe('backfill status transitions', () => {
+    beforeEach(async () => {
+      const request = new Request('http://localhost/init', {
+        method: 'POST',
+        body: JSON.stringify({
+          chatId: 'chat123',
+          ourTeamName: 'Team A',
+          opponentName: 'Team B',
+        }),
+      });
+      await gameState.fetch(request);
+    });
+
+    it('should use provided timestamp for game_start startedAt', async () => {
+      const customTimestamp = 1700000000000;
+
+      const request = new Request('http://localhost/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: EventType.GAME_START,
+          timestamp: customTimestamp,
+        }),
+      });
+
+      const response = await gameState.fetch(request);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.status).toBe(GameStatus.FIRST_HALF);
+      expect(data.game.startedAt).toBe(customTimestamp);
+      expect(data.event.timestamp).toBe(customTimestamp);
+    });
+
+    it('should use provided timestamp for game_end finishedAt', async () => {
+      // Start the game first
+      await gameState.fetch(
+        new Request('http://localhost/start', {
+          method: 'POST',
+        })
+      );
+
+      const customTimestamp = 1700003600000;
+
+      const request = new Request('http://localhost/events', {
+        method: 'POST',
+        body: JSON.stringify({
+          type: EventType.GAME_END,
+          timestamp: customTimestamp,
+        }),
+      });
+
+      const response = await gameState.fetch(request);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
+      expect(data.game.status).toBe(GameStatus.FINISHED);
+      expect(data.game.finishedAt).toBe(customTimestamp);
+      expect(data.event.timestamp).toBe(customTimestamp);
+    });
+  });
+
   describe('error handling', () => {
     it('should return 404 for unknown routes', async () => {
       const request = new Request('http://localhost/unknown', {
