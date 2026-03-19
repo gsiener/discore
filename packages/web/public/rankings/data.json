@@ -1,0 +1,7493 @@
+{
+  "lastUpdated": "2026-03-19",
+  "season": "2025-26",
+  "league": "High School Open",
+  "blowoutsIgnored": 35,
+  "totalGames": 326,
+  "tournaments": {
+    "fall-flock": {
+      "name": "Fall Flock 2025",
+      "date": "Oct 11-12",
+      "location": "Montclair, NJ"
+    },
+    "havoc": {
+      "name": "Halloween Havoc 2025",
+      "date": "Oct 26",
+      "location": "Freehold, NJ"
+    },
+    "coconut": {
+      "name": "Coconut Classic 2025",
+      "date": "Nov 1-2",
+      "location": "Freehold, NJ"
+    },
+    "hucksgiving": {
+      "name": "Hucksgiving 2025",
+      "date": "Nov 22",
+      "location": "Brooklyn, NY"
+    },
+    "boh": {
+      "name": "Battle of the Hudson",
+      "date": "Mar 8",
+      "location": "Brooklyn, NY"
+    },
+    "hsl": {
+      "name": "HSL Spring League",
+      "date": "Mar 9-15",
+      "location": "NYC"
+    },
+    "muletown": {
+      "name": "Muletown Throwdown 2026",
+      "date": "Apr 12-13",
+      "location": "Columbia, TN"
+    },
+    "seattle": {
+      "name": "HS Bx Seattle Invite",
+      "date": "Fall 2025",
+      "location": "Seattle, WA"
+    },
+    "nc-states": {
+      "name": "NC HS Boys State Championship",
+      "date": "Nov 8-9",
+      "location": "North Carolina"
+    },
+    "monarch": {
+      "name": "Monarch Invite 2025",
+      "date": "Oct 4-5",
+      "location": "Colorado"
+    },
+    "terminus": {
+      "name": "ATL HS Terminus",
+      "date": "Feb 28 - Mar 1",
+      "location": "Atlanta, GA"
+    },
+    "crushtober": {
+      "name": "Crushtober 2025",
+      "date": "Oct 26",
+      "location": "St. Louis Park, MN"
+    },
+    "emerald": {
+      "name": "Emerald City Challenge 2026",
+      "date": "2026",
+      "location": "Seattle, WA"
+    },
+    "mason": {
+      "name": "Mason Invite 2026",
+      "date": "2026",
+      "location": "Mason, OH"
+    }
+  },
+  "teams": [
+    {
+      "rank": 1,
+      "name": "Columbia",
+      "rating": 1827.9,
+      "wins": 9,
+      "losses": 2,
+      "pf": 210,
+      "pa": 106,
+      "games": [
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -1036.19,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -694.73,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Bard",
+          "result": "W",
+          "score": "11-3",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -281.45,
+          "oppRank": 59,
+          "oppRating": 946.4
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 10.97,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -178.91,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 244.59,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Bronx Science",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": true,
+          "effect": -810.54,
+          "oppRank": 102,
+          "oppRating": 417.3
+        },
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -282.75,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -312.4,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -4.04,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Pennsbury",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -189.17,
+          "oppRank": 43,
+          "oppRating": 1081.2
+        },
+        {
+          "opponent": "Blair",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 74.94,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        },
+        {
+          "opponent": "HB Woodlawn",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 24.37,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 244.59,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 398.39,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        },
+        {
+          "opponent": "Bardbarians",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Battle of the Hudson",
+          "ignored": true,
+          "effect": -603.75,
+          "oppRank": 87,
+          "oppRating": 624.1
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -208.56,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "name": "Middleton",
+      "rating": 1796.4,
+      "wins": 7,
+      "losses": 0,
+      "pf": 148,
+      "pa": 69,
+      "games": [
+        {
+          "opponent": "Hopkins MMP",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": -713.2,
+          "oppRank": 97,
+          "oppRating": 483.1
+        },
+        {
+          "opponent": "WBL Bears Y",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": -1009.16,
+          "oppRank": 110,
+          "oppRating": 187.2
+        },
+        {
+          "opponent": "Mounds View Green",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": -450.68,
+          "oppRank": 77,
+          "oppRating": 745.7
+        },
+        {
+          "opponent": "St. Paul Central",
+          "result": "W",
+          "score": "10-4",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": -206.08,
+          "oppRank": 53,
+          "oppRating": 990.3
+        },
+        {
+          "opponent": "Washburn Open",
+          "result": "W",
+          "score": "10-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 18.57,
+          "oppRank": 31,
+          "oppRating": 1241.0
+        },
+        {
+          "opponent": "Revolution",
+          "result": "W",
+          "score": "15-12",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -377.24,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        },
+        {
+          "opponent": "Center Grove",
+          "result": "W",
+          "score": "15-8",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -38.54,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        },
+        {
+          "opponent": "Mason",
+          "result": "W",
+          "score": "14-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -282.76,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        },
+        {
+          "opponent": "West Jess",
+          "result": "W",
+          "score": "15-10",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 98.4,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        },
+        {
+          "opponent": "Mason",
+          "result": "W",
+          "score": "15-6",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 192.24,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        },
+        {
+          "opponent": "Edwardsville",
+          "result": "W",
+          "score": "15-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 389.19,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "name": "Brooklyn Tech",
+      "rating": 1744.3,
+      "wins": 8,
+      "losses": 2,
+      "pf": 188,
+      "pa": 106,
+      "games": [
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -453.47,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Beacon",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -402.8,
+          "oppRank": 79,
+          "oppRating": 741.5
+        },
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -95.36,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "12-8",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -11.01,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -244.59,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Bergen Ultimate",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": true,
+          "effect": -402.41,
+          "oppRank": 78,
+          "oppRating": 741.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -33.6,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 312.4,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Bethesda CC",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": -616.75,
+          "oppRank": 92,
+          "oppRating": 527.6
+        },
+        {
+          "opponent": "Lower Merion",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -548.48,
+          "oppRank": 57,
+          "oppRating": 967.0
+        },
+        {
+          "opponent": "Strath Haven",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 128.94,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        },
+        {
+          "opponent": "Jackson-Reed",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 285.42,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -244.59,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 147.83,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 208.56,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "name": "Lakeside ATL",
+      "rating": 1699.2,
+      "wins": 5,
+      "losses": 0,
+      "pf": 72,
+      "pa": 28,
+      "games": [
+        {
+          "opponent": "Druid Hills",
+          "result": "W",
+          "score": "12-3",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 51.65,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": -530.98,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -210.94,
+          "oppRank": 61,
+          "oppRating": 930.8
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -337.19,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "Midtown",
+          "result": "W",
+          "score": "10-5",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 224.3,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 272.18,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "name": "Albany Cougars",
+      "rating": 1671.9,
+      "wins": 3,
+      "losses": 0,
+      "pf": 39,
+      "pa": 16,
+      "games": [
+        {
+          "opponent": "Northwest",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -202.1,
+          "oppRank": 65,
+          "oppRating": 869.8
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 339.08,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        },
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -136.98,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "name": "Edwardsville",
+      "rating": 1670.1,
+      "wins": 3,
+      "losses": 2,
+      "pf": 70,
+      "pa": 53,
+      "games": [
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "14-6",
+          "tournament": "Mason Invite 2026",
+          "ignored": true,
+          "effect": -223.47,
+          "oppRank": 69,
+          "oppRating": 846.6
+        },
+        {
+          "opponent": "West Jess",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 267.24,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "W",
+          "score": "12-7",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 178.11,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Mason",
+          "result": "W",
+          "score": "12-6",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 297.84,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        },
+        {
+          "opponent": "West Jess",
+          "result": "L",
+          "score": "10-11",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -353.92,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "9-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -389.19,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "name": "Wissahickon",
+      "rating": 1626.2,
+      "wins": 4,
+      "losses": 1,
+      "pf": 70,
+      "pa": 57,
+      "games": [
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -5.97,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Impulse",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": -338.52,
+          "oppRank": 84,
+          "oppRating": 687.7
+        },
+        {
+          "opponent": "HB Woodlawn",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 87.02,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        },
+        {
+          "opponent": "Blair",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 198.96,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        },
+        {
+          "opponent": "Lexington",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 118.81,
+          "oppRank": 8,
+          "oppRating": 1620.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -398.39,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "name": "Lexington",
+      "rating": 1620.1,
+      "wins": 4,
+      "losses": 1,
+      "pf": 62,
+      "pa": 34,
+      "games": [
+        {
+          "opponent": "Hampton",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -365.43,
+          "oppRank": 86,
+          "oppRating": 654.6
+        },
+        {
+          "opponent": "SLA",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 150.51,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        },
+        {
+          "opponent": "Jackson-Reed",
+          "result": "W",
+          "score": "11-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 38.51,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        },
+        {
+          "opponent": "Strath Haven",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 295.66,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -118.81,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "name": "Chapel Hill",
+      "rating": 1564.6,
+      "wins": 5,
+      "losses": 0,
+      "pf": 65,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "Athens Drive",
+          "result": "W",
+          "score": "11-1",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": true,
+          "effect": -528.0,
+          "oppRank": 101,
+          "oppRating": 436.6
+        },
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "W",
+          "score": "10-8",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -163.07,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "11-3",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -160.06,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "W",
+          "score": "11-1",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 13.06,
+          "oppRank": 54,
+          "oppRating": 977.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "W",
+          "score": "12-8",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 247.99,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Carrboro",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 62.08,
+          "oppRank": 11,
+          "oppRating": 1501.6
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "name": "Jackson-Reed",
+      "rating": 1533.6,
+      "wins": 3,
+      "losses": 2,
+      "pf": 70,
+      "pa": 57,
+      "games": [
+        {
+          "opponent": "SLA",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 133.16,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        },
+        {
+          "opponent": "Hampton",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": -278.94,
+          "oppRank": 86,
+          "oppRating": 654.6
+        },
+        {
+          "opponent": "Lexington",
+          "result": "L",
+          "score": "10-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -38.51,
+          "oppRank": 8,
+          "oppRating": 1620.1
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -285.42,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "HB Woodlawn",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 89.28,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        },
+        {
+          "opponent": "Blair",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 101.92,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        }
+      ]
+    },
+    {
+      "rank": 11,
+      "name": "Carrboro",
+      "rating": 1501.6,
+      "wins": 4,
+      "losses": 1,
+      "pf": 60,
+      "pa": 42,
+      "games": [
+        {
+          "opponent": "East Chapel Hill",
+          "result": "W",
+          "score": "12-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 134.4,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "Carolina Friends",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -222.15,
+          "oppRank": 68,
+          "oppRating": 860.9
+        },
+        {
+          "opponent": "Jordan",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -5.25,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "East Chapel Hill",
+          "result": "W",
+          "score": "14-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 155.09,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -62.08,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        }
+      ]
+    },
+    {
+      "rank": 12,
+      "name": "Northfield JV",
+      "rating": 1457.1,
+      "wins": 6,
+      "losses": 0,
+      "pf": 72,
+      "pa": 40,
+      "games": [
+        {
+          "opponent": "Lafayette B",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -12.4,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "W",
+          "score": "7-5",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 127.17,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": -483.06,
+          "oppRank": 105,
+          "oppRating": 374.0
+        },
+        {
+          "opponent": "East CO",
+          "result": "W",
+          "score": "9-4",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -137.37,
+          "oppRank": 81,
+          "oppRating": 719.7
+        },
+        {
+          "opponent": "Fairview",
+          "result": "W",
+          "score": "8-7",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -243.95,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 48.97,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "W",
+          "score": "9-6",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 217.59,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        }
+      ]
+    },
+    {
+      "rank": 13,
+      "name": "Gold Rush",
+      "rating": 1445.3,
+      "wins": 4,
+      "losses": 1,
+      "pf": 53,
+      "pa": 25,
+      "games": [
+        {
+          "opponent": "Lincoln",
+          "result": "W",
+          "score": "11-7",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 234.29,
+          "oppRank": 32,
+          "oppRating": 1212.7
+        },
+        {
+          "opponent": "RCU C",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -374.19,
+          "oppRank": 98,
+          "oppRating": 471.1
+        },
+        {
+          "opponent": "RCU A SEA",
+          "result": "W",
+          "score": "11-3",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 230.02,
+          "oppRank": 44,
+          "oppRating": 1075.4
+        },
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "W",
+          "score": "11-4",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 193.43,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -283.55,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        }
+      ]
+    },
+    {
+      "rank": 14,
+      "name": "West Jess",
+      "rating": 1441.1,
+      "wins": 4,
+      "losses": 2,
+      "pf": 65,
+      "pa": 67,
+      "games": [
+        {
+          "opponent": "Washington-Liberty",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 11.52,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Edwardsville",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -267.24,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        },
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -175.99,
+          "oppRank": 69,
+          "oppRating": 846.6
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "10-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -98.4,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Edwardsville",
+          "result": "W",
+          "score": "11-10",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 353.92,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        },
+        {
+          "opponent": "Mason",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 176.29,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        }
+      ]
+    },
+    {
+      "rank": 15,
+      "name": "South Eugene",
+      "rating": 1411.0,
+      "wins": 7,
+      "losses": 2,
+      "pf": 91,
+      "pa": 66,
+      "games": [
+        {
+          "opponent": "Green Canyon",
+          "result": "W",
+          "score": "12-9",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 202.1,
+          "oppRank": 27,
+          "oppRating": 1267.7
+        },
+        {
+          "opponent": "Albany Cougars",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -339.08,
+          "oppRank": 5,
+          "oppRating": 1671.9
+        },
+        {
+          "opponent": "Lincoln Lynx",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -204.18,
+          "oppRank": 83,
+          "oppRating": 710.6
+        },
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "W",
+          "score": "11-3",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 227.78,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        },
+        {
+          "opponent": "OAK Storm",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 1.38,
+          "oppRank": 67,
+          "oppRating": 865.7
+        },
+        {
+          "opponent": "7H Red",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -505.45,
+          "oppRank": 26,
+          "oppRating": 1271.1
+        },
+        {
+          "opponent": "7H Blue",
+          "result": "W",
+          "score": "11-2",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 69.53,
+          "oppRank": 64,
+          "oppRating": 880.5
+        },
+        {
+          "opponent": "Gold Rush",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 283.55,
+          "oppRank": 13,
+          "oppRating": 1445.3
+        },
+        {
+          "opponent": "RCU A SEA",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 264.37,
+          "oppRank": 44,
+          "oppRating": 1075.4
+        }
+      ]
+    },
+    {
+      "rank": 16,
+      "name": "Parkway",
+      "rating": 1409.7,
+      "wins": 5,
+      "losses": 0,
+      "pf": 76,
+      "pa": 27,
+      "games": [
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": -241.42,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "McCallie",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 195.93,
+          "oppRank": 51,
+          "oppRating": 1005.6
+        },
+        {
+          "opponent": "Stewart's Creek",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -94.84,
+          "oppRank": 82,
+          "oppRating": 714.8
+        },
+        {
+          "opponent": "Ravenwood",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -251.49,
+          "oppRank": 88,
+          "oppRating": 611.5
+        },
+        {
+          "opponent": "HFC",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 202.03,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "Pi",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -51.64,
+          "oppRank": 60,
+          "oppRating": 939.5
+        }
+      ]
+    },
+    {
+      "rank": 17,
+      "name": "Blair",
+      "rating": 1406.6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 65,
+      "pa": 68,
+      "games": [
+        {
+          "opponent": "Pennsbury",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 2.66,
+          "oppRank": 43,
+          "oppRating": 1081.2
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 339.58,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -74.94,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -198.96,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        },
+        {
+          "opponent": "Strath Haven",
+          "result": "W",
+          "score": "11-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 34.07,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        },
+        {
+          "opponent": "Jackson-Reed",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -101.92,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        }
+      ]
+    },
+    {
+      "rank": 18,
+      "name": "Mason",
+      "rating": 1388.6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 62,
+      "pa": 68,
+      "games": [
+        {
+          "opponent": "Center Grove",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 53.62,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        },
+        {
+          "opponent": "Revolution",
+          "result": "W",
+          "score": "15-5",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 330.02,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "13-14",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 282.76,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Edwardsville",
+          "result": "L",
+          "score": "6-12",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -297.84,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "6-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -192.24,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "West Jess",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -176.29,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        }
+      ]
+    },
+    {
+      "rank": 19,
+      "name": "Jordan",
+      "rating": 1371.4,
+      "wins": 8,
+      "losses": 3,
+      "pf": 128,
+      "pa": 101,
+      "games": [
+        {
+          "opponent": "Carolina Friends",
+          "result": "W",
+          "score": "15-8",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 54.34,
+          "oppRank": 68,
+          "oppRating": 860.9
+        },
+        {
+          "opponent": "East Chapel Hill",
+          "result": "W",
+          "score": "15-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 138.94,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "Carrboro",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 5.25,
+          "oppRank": 11,
+          "oppRating": 1501.6
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "W",
+          "score": "14-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 4.93,
+          "oppRank": 54,
+          "oppRating": 977.6
+        },
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "8-12",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -247.99,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        },
+        {
+          "opponent": "East Chapel Hill",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 232.03,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "Paideia",
+          "result": "W",
+          "score": "8-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -22.91,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        },
+        {
+          "opponent": "DHS Open Varsity",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": -320.85,
+          "oppRank": 99,
+          "oppRating": 450.5
+        },
+        {
+          "opponent": "Midtown",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 103.23,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        },
+        {
+          "opponent": "Forsyth Central",
+          "result": "W",
+          "score": "9-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -164.77,
+          "oppRank": 62,
+          "oppRating": 927.3
+        },
+        {
+          "opponent": "Druid Hills",
+          "result": "W",
+          "score": "10-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 169.13,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        },
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -272.18,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        }
+      ]
+    },
+    {
+      "rank": 20,
+      "name": "Midtown",
+      "rating": 1349.6,
+      "wins": 3,
+      "losses": 2,
+      "pf": 52,
+      "pa": 38,
+      "games": [
+        {
+          "opponent": "DHS Open Varsity",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": -299.08,
+          "oppRank": 99,
+          "oppRating": 450.5
+        },
+        {
+          "opponent": "Forsyth Central",
+          "result": "W",
+          "score": "8-5",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 31.27,
+          "oppRank": 62,
+          "oppRating": 927.3
+        },
+        {
+          "opponent": "Paideia",
+          "result": "W",
+          "score": "8-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -1.14,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -103.23,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "5-10",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -224.3,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        },
+        {
+          "opponent": "Druid Hills",
+          "result": "W",
+          "score": "10-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 297.4,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        }
+      ]
+    },
+    {
+      "rank": 21,
+      "name": "Franklin HS",
+      "rating": 1336.5,
+      "wins": 2,
+      "losses": 0,
+      "pf": 26,
+      "pa": 14,
+      "games": [
+        {
+          "opponent": "Lincoln Lynx V2",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 185.58,
+          "oppRank": 50,
+          "oppRating": 1026.0
+        },
+        {
+          "opponent": "Horned Haze",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 237.5,
+          "oppRank": 56,
+          "oppRating": 974.0
+        }
+      ]
+    },
+    {
+      "rank": 22,
+      "name": "Washington-Liberty",
+      "rating": 1327.7,
+      "wins": 7,
+      "losses": 5,
+      "pf": 132,
+      "pa": 117,
+      "games": [
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 4.04,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Blair",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -339.58,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        },
+        {
+          "opponent": "Pennsbury",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 353.5,
+          "oppRank": 43,
+          "oppRating": 1081.2
+        },
+        {
+          "opponent": "SLA",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 171.04,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        },
+        {
+          "opponent": "Lower Merion",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 57.89,
+          "oppRank": 57,
+          "oppRating": 967.0
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -264.36,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "West Jess",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -11.52,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        },
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "14-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -7.2,
+          "oppRank": 69,
+          "oppRating": 846.6
+        },
+        {
+          "opponent": "Edwardsville",
+          "result": "L",
+          "score": "7-12",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -178.11,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        },
+        {
+          "opponent": "Center Grove",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 361.5,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        },
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -356.07,
+          "oppRank": 69,
+          "oppRating": 846.6
+        },
+        {
+          "opponent": "Revolution",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 209.52,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        }
+      ]
+    },
+    {
+      "rank": 23,
+      "name": "Strath Haven",
+      "rating": 1315.7,
+      "wins": 2,
+      "losses": 3,
+      "pf": 62,
+      "pa": 56,
+      "games": [
+        {
+          "opponent": "Lower Merion",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 251.27,
+          "oppRank": 57,
+          "oppRating": 967.0
+        },
+        {
+          "opponent": "Bethesda CC",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": -188.16,
+          "oppRank": 92,
+          "oppRating": 527.6
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -128.94,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Lexington",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -295.66,
+          "oppRank": 8,
+          "oppRating": 1620.1
+        },
+        {
+          "opponent": "Blair",
+          "result": "L",
+          "score": "10-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -34.07,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        },
+        {
+          "opponent": "HB Woodlawn",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 207.83,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        }
+      ]
+    },
+    {
+      "rank": 24,
+      "name": "HB Woodlawn",
+      "rating": 1294.7,
+      "wins": 2,
+      "losses": 4,
+      "pf": 61,
+      "pa": 66,
+      "games": [
+        {
+          "opponent": "Impulse",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -6.97,
+          "oppRank": 84,
+          "oppRating": 687.7
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 416.01,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -87.02,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -24.37,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Jackson-Reed",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -89.28,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        },
+        {
+          "opponent": "Strath Haven",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -207.83,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        }
+      ]
+    },
+    {
+      "rank": 25,
+      "name": "Montclair",
+      "rating": 1292.1,
+      "wins": 8,
+      "losses": 7,
+      "pf": 174,
+      "pa": 148,
+      "games": [
+        {
+          "opponent": "Bard",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 254.27,
+          "oppRank": 59,
+          "oppRating": 946.4
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -500.46,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -159.01,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -10.97,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "8-12",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 11.01,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -118.19,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Bard",
+          "result": "W",
+          "score": "9-4",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 254.27,
+          "oppRank": 59,
+          "oppRating": 946.4
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 33.6,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 356.81,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 5.97,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        },
+        {
+          "opponent": "HB Woodlawn",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -416.01,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        },
+        {
+          "opponent": "Impulse",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -355.21,
+          "oppRank": 84,
+          "oppRating": 687.7
+        },
+        {
+          "opponent": "Lower Merion",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 274.84,
+          "oppRank": 57,
+          "oppRating": 967.0
+        },
+        {
+          "opponent": "SLA",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -246.58,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 264.36,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -147.83,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Bardbarians",
+          "result": "W",
+          "score": "15-6",
+          "tournament": "Battle of the Hudson",
+          "ignored": true,
+          "effect": -68.03,
+          "oppRank": 87,
+          "oppRating": 624.1
+        }
+      ]
+    },
+    {
+      "rank": 26,
+      "name": "7H Red",
+      "rating": 1271.1,
+      "wins": 3,
+      "losses": 1,
+      "pf": 41,
+      "pa": 24,
+      "games": [
+        {
+          "opponent": "Blitz Open",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 147.03,
+          "oppRank": 72,
+          "oppRating": 818.2
+        },
+        {
+          "opponent": "RCU B",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -228.45,
+          "oppRank": 100,
+          "oppRating": 442.7
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 505.45,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        },
+        {
+          "opponent": "Lincoln",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -424.02,
+          "oppRank": 32,
+          "oppRating": 1212.7
+        }
+      ]
+    },
+    {
+      "rank": 27,
+      "name": "Green Canyon",
+      "rating": 1267.7,
+      "wins": 1,
+      "losses": 1,
+      "pf": 21,
+      "pa": 17,
+      "games": [
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "9-12",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -202.1,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        },
+        {
+          "opponent": "Northwest",
+          "result": "W",
+          "score": "12-5",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 202.1,
+          "oppRank": 65,
+          "oppRating": 869.8
+        }
+      ]
+    },
+    {
+      "rank": 28,
+      "name": "Nathan Hale",
+      "rating": 1265.6,
+      "wins": 1,
+      "losses": 1,
+      "pf": 18,
+      "pa": 19,
+      "games": [
+        {
+          "opponent": "Overlake Owls",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -237.5,
+          "oppRank": 63,
+          "oppRating": 903.1
+        },
+        {
+          "opponent": "WTTWS",
+          "result": "L",
+          "score": "8-10",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -431.33,
+          "oppRank": 41,
+          "oppRating": 1096.9
+        }
+      ]
+    },
+    {
+      "rank": 29,
+      "name": "Fort Collins Club",
+      "rating": 1256.1,
+      "wins": 3,
+      "losses": 3,
+      "pf": 66,
+      "pa": 45,
+      "games": [
+        {
+          "opponent": "Fairview",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -417.18,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "5-7",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -127.17,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "East CO",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 63.6,
+          "oppRank": 81,
+          "oppRating": 719.7
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "W",
+          "score": "10-5",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 266.31,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "12-2",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": -282.09,
+          "oppRank": 105,
+          "oppRating": 374.0
+        },
+        {
+          "opponent": "Fairview",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 432.03,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "6-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -217.59,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        }
+      ]
+    },
+    {
+      "rank": 30,
+      "name": "Westside Ultimate",
+      "rating": 1241.7,
+      "wins": 2,
+      "losses": 0,
+      "pf": 26,
+      "pa": 20,
+      "games": [
+        {
+          "opponent": "Grant HS",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 7.05,
+          "oppRank": 75,
+          "oppRating": 752.6
+        },
+        {
+          "opponent": "Eastside Prep",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 7.05,
+          "oppRank": 39,
+          "oppRating": 1123.7
+        }
+      ]
+    },
+    {
+      "rank": 31,
+      "name": "Washburn Open",
+      "rating": 1241.0,
+      "wins": 4,
+      "losses": 1,
+      "pf": 44,
+      "pa": 25,
+      "games": [
+        {
+          "opponent": "SLP Panthers",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -431.82,
+          "oppRank": 109,
+          "oppRating": 209.2
+        },
+        {
+          "opponent": "SLP Open Varsity",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 108.36,
+          "oppRank": 76,
+          "oppRating": 749.4
+        },
+        {
+          "opponent": "Great River School",
+          "result": "W",
+          "score": "7-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -44.7,
+          "oppRank": 66,
+          "oppRating": 868.2
+        },
+        {
+          "opponent": "South Squall",
+          "result": "W",
+          "score": "8-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 385.66,
+          "oppRank": 35,
+          "oppRating": 1173.1
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "5-10",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -18.57,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        }
+      ]
+    },
+    {
+      "rank": 32,
+      "name": "Lincoln",
+      "rating": 1212.7,
+      "wins": 3,
+      "losses": 1,
+      "pf": 40,
+      "pa": 19,
+      "games": [
+        {
+          "opponent": "Gold Rush",
+          "result": "L",
+          "score": "7-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -234.29,
+          "oppRank": 13,
+          "oppRating": 1445.3
+        },
+        {
+          "opponent": "RCU C",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -141.58,
+          "oppRank": 98,
+          "oppRating": 471.1
+        },
+        {
+          "opponent": "Aura Open",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -48.15,
+          "oppRank": 90,
+          "oppRating": 564.6
+        },
+        {
+          "opponent": "7H Red",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 424.02,
+          "oppRank": 26,
+          "oppRating": 1271.1
+        }
+      ]
+    },
+    {
+      "rank": 33,
+      "name": "Center Grove",
+      "rating": 1193.0,
+      "wins": 2,
+      "losses": 4,
+      "pf": 62,
+      "pa": 61,
+      "games": [
+        {
+          "opponent": "Mason",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -53.62,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "8-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 38.54,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Revolution",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -402.53,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -361.5,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Revolution",
+          "result": "W",
+          "score": "15-4",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 525.62,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        },
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "12-5",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 253.59,
+          "oppRank": 69,
+          "oppRating": 846.6
+        }
+      ]
+    },
+    {
+      "rank": 34,
+      "name": "South Lakes",
+      "rating": 1182.5,
+      "wins": 5,
+      "losses": 0,
+      "pf": 65,
+      "pa": 31,
+      "games": [
+        {
+          "opponent": "Westfield",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 95.29,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Whitman",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -73.58,
+          "oppRank": 95,
+          "oppRating": 508.9
+        },
+        {
+          "opponent": "Watchung Hills",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -213.16,
+          "oppRank": 107,
+          "oppRating": 369.3
+        },
+        {
+          "opponent": "Bethesda CC",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -158.78,
+          "oppRank": 92,
+          "oppRating": 527.6
+        },
+        {
+          "opponent": "JR Masterman",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 350.72,
+          "oppRank": 55,
+          "oppRating": 975.7
+        }
+      ]
+    },
+    {
+      "rank": 35,
+      "name": "South Squall",
+      "rating": 1173.1,
+      "wins": 4,
+      "losses": 1,
+      "pf": 44,
+      "pa": 21,
+      "games": [
+        {
+          "opponent": "Woodbury",
+          "result": "W",
+          "score": "8-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 224.84,
+          "oppRank": 70,
+          "oppRating": 833.1
+        },
+        {
+          "opponent": "Mounds View White",
+          "result": "W",
+          "score": "12-2",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -195.85,
+          "oppRank": 104,
+          "oppRating": 377.2
+        },
+        {
+          "opponent": "OWLC",
+          "result": "W",
+          "score": "10-3",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -61.84,
+          "oppRank": 94,
+          "oppRating": 511.2
+        },
+        {
+          "opponent": "Washburn Open",
+          "result": "L",
+          "score": "5-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -385.66,
+          "oppRank": 31,
+          "oppRating": 1241.0
+        },
+        {
+          "opponent": "St. Paul Central",
+          "result": "W",
+          "score": "9-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 417.19,
+          "oppRank": 53,
+          "oppRating": 990.3
+        }
+      ]
+    },
+    {
+      "rank": 36,
+      "name": "SLA",
+      "rating": 1170.6,
+      "wins": 3,
+      "losses": 3,
+      "pf": 61,
+      "pa": 65,
+      "games": [
+        {
+          "opponent": "Jackson-Reed",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -133.16,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        },
+        {
+          "opponent": "Lexington",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -150.51,
+          "oppRank": 8,
+          "oppRating": 1620.1
+        },
+        {
+          "opponent": "Hampton",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 84.06,
+          "oppRank": 86,
+          "oppRating": 654.6
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -171.04,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Montclair",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 246.58,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Lower Merion",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 124.56,
+          "oppRank": 57,
+          "oppRating": 967.0
+        }
+      ]
+    },
+    {
+      "rank": 37,
+      "name": "Druid Hills",
+      "rating": 1150.9,
+      "wins": 3,
+      "losses": 3,
+      "pf": 48,
+      "pa": 49,
+      "games": [
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "3-12",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -51.65,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 200.33,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "10-5",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -8.73,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 326.58,
+          "oppRank": 61,
+          "oppRating": 930.8
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "7-10",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -169.13,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Midtown",
+          "result": "L",
+          "score": "6-10",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -297.4,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        }
+      ]
+    },
+    {
+      "rank": 38,
+      "name": "NCSSM+DSA",
+      "rating": 1138.8,
+      "wins": 4,
+      "losses": 2,
+      "pf": 65,
+      "pa": 56,
+      "games": [
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 212.37,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "8-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 163.07,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "W",
+          "score": "10-7",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 228.46,
+          "oppRank": 54,
+          "oppRating": 977.6
+        },
+        {
+          "opponent": "Athens Drive",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -336.65,
+          "oppRank": 101,
+          "oppRating": 436.6
+        },
+        {
+          "opponent": "East Chapel Hill",
+          "result": "L",
+          "score": "10-12",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -320.22,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "W",
+          "score": "15-13",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 52.97,
+          "oppRank": 54,
+          "oppRating": 977.6
+        }
+      ]
+    },
+    {
+      "rank": 39,
+      "name": "Eastside Prep",
+      "rating": 1123.7,
+      "wins": 1,
+      "losses": 1,
+      "pf": 25,
+      "pa": 17,
+      "games": [
+        {
+          "opponent": "Lakeside",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -7.05,
+          "oppRank": 93,
+          "oppRating": 516.7
+        },
+        {
+          "opponent": "Westside Ultimate",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -7.05,
+          "oppRank": 30,
+          "oppRating": 1241.7
+        }
+      ]
+    },
+    {
+      "rank": 40,
+      "name": "Revolution",
+      "rating": 1118.6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 56,
+      "pa": 75,
+      "games": [
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "12-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 377.24,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Mason",
+          "result": "L",
+          "score": "5-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -330.02,
+          "oppRank": 18,
+          "oppRating": 1388.6
+        },
+        {
+          "opponent": "Center Grove",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 402.53,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        },
+        {
+          "opponent": "Lebanon",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 285.51,
+          "oppRank": 69,
+          "oppRating": 846.6
+        },
+        {
+          "opponent": "Center Grove",
+          "result": "L",
+          "score": "4-15",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -525.62,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -209.52,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        }
+      ]
+    },
+    {
+      "rank": 41,
+      "name": "WTTWS",
+      "rating": 1096.9,
+      "wins": 2,
+      "losses": 0,
+      "pf": 23,
+      "pa": 8,
+      "games": [
+        {
+          "opponent": "University Prep",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 237.5,
+          "oppRank": 80,
+          "oppRating": 734.4
+        },
+        {
+          "opponent": "Nathan Hale",
+          "result": "W",
+          "score": "10-8",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 431.33,
+          "oppRank": 28,
+          "oppRating": 1265.6
+        }
+      ]
+    },
+    {
+      "rank": 42,
+      "name": "Fairview",
+      "rating": 1088.2,
+      "wins": 3,
+      "losses": 3,
+      "pf": 62,
+      "pa": 57,
+      "games": [
+        {
+          "opponent": "Fort Collins Club",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 417.18,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "East CO",
+          "result": "W",
+          "score": "8-7",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -243.43,
+          "oppRank": 81,
+          "oppRating": 719.7
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -264.62,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "9-2",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": -114.12,
+          "oppRank": 105,
+          "oppRating": 374.0
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "7-8",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 243.95,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -432.03,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 278.95,
+          "oppRank": 58,
+          "oppRating": 948.5
+        }
+      ]
+    },
+    {
+      "rank": 43,
+      "name": "Pennsbury",
+      "rating": 1081.2,
+      "wins": 1,
+      "losses": 4,
+      "pf": 44,
+      "pa": 58,
+      "games": [
+        {
+          "opponent": "Blair",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -2.66,
+          "oppRank": 17,
+          "oppRating": 1406.6
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 189.17,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -353.5,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "WACC",
+          "result": "W",
+          "score": "12-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 324.62,
+          "oppRank": 71,
+          "oppRating": 826.5
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -157.21,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        }
+      ]
+    },
+    {
+      "rank": 44,
+      "name": "RCU A SEA",
+      "rating": 1075.4,
+      "wins": 2,
+      "losses": 2,
+      "pf": 30,
+      "pa": 22,
+      "games": [
+        {
+          "opponent": "7H Blue",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 405.16,
+          "oppRank": 64,
+          "oppRating": 880.5
+        },
+        {
+          "opponent": "Aura Open",
+          "result": "W",
+          "score": "11-0",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 89.23,
+          "oppRank": 90,
+          "oppRating": 564.6
+        },
+        {
+          "opponent": "Gold Rush",
+          "result": "L",
+          "score": "3-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -230.02,
+          "oppRank": 13,
+          "oppRating": 1445.3
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -264.37,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        }
+      ]
+    },
+    {
+      "rank": 45,
+      "name": "East Chapel Hill",
+      "rating": 1056.7,
+      "wins": 2,
+      "losses": 4,
+      "pf": 54,
+      "pa": 70,
+      "games": [
+        {
+          "opponent": "Carrboro",
+          "result": "L",
+          "score": "6-12",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -134.4,
+          "oppRank": 11,
+          "oppRating": 1501.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "10-15",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -138.94,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Carolina Friends",
+          "result": "W",
+          "score": "14-8",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 340.23,
+          "oppRank": 68,
+          "oppRating": 860.9
+        },
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "W",
+          "score": "12-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 320.22,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        },
+        {
+          "opponent": "Carrboro",
+          "result": "L",
+          "score": "6-14",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -155.09,
+          "oppRank": 11,
+          "oppRating": 1501.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -232.03,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        }
+      ]
+    },
+    {
+      "rank": 46,
+      "name": "HFC",
+      "rating": 1054.2,
+      "wins": 4,
+      "losses": 2,
+      "pf": 77,
+      "pa": 47,
+      "games": [
+        {
+          "opponent": "Nolensville",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": -243.18,
+          "oppRank": 108,
+          "oppRating": 211.0
+        },
+        {
+          "opponent": "Independence",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -117.12,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "Ravenwood",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 53.48,
+          "oppRank": 88,
+          "oppRating": 611.5
+        },
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -480.31,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "Stewart's Creek",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 260.67,
+          "oppRank": 82,
+          "oppRating": 714.8
+        },
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -202.03,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "Pi",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 485.3,
+          "oppRank": 60,
+          "oppRating": 939.5
+        }
+      ]
+    },
+    {
+      "rank": 47,
+      "name": "Westfield",
+      "rating": 1048.9,
+      "wins": 8,
+      "losses": 4,
+      "pf": 155,
+      "pa": 151,
+      "games": [
+        {
+          "opponent": "Beacon",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -182.44,
+          "oppRank": 79,
+          "oppRating": 741.5
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "12-10",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -119.99,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": 95.36,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": 178.91,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 118.19,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -19.66,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 282.75,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -356.81,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "South Lakes",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -95.29,
+          "oppRank": 34,
+          "oppRating": 1182.5
+        },
+        {
+          "opponent": "Watchung Hills",
+          "result": "W",
+          "score": "12-4",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": -79.61,
+          "oppRank": 107,
+          "oppRating": 369.3
+        },
+        {
+          "opponent": "Whitman",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 59.96,
+          "oppRank": 95,
+          "oppRating": 508.9
+        },
+        {
+          "opponent": "Impulse",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 4.39,
+          "oppRank": 84,
+          "oppRating": 687.7
+        },
+        {
+          "opponent": "Pennsbury",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 157.21,
+          "oppRank": 43,
+          "oppRating": 1081.2
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "W",
+          "score": "13-7",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 41.71,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Beacon",
+          "result": "W",
+          "score": "13-9",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 111.12,
+          "oppRank": 79,
+          "oppRating": 741.5
+        }
+      ]
+    },
+    {
+      "rank": 48,
+      "name": "Paideia",
+      "rating": 1048.0,
+      "wins": 3,
+      "losses": 3,
+      "pf": 50,
+      "pa": 41,
+      "games": [
+        {
+          "opponent": "Forsyth Central",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -245.7,
+          "oppRank": 62,
+          "oppRating": 927.3
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "6-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 22.91,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Midtown",
+          "result": "L",
+          "score": "6-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 1.14,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        },
+        {
+          "opponent": "DHS Open Varsity",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 2.55,
+          "oppRank": 99,
+          "oppRating": 450.5
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "W",
+          "score": "9-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 162.09,
+          "oppRank": 61,
+          "oppRating": 930.8
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "8-6",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 57.0,
+          "oppRank": 74,
+          "oppRating": 804.5
+        }
+      ]
+    },
+    {
+      "rank": 49,
+      "name": "Roosevelt SEA",
+      "rating": 1038.8,
+      "wins": 4,
+      "losses": 3,
+      "pf": 63,
+      "pa": 60,
+      "games": [
+        {
+          "opponent": "Franklin Varsity",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -67.71,
+          "oppRank": 106,
+          "oppRating": 371.1
+        },
+        {
+          "opponent": "Lincoln Lynx",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 271.88,
+          "oppRank": 83,
+          "oppRating": 710.6
+        },
+        {
+          "opponent": "Albany Cougars",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 136.98,
+          "oppRank": 5,
+          "oppRating": 1671.9
+        },
+        {
+          "opponent": "OAK Storm",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 76.12,
+          "oppRank": 67,
+          "oppRating": 865.7
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "3-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -227.78,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        },
+        {
+          "opponent": "RCU B",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 3.93,
+          "oppRank": 100,
+          "oppRating": 442.7
+        },
+        {
+          "opponent": "Gold Rush",
+          "result": "L",
+          "score": "4-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -193.43,
+          "oppRank": 13,
+          "oppRating": 1445.3
+        }
+      ]
+    },
+    {
+      "rank": 50,
+      "name": "Lincoln Lynx V2",
+      "rating": 1026.0,
+      "wins": 1,
+      "losses": 1,
+      "pf": 19,
+      "pa": 23,
+      "games": [
+        {
+          "opponent": "Franklin HS",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -185.58,
+          "oppRank": 21,
+          "oppRating": 1336.5
+        },
+        {
+          "opponent": "Garfield HS",
+          "result": "W",
+          "score": "11-10",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -237.5,
+          "oppRank": 85,
+          "oppRating": 663.5
+        }
+      ]
+    },
+    {
+      "rank": 51,
+      "name": "McCallie",
+      "rating": 1005.6,
+      "wins": 2,
+      "losses": 2,
+      "pf": 28,
+      "pa": 28,
+      "games": [
+        {
+          "opponent": "Stewart's Creek",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 309.23,
+          "oppRank": 82,
+          "oppRating": 714.8
+        },
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -195.93,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "Independence",
+          "result": "W",
+          "score": "7-3",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 406.44,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "5-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -519.74,
+          "oppRank": 60,
+          "oppRating": 939.5
+        }
+      ]
+    },
+    {
+      "rank": 52,
+      "name": "Edina Varsity",
+      "rating": 1003.1,
+      "wins": 4,
+      "losses": 1,
+      "pf": 48,
+      "pa": 23,
+      "games": [
+        {
+          "opponent": "Providence Academy",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -256.73,
+          "oppRank": 112,
+          "oppRating": 146.4
+        },
+        {
+          "opponent": "St. Paul Central",
+          "result": "L",
+          "score": "4-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -577.63,
+          "oppRank": 53,
+          "oppRating": 990.3
+        },
+        {
+          "opponent": "WBL Bears X",
+          "result": "W",
+          "score": "10-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 78.6,
+          "oppRank": 96,
+          "oppRating": 507.8
+        },
+        {
+          "opponent": "Mounds View Green",
+          "result": "W",
+          "score": "10-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 342.58,
+          "oppRank": 77,
+          "oppRating": 745.7
+        },
+        {
+          "opponent": "Great River School",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 411.78,
+          "oppRank": 66,
+          "oppRating": 868.2
+        }
+      ]
+    },
+    {
+      "rank": 53,
+      "name": "St. Paul Central",
+      "rating": 990.3,
+      "wins": 3,
+      "losses": 1,
+      "pf": 34,
+      "pa": 29,
+      "games": [
+        {
+          "opponent": "WBL Bears X",
+          "result": "W",
+          "score": "8-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 82.34,
+          "oppRank": 96,
+          "oppRating": 507.8
+        },
+        {
+          "opponent": "Edina Varsity",
+          "result": "W",
+          "score": "8-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 577.63,
+          "oppRank": 52,
+          "oppRating": 1003.1
+        },
+        {
+          "opponent": "Providence Academy",
+          "result": "W",
+          "score": "10-2",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -243.91,
+          "oppRank": 112,
+          "oppRating": 146.4
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "4-10",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": 206.08,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "South Squall",
+          "result": "L",
+          "score": "4-9",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -417.19,
+          "oppRank": 35,
+          "oppRating": 1173.1
+        }
+      ]
+    },
+    {
+      "rank": 54,
+      "name": "JT Williams",
+      "rating": 977.6,
+      "wins": 2,
+      "losses": 4,
+      "pf": 53,
+      "pa": 63,
+      "games": [
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 373.58,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "L",
+          "score": "7-10",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -228.46,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        },
+        {
+          "opponent": "Athens Drive",
+          "result": "W",
+          "score": "11-7",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -74.16,
+          "oppRank": 101,
+          "oppRating": 436.6
+        },
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "1-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -13.06,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "10-14",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -4.93,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "L",
+          "score": "13-15",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -52.97,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        }
+      ]
+    },
+    {
+      "rank": 55,
+      "name": "JR Masterman",
+      "rating": 975.7,
+      "wins": 4,
+      "losses": 1,
+      "pf": 56,
+      "pa": 39,
+      "games": [
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "12-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 156.3,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -184.01,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "WACC",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 99.99,
+          "oppRank": 71,
+          "oppRating": 826.5
+        },
+        {
+          "opponent": "Hampton",
+          "result": "W",
+          "score": "13-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 278.94,
+          "oppRank": 86,
+          "oppRating": 654.6
+        },
+        {
+          "opponent": "South Lakes",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -350.72,
+          "oppRank": 34,
+          "oppRating": 1182.5
+        }
+      ]
+    },
+    {
+      "rank": 56,
+      "name": "Horned Haze",
+      "rating": 974.0,
+      "wins": 1,
+      "losses": 1,
+      "pf": 18,
+      "pa": 24,
+      "games": [
+        {
+          "opponent": "Garfield HS",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -185.58,
+          "oppRank": 85,
+          "oppRating": 663.5
+        },
+        {
+          "opponent": "Franklin HS",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -237.5,
+          "oppRank": 21,
+          "oppRating": 1336.5
+        }
+      ]
+    },
+    {
+      "rank": 57,
+      "name": "Lower Merion",
+      "rating": 967.0,
+      "wins": 1,
+      "losses": 5,
+      "pf": 54,
+      "pa": 67,
+      "games": [
+        {
+          "opponent": "Strath Haven",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -251.27,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 548.48,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Bethesda CC",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 160.57,
+          "oppRank": 92,
+          "oppRating": 527.6
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -274.84,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -57.89,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "SLA",
+          "result": "L",
+          "score": "10-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -124.56,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        }
+      ]
+    },
+    {
+      "rank": 58,
+      "name": "Lafayette B",
+      "rating": 948.5,
+      "wins": 3,
+      "losses": 4,
+      "pf": 63,
+      "pa": 68,
+      "games": [
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 12.4,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "12-7",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -53.99,
+          "oppRank": 105,
+          "oppRating": 374.0
+        },
+        {
+          "opponent": "Fairview",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 264.62,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "L",
+          "score": "5-10",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -266.31,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "East CO",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 371.19,
+          "oppRank": 81,
+          "oppRating": 719.7
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -48.97,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "Fairview",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -278.95,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        }
+      ]
+    },
+    {
+      "rank": 59,
+      "name": "Bard",
+      "rating": 946.4,
+      "wins": 3,
+      "losses": 2,
+      "pf": 71,
+      "pa": 59,
+      "games": [
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -254.27,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "11-2",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": -154.74,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "W",
+          "score": "10-6",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 82.87,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "3-11",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": 281.45,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "12-8",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 185.57,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "4-9",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -254.27,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": true,
+          "effect": -154.74,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 240.58,
+          "oppRank": null,
+          "oppRating": 690.8
+        }
+      ]
+    },
+    {
+      "rank": 60,
+      "name": "Pi",
+      "rating": 939.5,
+      "wins": 5,
+      "losses": 3,
+      "pf": 81,
+      "pa": 77,
+      "games": [
+        {
+          "opponent": "Ravenwood",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 272.02,
+          "oppRank": 88,
+          "oppRating": 611.5
+        },
+        {
+          "opponent": "Independence",
+          "result": "L",
+          "score": "3-12",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -727.42,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "Nolensville",
+          "result": "W",
+          "score": "12-5",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": -128.48,
+          "oppRank": 108,
+          "oppRating": 211.0
+        },
+        {
+          "opponent": "Independence",
+          "result": "W",
+          "score": "10-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 135.24,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "HFC",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 480.31,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -246.22,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "McCallie",
+          "result": "W",
+          "score": "8-5",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 519.74,
+          "oppRank": 51,
+          "oppRating": 1005.6
+        },
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 51.64,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "HFC",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -485.3,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        }
+      ]
+    },
+    {
+      "rank": 61,
+      "name": "Maynard Jackson",
+      "rating": 930.8,
+      "wins": 3,
+      "losses": 3,
+      "pf": 50,
+      "pa": 57,
+      "games": [
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 3.1,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "9-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 153.09,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 210.94,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        },
+        {
+          "opponent": "Druid Hills",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -326.58,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        },
+        {
+          "opponent": "Paideia",
+          "result": "L",
+          "score": "7-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -162.09,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        },
+        {
+          "opponent": "Forsyth Central",
+          "result": "W",
+          "score": "10-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 121.54,
+          "oppRank": 62,
+          "oppRating": 927.3
+        }
+      ]
+    },
+    {
+      "rank": 62,
+      "name": "Forsyth Central",
+      "rating": 927.3,
+      "wins": 2,
+      "losses": 4,
+      "pf": 48,
+      "pa": 50,
+      "games": [
+        {
+          "opponent": "Paideia",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 245.7,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        },
+        {
+          "opponent": "Midtown",
+          "result": "L",
+          "score": "5-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -31.27,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        },
+        {
+          "opponent": "DHS Open Varsity",
+          "result": "W",
+          "score": "11-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -9.86,
+          "oppRank": 99,
+          "oppRating": 450.5
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "7-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 164.77,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Asheville",
+          "result": "L",
+          "score": "7-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -247.79,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -121.54,
+          "oppRank": 61,
+          "oppRating": 930.8
+        }
+      ]
+    },
+    {
+      "rank": 63,
+      "name": "Overlake Owls",
+      "rating": 903.1,
+      "wins": 1,
+      "losses": 1,
+      "pf": 22,
+      "pa": 10,
+      "games": [
+        {
+          "opponent": "Nathan Hale",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 237.5,
+          "oppRank": 28,
+          "oppRating": 1265.6
+        },
+        {
+          "opponent": "University Prep",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 431.33,
+          "oppRank": 80,
+          "oppRating": 734.4
+        }
+      ]
+    },
+    {
+      "rank": 64,
+      "name": "7H Blue",
+      "rating": 880.5,
+      "wins": 2,
+      "losses": 2,
+      "pf": 24,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "Aura Open",
+          "result": "W",
+          "score": "11-4",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 284.06,
+          "oppRank": 90,
+          "oppRating": 564.6
+        },
+        {
+          "opponent": "RCU A SEA",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -405.16,
+          "oppRank": 44,
+          "oppRating": 1075.4
+        },
+        {
+          "opponent": "RCU C",
+          "result": "W",
+          "score": "11-4",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 190.63,
+          "oppRank": 98,
+          "oppRating": 471.1
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "2-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -69.53,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        }
+      ]
+    },
+    {
+      "rank": 65,
+      "name": "Northwest",
+      "rating": 869.8,
+      "wins": 0,
+      "losses": 2,
+      "pf": 10,
+      "pa": 25,
+      "games": [
+        {
+          "opponent": "Albany Cougars",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 202.1,
+          "oppRank": 5,
+          "oppRating": 1671.9
+        },
+        {
+          "opponent": "Green Canyon",
+          "result": "L",
+          "score": "5-12",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -202.1,
+          "oppRank": 27,
+          "oppRating": 1267.7
+        }
+      ]
+    },
+    {
+      "rank": 66,
+      "name": "Great River School",
+      "rating": 868.2,
+      "wins": 3,
+      "losses": 2,
+      "pf": 38,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "SLP Open Varsity",
+          "result": "W",
+          "score": "8-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 334.81,
+          "oppRank": 76,
+          "oppRating": 749.4
+        },
+        {
+          "opponent": "SLP Panthers",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -58.97,
+          "oppRank": 109,
+          "oppRating": 209.2
+        },
+        {
+          "opponent": "Washburn Open",
+          "result": "L",
+          "score": "5-7",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 44.7,
+          "oppRank": 31,
+          "oppRating": 1241.0
+        },
+        {
+          "opponent": "Woodbury",
+          "result": "W",
+          "score": "6-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 89.94,
+          "oppRank": 70,
+          "oppRating": 833.1
+        },
+        {
+          "opponent": "Edina Varsity",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -411.78,
+          "oppRank": 52,
+          "oppRating": 1003.1
+        }
+      ]
+    },
+    {
+      "rank": 67,
+      "name": "OAK Storm",
+      "rating": 865.7,
+      "wins": 1,
+      "losses": 2,
+      "pf": 24,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -76.12,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -1.38,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        },
+        {
+          "opponent": "Blitz Open",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 77.5,
+          "oppRank": 72,
+          "oppRating": 818.2
+        }
+      ]
+    },
+    {
+      "rank": 68,
+      "name": "Carolina Friends",
+      "rating": 860.9,
+      "wins": 1,
+      "losses": 3,
+      "pf": 38,
+      "pa": 53,
+      "games": [
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "8-15",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -54.34,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Carrboro",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 222.15,
+          "oppRank": 11,
+          "oppRating": 1501.6
+        },
+        {
+          "opponent": "East Chapel Hill",
+          "result": "L",
+          "score": "8-14",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -340.23,
+          "oppRank": 45,
+          "oppRating": 1056.7
+        },
+        {
+          "opponent": "Asheville",
+          "result": "W",
+          "score": "13-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 172.42,
+          "oppRank": 74,
+          "oppRating": 804.5
+        }
+      ]
+    },
+    {
+      "rank": 69,
+      "name": "Lebanon",
+      "rating": 846.6,
+      "wins": 0,
+      "losses": 5,
+      "pf": 44,
+      "pa": 75,
+      "games": [
+        {
+          "opponent": "Edwardsville",
+          "result": "L",
+          "score": "6-14",
+          "tournament": "Mason Invite 2026",
+          "ignored": true,
+          "effect": 223.47,
+          "oppRank": 6,
+          "oppRating": 1670.1
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "9-14",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 7.2,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "West Jess",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 175.99,
+          "oppRank": 14,
+          "oppRating": 1441.1
+        },
+        {
+          "opponent": "Revolution",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -285.51,
+          "oppRank": 40,
+          "oppRating": 1118.6
+        },
+        {
+          "opponent": "Washington-Liberty",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": 356.07,
+          "oppRank": 22,
+          "oppRating": 1327.7
+        },
+        {
+          "opponent": "Center Grove",
+          "result": "L",
+          "score": "5-12",
+          "tournament": "Mason Invite 2026",
+          "ignored": false,
+          "effect": -253.59,
+          "oppRank": 33,
+          "oppRating": 1193.0
+        }
+      ]
+    },
+    {
+      "rank": 70,
+      "name": "Woodbury",
+      "rating": 833.1,
+      "wins": 3,
+      "losses": 2,
+      "pf": 35,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "South Squall",
+          "result": "L",
+          "score": "4-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -224.84,
+          "oppRank": 35,
+          "oppRating": 1173.1
+        },
+        {
+          "opponent": "OWLC",
+          "result": "W",
+          "score": "8-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 131.73,
+          "oppRank": 94,
+          "oppRating": 511.2
+        },
+        {
+          "opponent": "Mounds View White",
+          "result": "W",
+          "score": "11-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 144.12,
+          "oppRank": 104,
+          "oppRating": 377.2
+        },
+        {
+          "opponent": "Great River School",
+          "result": "L",
+          "score": "5-6",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -89.94,
+          "oppRank": 66,
+          "oppRating": 868.2
+        },
+        {
+          "opponent": "Mounds View Green",
+          "result": "W",
+          "score": "7-6",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 37.56,
+          "oppRank": 77,
+          "oppRating": 745.7
+        }
+      ]
+    },
+    {
+      "rank": 71,
+      "name": "WACC",
+      "rating": 826.5,
+      "wins": 3,
+      "losses": 2,
+      "pf": 47,
+      "pa": 38,
+      "games": [
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -34.8,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "12-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 102.48,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "JR Masterman",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -99.99,
+          "oppRank": 55,
+          "oppRating": 975.7
+        },
+        {
+          "opponent": "Pennsbury",
+          "result": "L",
+          "score": "6-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -324.62,
+          "oppRank": 43,
+          "oppRating": 1081.2
+        },
+        {
+          "opponent": "Impulse",
+          "result": "W",
+          "score": "7-4",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 357.41,
+          "oppRank": 84,
+          "oppRating": 687.7
+        }
+      ]
+    },
+    {
+      "rank": 72,
+      "name": "Blitz Open",
+      "rating": 818.2,
+      "wins": 1,
+      "losses": 2,
+      "pf": 24,
+      "pa": 24,
+      "games": [
+        {
+          "opponent": "7H Red",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -147.03,
+          "oppRank": 26,
+          "oppRating": 1271.1
+        },
+        {
+          "opponent": "RCU B",
+          "result": "W",
+          "score": "11-4",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 224.52,
+          "oppRank": 100,
+          "oppRating": 442.7
+        },
+        {
+          "opponent": "OAK Storm",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -77.5,
+          "oppRank": 67,
+          "oppRating": 865.7
+        }
+      ]
+    },
+    {
+      "rank": 73,
+      "name": "Independence",
+      "rating": 812.0,
+      "wins": 3,
+      "losses": 3,
+      "pf": 51,
+      "pa": 45,
+      "games": [
+        {
+          "opponent": "Nolensville",
+          "result": "W",
+          "score": "10-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -338.4,
+          "oppRank": 108,
+          "oppRating": 211.0
+        },
+        {
+          "opponent": "Pi",
+          "result": "W",
+          "score": "12-3",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 727.42,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "HFC",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 117.12,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "8-10",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -135.24,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "McCallie",
+          "result": "L",
+          "score": "3-7",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -406.44,
+          "oppRank": 51,
+          "oppRating": 1005.6
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "9-7",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 35.54,
+          "oppRank": 89,
+          "oppRating": 568.2
+        }
+      ]
+    },
+    {
+      "rank": 74,
+      "name": "Asheville",
+      "rating": 804.5,
+      "wins": 4,
+      "losses": 8,
+      "pf": 97,
+      "pa": 115,
+      "games": [
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -212.37,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -373.58,
+          "oppRank": 54,
+          "oppRating": 977.6
+        },
+        {
+          "opponent": "Athens Drive",
+          "result": "W",
+          "score": "11-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 178.76,
+          "oppRank": 101,
+          "oppRating": 436.6
+        },
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "3-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 160.06,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        },
+        {
+          "opponent": "Carolina Friends",
+          "result": "L",
+          "score": "11-13",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -172.42,
+          "oppRank": 68,
+          "oppRating": 860.9
+        },
+        {
+          "opponent": "Athens Drive",
+          "result": "W",
+          "score": "15-6",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 232.06,
+          "oppRank": 101,
+          "oppRating": 436.6
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "L",
+          "score": "7-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -153.09,
+          "oppRank": 61,
+          "oppRating": 930.8
+        },
+        {
+          "opponent": "Druid Hills",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -200.33,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        },
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 337.19,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 12.94,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "Forsyth Central",
+          "result": "W",
+          "score": "8-7",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 247.79,
+          "oppRank": 62,
+          "oppRating": 927.3
+        },
+        {
+          "opponent": "Paideia",
+          "result": "L",
+          "score": "6-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -57.0,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        }
+      ]
+    },
+    {
+      "rank": 75,
+      "name": "Grant HS",
+      "rating": 752.6,
+      "wins": 0,
+      "losses": 1,
+      "pf": 8,
+      "pa": 13,
+      "games": [
+        {
+          "opponent": "Westside Ultimate",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -7.05,
+          "oppRank": 30,
+          "oppRating": 1241.7
+        }
+      ]
+    },
+    {
+      "rank": 76,
+      "name": "SLP Open Varsity",
+      "rating": 749.4,
+      "wins": 3,
+      "losses": 2,
+      "pf": 36,
+      "pa": 28,
+      "games": [
+        {
+          "opponent": "Great River School",
+          "result": "L",
+          "score": "5-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -334.81,
+          "oppRank": 66,
+          "oppRating": 868.2
+        },
+        {
+          "opponent": "Washburn Open",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -108.36,
+          "oppRank": 31,
+          "oppRating": 1241.0
+        },
+        {
+          "opponent": "SLP Panthers",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 59.83,
+          "oppRank": 109,
+          "oppRating": 209.2
+        },
+        {
+          "opponent": "OWLC",
+          "result": "W",
+          "score": "6-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 127.47,
+          "oppRank": 94,
+          "oppRating": 511.2
+        },
+        {
+          "opponent": "WBL Bears X",
+          "result": "W",
+          "score": "7-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 254.58,
+          "oppRank": 96,
+          "oppRating": 507.8
+        }
+      ]
+    },
+    {
+      "rank": 77,
+      "name": "Mounds View Green",
+      "rating": 745.7,
+      "wins": 2,
+      "losses": 2,
+      "pf": 34,
+      "pa": 35,
+      "games": [
+        {
+          "opponent": "WBL Bears Y",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 41.52,
+          "oppRank": 110,
+          "oppRating": 187.2
+        },
+        {
+          "opponent": "Hopkins MMP",
+          "result": "W",
+          "score": "9-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 337.48,
+          "oppRank": 97,
+          "oppRating": 483.1
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": 450.68,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Edina Varsity",
+          "result": "L",
+          "score": "4-10",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -342.58,
+          "oppRank": 52,
+          "oppRating": 1003.1
+        },
+        {
+          "opponent": "Woodbury",
+          "result": "L",
+          "score": "6-7",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -37.56,
+          "oppRank": 70,
+          "oppRating": 833.1
+        }
+      ]
+    },
+    {
+      "rank": 78,
+      "name": "Bergen Ultimate",
+      "rating": 741.9,
+      "wins": 2,
+      "losses": 0,
+      "pf": 29,
+      "pa": 14,
+      "games": [
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": true,
+          "effect": 402.41,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Columbia JV-B",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -275.22,
+          "oppRank": null,
+          "oppRating": -133.3
+        },
+        {
+          "opponent": "Bronx Science",
+          "result": "W",
+          "score": "13-1",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 275.42,
+          "oppRank": 102,
+          "oppRating": 417.3
+        }
+      ]
+    },
+    {
+      "rank": 79,
+      "name": "Beacon",
+      "rating": 741.5,
+      "wins": 4,
+      "losses": 2,
+      "pf": 74,
+      "pa": 74,
+      "games": [
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 182.44,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": 402.8,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 277.47,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-2",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 50.17,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Bronx Science",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -199.18,
+          "oppRank": 102,
+          "oppRating": 417.3
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -111.12,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Bronx Science",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "HSL Spring League",
+          "ignored": false,
+          "effect": -199.18,
+          "oppRank": 102,
+          "oppRating": 417.3
+        }
+      ]
+    },
+    {
+      "rank": 80,
+      "name": "University Prep",
+      "rating": 734.4,
+      "wins": 0,
+      "losses": 2,
+      "pf": 0,
+      "pa": 26,
+      "games": [
+        {
+          "opponent": "WTTWS",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -237.5,
+          "oppRank": 41,
+          "oppRating": 1096.9
+        },
+        {
+          "opponent": "Overlake Owls",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -431.33,
+          "oppRank": 63,
+          "oppRating": 903.1
+        }
+      ]
+    },
+    {
+      "rank": 81,
+      "name": "East CO",
+      "rating": 719.7,
+      "wins": 2,
+      "losses": 4,
+      "pf": 44,
+      "pa": 58,
+      "games": [
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "13-8",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 150.47,
+          "oppRank": 105,
+          "oppRating": 374.0
+        },
+        {
+          "opponent": "Fairview",
+          "result": "L",
+          "score": "7-8",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 243.43,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -63.6,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "4-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 137.37,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -371.19,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Monarch Fun A",
+          "result": "W",
+          "score": "11-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -96.48,
+          "oppRank": 105,
+          "oppRating": 374.0
+        }
+      ]
+    },
+    {
+      "rank": 82,
+      "name": "Stewart's Creek",
+      "rating": 714.8,
+      "wins": 2,
+      "losses": 3,
+      "pf": 28,
+      "pa": 51,
+      "games": [
+        {
+          "opponent": "McCallie",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -309.23,
+          "oppRank": 51,
+          "oppRating": 1005.6
+        },
+        {
+          "opponent": "USN",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 453.41,
+          "oppRank": 89,
+          "oppRating": 568.2
+        },
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 94.84,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "HFC",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -260.67,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "Ravenwood",
+          "result": "W",
+          "score": "8-7",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 21.65,
+          "oppRank": 88,
+          "oppRating": 611.5
+        }
+      ]
+    },
+    {
+      "rank": 83,
+      "name": "Lincoln Lynx",
+      "rating": 710.6,
+      "wins": 1,
+      "losses": 2,
+      "pf": 26,
+      "pa": 31,
+      "games": [
+        {
+          "opponent": "Cleveland HS",
+          "result": "W",
+          "score": "13-5",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 67.71,
+          "oppRank": 111,
+          "oppRating": 178.4
+        },
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -271.88,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        },
+        {
+          "opponent": "South Eugene",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 204.18,
+          "oppRank": 15,
+          "oppRating": 1411.0
+        }
+      ]
+    },
+    {
+      "rank": 84,
+      "name": "Impulse",
+      "rating": 687.7,
+      "wins": 0,
+      "losses": 4,
+      "pf": 30,
+      "pa": 53,
+      "games": [
+        {
+          "opponent": "HB Woodlawn",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 6.97,
+          "oppRank": 24,
+          "oppRating": 1294.7
+        },
+        {
+          "opponent": "Wissahickon",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": 338.52,
+          "oppRank": 7,
+          "oppRating": 1626.2
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 355.21,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -4.39,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "WACC",
+          "result": "L",
+          "score": "4-7",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -357.41,
+          "oppRank": 71,
+          "oppRating": 826.5
+        }
+      ]
+    },
+    {
+      "rank": 85,
+      "name": "Garfield HS",
+      "rating": 663.5,
+      "wins": 0,
+      "losses": 2,
+      "pf": 21,
+      "pa": 23,
+      "games": [
+        {
+          "opponent": "Horned Haze",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 185.58,
+          "oppRank": 56,
+          "oppRating": 974.0
+        },
+        {
+          "opponent": "Lincoln Lynx V2",
+          "result": "L",
+          "score": "10-11",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 237.5,
+          "oppRank": 50,
+          "oppRating": 1026.0
+        }
+      ]
+    },
+    {
+      "rank": 86,
+      "name": "Hampton",
+      "rating": 654.6,
+      "wins": 1,
+      "losses": 3,
+      "pf": 27,
+      "pa": 63,
+      "games": [
+        {
+          "opponent": "Lexington",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 365.43,
+          "oppRank": 8,
+          "oppRating": 1620.1
+        },
+        {
+          "opponent": "Jackson-Reed",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": 278.94,
+          "oppRank": 10,
+          "oppRating": 1533.6
+        },
+        {
+          "opponent": "SLA",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -84.06,
+          "oppRank": 36,
+          "oppRating": 1170.6
+        },
+        {
+          "opponent": "JR Masterman",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -278.94,
+          "oppRank": 55,
+          "oppRating": 975.7
+        },
+        {
+          "opponent": "Bethesda CC",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -2.07,
+          "oppRank": 92,
+          "oppRating": 527.6
+        }
+      ]
+    },
+    {
+      "rank": 87,
+      "name": "Bardbarians",
+      "rating": 624.1,
+      "wins": 1,
+      "losses": 0,
+      "pf": 24,
+      "pa": 36,
+      "games": [
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": true,
+          "effect": 603.75,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "6-15",
+          "tournament": "Battle of the Hudson",
+          "ignored": true,
+          "effect": 68.03,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "HSMSE Dragons",
+          "result": "W",
+          "score": "15-8",
+          "tournament": "HSL Spring League",
+          "ignored": false,
+          "effect": -8.81,
+          "oppRank": null,
+          "oppRating": 50.5
+        }
+      ]
+    },
+    {
+      "rank": 88,
+      "name": "Ravenwood",
+      "rating": 611.5,
+      "wins": 1,
+      "losses": 4,
+      "pf": 32,
+      "pa": 49,
+      "games": [
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -272.02,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "HFC",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -53.48,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "Nolensville",
+          "result": "W",
+          "score": "7-4",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 95.66,
+          "oppRank": 108,
+          "oppRating": 211.0
+        },
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 251.49,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "Stewart's Creek",
+          "result": "L",
+          "score": "7-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -21.65,
+          "oppRank": 82,
+          "oppRating": 714.8
+        }
+      ]
+    },
+    {
+      "rank": 89,
+      "name": "USN",
+      "rating": 568.2,
+      "wins": 2,
+      "losses": 6,
+      "pf": 61,
+      "pa": 101,
+      "games": [
+        {
+          "opponent": "Parkway",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": 241.42,
+          "oppRank": 16,
+          "oppRating": 1409.7
+        },
+        {
+          "opponent": "Stewart's Creek",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -453.41,
+          "oppRank": 82,
+          "oppRating": 714.8
+        },
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "9-10",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 246.22,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "Nolensville",
+          "result": "W",
+          "score": "8-3",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 242.74,
+          "oppRank": 108,
+          "oppRating": 211.0
+        },
+        {
+          "opponent": "Independence",
+          "result": "L",
+          "score": "7-9",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -35.54,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "Maynard Jackson",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -3.1,
+          "oppRank": 61,
+          "oppRating": 930.8
+        },
+        {
+          "opponent": "Lakeside ATL",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": 530.98,
+          "oppRank": 4,
+          "oppRating": 1699.2
+        },
+        {
+          "opponent": "Druid Hills",
+          "result": "L",
+          "score": "5-10",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 8.73,
+          "oppRank": 37,
+          "oppRating": 1150.9
+        },
+        {
+          "opponent": "Asheville",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -12.94,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "DHS Open Varsity",
+          "result": "W",
+          "score": "9-8",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 7.31,
+          "oppRank": 99,
+          "oppRating": 450.5
+        }
+      ]
+    },
+    {
+      "rank": 90,
+      "name": "Aura Open",
+      "rating": 564.6,
+      "wins": 1,
+      "losses": 3,
+      "pf": 13,
+      "pa": 39,
+      "games": [
+        {
+          "opponent": "7H Blue",
+          "result": "L",
+          "score": "4-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -284.06,
+          "oppRank": 64,
+          "oppRating": 880.5
+        },
+        {
+          "opponent": "RCU A SEA",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -89.23,
+          "oppRank": 44,
+          "oppRating": 1075.4
+        },
+        {
+          "opponent": "Lincoln",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 48.15,
+          "oppRank": 32,
+          "oppRating": 1212.7
+        },
+        {
+          "opponent": "RCU C",
+          "result": "W",
+          "score": "9-6",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 325.14,
+          "oppRank": 98,
+          "oppRating": 471.1
+        }
+      ]
+    },
+    {
+      "rank": 91,
+      "name": "Stuyvesant",
+      "rating": 533.1,
+      "wins": 5,
+      "losses": 6,
+      "pf": 93,
+      "pa": 125,
+      "games": [
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Fall Flock 2025",
+          "ignored": true,
+          "effect": 694.73,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Bard",
+          "result": "L",
+          "score": "6-10",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -82.87,
+          "oppRank": 59,
+          "oppRating": 946.4
+        },
+        {
+          "opponent": "Montclair",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": 159.01,
+          "oppRank": 25,
+          "oppRating": 1292.1
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "8-7",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -216.45,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Fall Flock 2025",
+          "ignored": false,
+          "effect": -442.29,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 19.66,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "W",
+          "score": "9-3",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": 757.71,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "L",
+          "score": "9-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -260.86,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-10",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -13.31,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "7-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -41.71,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Bronx Science",
+          "result": "W",
+          "score": "12-10",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 122.32,
+          "oppRank": 102,
+          "oppRating": 417.3
+        },
+        {
+          "opponent": "Hunter",
+          "result": "W",
+          "score": "12-11",
+          "tournament": "HSL Spring League",
+          "ignored": false,
+          "effect": -0.1,
+          "oppRank": 103,
+          "oppRating": 408.0
+        }
+      ]
+    },
+    {
+      "rank": 92,
+      "name": "Bethesda CC",
+      "rating": 527.6,
+      "wins": 0,
+      "losses": 3,
+      "pf": 25,
+      "pa": 64,
+      "games": [
+        {
+          "opponent": "Brooklyn Tech",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": 616.75,
+          "oppRank": 3,
+          "oppRating": 1744.3
+        },
+        {
+          "opponent": "Strath Haven",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": 188.16,
+          "oppRank": 23,
+          "oppRating": 1315.7
+        },
+        {
+          "opponent": "Lower Merion",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -160.57,
+          "oppRank": 57,
+          "oppRating": 967.0
+        },
+        {
+          "opponent": "South Lakes",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 158.78,
+          "oppRank": 34,
+          "oppRating": 1182.5
+        },
+        {
+          "opponent": "Hampton",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 2.07,
+          "oppRank": 86,
+          "oppRating": 654.6
+        }
+      ]
+    },
+    {
+      "rank": 93,
+      "name": "Lakeside",
+      "rating": 516.7,
+      "wins": 0,
+      "losses": 1,
+      "pf": 4,
+      "pa": 13,
+      "games": [
+        {
+          "opponent": "Eastside Prep",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 7.05,
+          "oppRank": 39,
+          "oppRating": 1123.7
+        }
+      ]
+    },
+    {
+      "rank": 94,
+      "name": "OWLC",
+      "rating": 511.2,
+      "wins": 2,
+      "losses": 3,
+      "pf": 26,
+      "pa": 33,
+      "games": [
+        {
+          "opponent": "Mounds View White",
+          "result": "W",
+          "score": "5-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -9.01,
+          "oppRank": 104,
+          "oppRating": 377.2
+        },
+        {
+          "opponent": "Woodbury",
+          "result": "L",
+          "score": "5-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -131.73,
+          "oppRank": 70,
+          "oppRating": 833.1
+        },
+        {
+          "opponent": "South Squall",
+          "result": "L",
+          "score": "3-10",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 61.84,
+          "oppRank": 35,
+          "oppRating": 1173.1
+        },
+        {
+          "opponent": "SLP Open Varsity",
+          "result": "L",
+          "score": "4-6",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -127.47,
+          "oppRank": 76,
+          "oppRating": 749.4
+        },
+        {
+          "opponent": "WBL Bears Y",
+          "result": "W",
+          "score": "9-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 205.01,
+          "oppRank": 110,
+          "oppRating": 187.2
+        }
+      ]
+    },
+    {
+      "rank": 95,
+      "name": "Whitman",
+      "rating": 508.9,
+      "wins": 2,
+      "losses": 3,
+      "pf": 34,
+      "pa": 53,
+      "games": [
+        {
+          "opponent": "Watchung Hills",
+          "result": "W",
+          "score": "10-6",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 356.59,
+          "oppRank": 107,
+          "oppRating": 369.3
+        },
+        {
+          "opponent": "South Lakes",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 73.58,
+          "oppRank": 34,
+          "oppRating": 1182.5
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -59.96,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "11-8",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 48.37,
+          "oppRank": null,
+          "oppRating": 191.7
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -418.08,
+          "oppRank": null,
+          "oppRating": 690.8
+        }
+      ]
+    },
+    {
+      "rank": 96,
+      "name": "WBL Bears X",
+      "rating": 507.8,
+      "wins": 2,
+      "losses": 3,
+      "pf": 32,
+      "pa": 30,
+      "games": [
+        {
+          "opponent": "St. Paul Central",
+          "result": "L",
+          "score": "4-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -82.34,
+          "oppRank": 53,
+          "oppRating": 990.3
+        },
+        {
+          "opponent": "Providence Academy",
+          "result": "W",
+          "score": "12-1",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 238.56,
+          "oppRank": 112,
+          "oppRating": 146.4
+        },
+        {
+          "opponent": "Edina Varsity",
+          "result": "L",
+          "score": "5-10",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -78.6,
+          "oppRank": 52,
+          "oppRating": 1003.1
+        },
+        {
+          "opponent": "WBL Bears Y",
+          "result": "W",
+          "score": "7-4",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 175.56,
+          "oppRank": 110,
+          "oppRating": 187.2
+        },
+        {
+          "opponent": "SLP Open Varsity",
+          "result": "L",
+          "score": "4-7",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -254.58,
+          "oppRank": 76,
+          "oppRating": 749.4
+        }
+      ]
+    },
+    {
+      "rank": 97,
+      "name": "Hopkins MMP",
+      "rating": 483.1,
+      "wins": 2,
+      "losses": 2,
+      "pf": 30,
+      "pa": 31,
+      "games": [
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": 713.2,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Mounds View Green",
+          "result": "L",
+          "score": "4-9",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -337.48,
+          "oppRank": 77,
+          "oppRating": 745.7
+        },
+        {
+          "opponent": "WBL Bears Y",
+          "result": "L",
+          "score": "5-6",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -420.95,
+          "oppRank": 110,
+          "oppRating": 187.2
+        },
+        {
+          "opponent": "Providence Academy",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 263.21,
+          "oppRank": 112,
+          "oppRating": 146.4
+        },
+        {
+          "opponent": "Mounds View White",
+          "result": "W",
+          "score": "8-3",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 494.08,
+          "oppRank": 104,
+          "oppRating": 377.2
+        }
+      ]
+    },
+    {
+      "rank": 98,
+      "name": "RCU C",
+      "rating": 471.1,
+      "wins": 0,
+      "losses": 4,
+      "pf": 10,
+      "pa": 42,
+      "games": [
+        {
+          "opponent": "Lincoln",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 141.58,
+          "oppRank": 32,
+          "oppRating": 1212.7
+        },
+        {
+          "opponent": "Gold Rush",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 374.19,
+          "oppRank": 13,
+          "oppRating": 1445.3
+        },
+        {
+          "opponent": "7H Blue",
+          "result": "L",
+          "score": "4-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -190.63,
+          "oppRank": 64,
+          "oppRating": 880.5
+        },
+        {
+          "opponent": "Aura Open",
+          "result": "L",
+          "score": "6-9",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -325.14,
+          "oppRank": 90,
+          "oppRating": 564.6
+        }
+      ]
+    },
+    {
+      "rank": 99,
+      "name": "DHS Open Varsity",
+      "rating": 450.5,
+      "wins": 0,
+      "losses": 3,
+      "pf": 24,
+      "pa": 59,
+      "games": [
+        {
+          "opponent": "Midtown",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": 299.08,
+          "oppRank": 20,
+          "oppRating": 1349.6
+        },
+        {
+          "opponent": "Jordan",
+          "result": "L",
+          "score": "4-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": true,
+          "effect": 320.85,
+          "oppRank": 19,
+          "oppRating": 1371.4
+        },
+        {
+          "opponent": "Forsyth Central",
+          "result": "L",
+          "score": "7-11",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": 9.86,
+          "oppRank": 62,
+          "oppRating": 927.3
+        },
+        {
+          "opponent": "Paideia",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -2.55,
+          "oppRank": 48,
+          "oppRating": 1048.0
+        },
+        {
+          "opponent": "USN",
+          "result": "L",
+          "score": "8-9",
+          "tournament": "ATL HS Terminus",
+          "ignored": false,
+          "effect": -7.31,
+          "oppRank": 89,
+          "oppRating": 568.2
+        }
+      ]
+    },
+    {
+      "rank": 100,
+      "name": "RCU B",
+      "rating": 442.7,
+      "wins": 0,
+      "losses": 3,
+      "pf": 9,
+      "pa": 33,
+      "games": [
+        {
+          "opponent": "7H Red",
+          "result": "L",
+          "score": "0-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": 228.45,
+          "oppRank": 26,
+          "oppRating": 1271.1
+        },
+        {
+          "opponent": "Blitz Open",
+          "result": "L",
+          "score": "4-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -224.52,
+          "oppRank": 72,
+          "oppRating": 818.2
+        },
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Emerald City Challenge 2026",
+          "ignored": false,
+          "effect": -3.93,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        }
+      ]
+    },
+    {
+      "rank": 101,
+      "name": "Athens Drive",
+      "rating": 436.6,
+      "wins": 0,
+      "losses": 4,
+      "pf": 28,
+      "pa": 59,
+      "games": [
+        {
+          "opponent": "Chapel Hill",
+          "result": "L",
+          "score": "1-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": true,
+          "effect": 528.0,
+          "oppRank": 9,
+          "oppRating": 1564.6
+        },
+        {
+          "opponent": "Asheville",
+          "result": "L",
+          "score": "6-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -178.76,
+          "oppRank": 74,
+          "oppRating": 804.5
+        },
+        {
+          "opponent": "JT Williams",
+          "result": "L",
+          "score": "7-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 74.16,
+          "oppRank": 54,
+          "oppRating": 977.6
+        },
+        {
+          "opponent": "NCSSM+DSA",
+          "result": "L",
+          "score": "8-11",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": 336.65,
+          "oppRank": 38,
+          "oppRating": 1138.8
+        },
+        {
+          "opponent": "Asheville",
+          "result": "L",
+          "score": "6-15",
+          "tournament": "NC HS Boys State Championship",
+          "ignored": false,
+          "effect": -232.06,
+          "oppRank": 74,
+          "oppRating": 804.5
+        }
+      ]
+    },
+    {
+      "rank": 102,
+      "name": "Bronx Science",
+      "rating": 417.3,
+      "wins": 1,
+      "losses": 4,
+      "pf": 47,
+      "pa": 67,
+      "games": [
+        {
+          "opponent": "Columbia",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": true,
+          "effect": 810.54,
+          "oppRank": 1,
+          "oppRating": 1827.9
+        },
+        {
+          "opponent": "Brooklyn Tech B",
+          "result": "W",
+          "score": "13-4",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -0.1,
+          "oppRank": null,
+          "oppRating": -182.8
+        },
+        {
+          "opponent": "Bergen Ultimate",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "Halloween Havoc 2025",
+          "ignored": false,
+          "effect": -275.42,
+          "oppRank": 78,
+          "oppRating": 741.9
+        },
+        {
+          "opponent": "Beacon",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": 199.18,
+          "oppRank": 79,
+          "oppRating": 741.5
+        },
+        {
+          "opponent": "Stuyvesant",
+          "result": "L",
+          "score": "10-12",
+          "tournament": "Battle of the Hudson",
+          "ignored": false,
+          "effect": -122.32,
+          "oppRank": 91,
+          "oppRating": 533.1
+        },
+        {
+          "opponent": "Beacon",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "HSL Spring League",
+          "ignored": false,
+          "effect": 199.18,
+          "oppRank": 79,
+          "oppRating": 741.5
+        }
+      ]
+    },
+    {
+      "rank": 103,
+      "name": "Hunter",
+      "rating": 408.0,
+      "wins": 0,
+      "losses": 1,
+      "pf": 11,
+      "pa": 12,
+      "games": [
+        {
+          "opponent": "Stuyvesant",
+          "result": "L",
+          "score": "11-12",
+          "tournament": "HSL Spring League",
+          "ignored": false,
+          "effect": 0.1,
+          "oppRank": 91,
+          "oppRating": 533.1
+        }
+      ]
+    },
+    {
+      "rank": 104,
+      "name": "Mounds View White",
+      "rating": 377.2,
+      "wins": 1,
+      "losses": 4,
+      "pf": 27,
+      "pa": 36,
+      "games": [
+        {
+          "opponent": "OWLC",
+          "result": "L",
+          "score": "4-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 9.01,
+          "oppRank": 94,
+          "oppRating": 511.2
+        },
+        {
+          "opponent": "South Squall",
+          "result": "L",
+          "score": "2-12",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 195.85,
+          "oppRank": 35,
+          "oppRating": 1173.1
+        },
+        {
+          "opponent": "Woodbury",
+          "result": "L",
+          "score": "5-11",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -144.12,
+          "oppRank": 70,
+          "oppRating": 833.1
+        },
+        {
+          "opponent": "SLP Panthers",
+          "result": "W",
+          "score": "13-0",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 431.97,
+          "oppRank": 109,
+          "oppRating": 209.2
+        },
+        {
+          "opponent": "Hopkins MMP",
+          "result": "L",
+          "score": "3-8",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -494.08,
+          "oppRank": 97,
+          "oppRating": 483.1
+        }
+      ]
+    },
+    {
+      "rank": 105,
+      "name": "Monarch Fun A",
+      "rating": 374.0,
+      "wins": 0,
+      "losses": 3,
+      "pf": 31,
+      "pa": 70,
+      "games": [
+        {
+          "opponent": "East CO",
+          "result": "L",
+          "score": "8-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": -150.47,
+          "oppRank": 81,
+          "oppRating": 719.7
+        },
+        {
+          "opponent": "Lafayette B",
+          "result": "L",
+          "score": "7-12",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 53.99,
+          "oppRank": 58,
+          "oppRating": 948.5
+        },
+        {
+          "opponent": "Northfield JV",
+          "result": "L",
+          "score": "3-13",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": 483.06,
+          "oppRank": 12,
+          "oppRating": 1457.1
+        },
+        {
+          "opponent": "Fairview",
+          "result": "L",
+          "score": "2-9",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": 114.12,
+          "oppRank": 42,
+          "oppRating": 1088.2
+        },
+        {
+          "opponent": "Fort Collins Club",
+          "result": "L",
+          "score": "2-12",
+          "tournament": "Monarch Invite 2025",
+          "ignored": true,
+          "effect": 282.09,
+          "oppRank": 29,
+          "oppRating": 1256.1
+        },
+        {
+          "opponent": "East CO",
+          "result": "L",
+          "score": "9-11",
+          "tournament": "Monarch Invite 2025",
+          "ignored": false,
+          "effect": 96.48,
+          "oppRank": 81,
+          "oppRating": 719.7
+        }
+      ]
+    },
+    {
+      "rank": 106,
+      "name": "Franklin Varsity",
+      "rating": 371.1,
+      "wins": 1,
+      "losses": 1,
+      "pf": 19,
+      "pa": 25,
+      "games": [
+        {
+          "opponent": "Roosevelt SEA",
+          "result": "L",
+          "score": "6-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 67.71,
+          "oppRank": 49,
+          "oppRating": 1038.8
+        },
+        {
+          "opponent": "Cleveland HS",
+          "result": "W",
+          "score": "13-12",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -67.71,
+          "oppRank": 111,
+          "oppRating": 178.4
+        }
+      ]
+    },
+    {
+      "rank": 107,
+      "name": "Watchung Hills",
+      "rating": 369.3,
+      "wins": 1,
+      "losses": 3,
+      "pf": 27,
+      "pa": 51,
+      "games": [
+        {
+          "opponent": "Whitman",
+          "result": "L",
+          "score": "6-10",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -356.59,
+          "oppRank": 95,
+          "oppRating": 508.9
+        },
+        {
+          "opponent": "Westfield",
+          "result": "L",
+          "score": "4-12",
+          "tournament": "Coconut Classic 2025",
+          "ignored": true,
+          "effect": 79.61,
+          "oppRank": 47,
+          "oppRating": 1048.9
+        },
+        {
+          "opponent": "South Lakes",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 213.16,
+          "oppRank": 34,
+          "oppRating": 1182.5
+        },
+        {
+          "opponent": "Columbia JV",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": -278.5,
+          "oppRank": null,
+          "oppRating": 690.8
+        },
+        {
+          "opponent": "Montclair JV",
+          "result": "W",
+          "score": "13-3",
+          "tournament": "Coconut Classic 2025",
+          "ignored": false,
+          "effect": 422.34,
+          "oppRank": null,
+          "oppRating": 191.7
+        }
+      ]
+    },
+    {
+      "rank": 108,
+      "name": "Nolensville",
+      "rating": 211.0,
+      "wins": 0,
+      "losses": 3,
+      "pf": 20,
+      "pa": 50,
+      "games": [
+        {
+          "opponent": "Independence",
+          "result": "L",
+          "score": "8-10",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": 338.4,
+          "oppRank": 73,
+          "oppRating": 812.0
+        },
+        {
+          "opponent": "HFC",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": 243.18,
+          "oppRank": 46,
+          "oppRating": 1054.2
+        },
+        {
+          "opponent": "Pi",
+          "result": "L",
+          "score": "5-12",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": true,
+          "effect": 128.48,
+          "oppRank": 60,
+          "oppRating": 939.5
+        },
+        {
+          "opponent": "Ravenwood",
+          "result": "L",
+          "score": "4-7",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -95.66,
+          "oppRank": 88,
+          "oppRating": 611.5
+        },
+        {
+          "opponent": "USN",
+          "result": "L",
+          "score": "3-8",
+          "tournament": "Muletown Throwdown 2026",
+          "ignored": false,
+          "effect": -242.74,
+          "oppRank": 89,
+          "oppRating": 568.2
+        }
+      ]
+    },
+    {
+      "rank": 109,
+      "name": "SLP Panthers",
+      "rating": 209.2,
+      "wins": 0,
+      "losses": 4,
+      "pf": 3,
+      "pa": 52,
+      "games": [
+        {
+          "opponent": "Washburn Open",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 431.82,
+          "oppRank": 31,
+          "oppRating": 1241.0
+        },
+        {
+          "opponent": "Great River School",
+          "result": "L",
+          "score": "2-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 58.97,
+          "oppRank": 66,
+          "oppRating": 868.2
+        },
+        {
+          "opponent": "SLP Open Varsity",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -59.83,
+          "oppRank": 76,
+          "oppRating": 749.4
+        },
+        {
+          "opponent": "Mounds View White",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -431.97,
+          "oppRank": 104,
+          "oppRating": 377.2
+        }
+      ]
+    },
+    {
+      "rank": 110,
+      "name": "WBL Bears Y",
+      "rating": 187.2,
+      "wins": 1,
+      "losses": 3,
+      "pf": 16,
+      "pa": 47,
+      "games": [
+        {
+          "opponent": "Mounds View Green",
+          "result": "L",
+          "score": "1-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -41.52,
+          "oppRank": 77,
+          "oppRating": 745.7
+        },
+        {
+          "opponent": "Middleton",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": true,
+          "effect": 1009.16,
+          "oppRank": 2,
+          "oppRating": 1796.4
+        },
+        {
+          "opponent": "Hopkins MMP",
+          "result": "W",
+          "score": "6-5",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 420.95,
+          "oppRank": 97,
+          "oppRating": 483.1
+        },
+        {
+          "opponent": "WBL Bears X",
+          "result": "L",
+          "score": "4-7",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -175.56,
+          "oppRank": 96,
+          "oppRating": 507.8
+        },
+        {
+          "opponent": "OWLC",
+          "result": "L",
+          "score": "5-9",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -205.01,
+          "oppRank": 94,
+          "oppRating": 511.2
+        }
+      ]
+    },
+    {
+      "rank": 111,
+      "name": "Cleveland HS",
+      "rating": 178.4,
+      "wins": 0,
+      "losses": 2,
+      "pf": 17,
+      "pa": 26,
+      "games": [
+        {
+          "opponent": "Lincoln Lynx",
+          "result": "L",
+          "score": "5-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": -67.71,
+          "oppRank": 83,
+          "oppRating": 710.6
+        },
+        {
+          "opponent": "Franklin Varsity",
+          "result": "L",
+          "score": "12-13",
+          "tournament": "HS Bx Seattle Invite",
+          "ignored": false,
+          "effect": 67.71,
+          "oppRank": 106,
+          "oppRating": 371.1
+        }
+      ]
+    },
+    {
+      "rank": 112,
+      "name": "Providence Academy",
+      "rating": 146.4,
+      "wins": 0,
+      "losses": 4,
+      "pf": 3,
+      "pa": 48,
+      "games": [
+        {
+          "opponent": "Edina Varsity",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 256.73,
+          "oppRank": 52,
+          "oppRating": 1003.1
+        },
+        {
+          "opponent": "WBL Bears X",
+          "result": "L",
+          "score": "1-12",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -238.56,
+          "oppRank": 96,
+          "oppRating": 507.8
+        },
+        {
+          "opponent": "St. Paul Central",
+          "result": "L",
+          "score": "2-10",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": 243.91,
+          "oppRank": 53,
+          "oppRating": 990.3
+        },
+        {
+          "opponent": "Hopkins MMP",
+          "result": "L",
+          "score": "0-13",
+          "tournament": "Crushtober 2025",
+          "ignored": false,
+          "effect": -263.21,
+          "oppRank": 97,
+          "oppRating": 483.1
+        }
+      ]
+    }
+  ]
+}
