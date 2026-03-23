@@ -8,18 +8,7 @@ import type { Game, GameEvent } from '@scorebot/shared';
 import { EventType } from '@scorebot/shared';
 
 export function isBreakScore(event: GameEvent, allEvents: GameEvent[], game: Game): boolean {
-  // Find the previous goal event
   const eventIndex = allEvents.findIndex(e => e.id === event.id);
-
-  // For the first goal, check if we have startingOnOffense info
-  if (eventIndex === 0) {
-    if (game.startingOnOffense !== undefined && event.team === 'us') {
-      // If we started on offense and we scored first, it's a hold
-      // If we started on defense and we scored first, it's a break
-      return !game.startingOnOffense;
-    }
-    return false; // Can't determine without more info
-  }
 
   // Look backwards for the previous goal, checking if halftime occurred in between
   let crossedHalftime = false;
@@ -29,11 +18,21 @@ export function isBreakScore(event: GameEvent, allEvents: GameEvent[], game: Gam
       crossedHalftime = true;
     }
     if (prevEvent.type === EventType.GOAL && prevEvent.team) {
+      if (crossedHalftime && game.startingOnOffense !== undefined && event.team) {
+        // After halftime, the team that received first now pulls (switches to D).
+        // So break = scoring team is the one that started on O (now on D after half).
+        return (event.team === 'us') === game.startingOnOffense;
+      }
       // Same team scoring consecutively = break (they were on defense after pull)
-      // But if halftime occurred, receiving team flips, so same team = hold
       const sameTeam = prevEvent.team === event.team;
-      return crossedHalftime ? !sameTeam : sameTeam;
+      return sameTeam;
     }
+  }
+
+  // No previous goal found — this is the first goal of the game
+  if (game.startingOnOffense !== undefined && event.team) {
+    const weOnOffense = crossedHalftime ? !game.startingOnOffense : game.startingOnOffense;
+    return event.team === 'us' ? !weOnOffense : weOnOffense;
   }
 
   return false;
