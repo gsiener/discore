@@ -18,12 +18,17 @@ class StatsApp {
   private games: GameSummary[] = [];
   private currentGameId: string | null = null;
   private currentTournament: string | null = null;
+  private currentPlayers: any[] = [];
+  private currentIsAggregated: boolean = false;
+  private sortColumn: string = 'goals';
+  private sortAscending: boolean = false;
 
   constructor() {
     this.init();
   }
 
   async init() {
+    this.setupSortHeaders();
     await this.loadGames();
     this.setupEventListeners();
     this.loadStats();
@@ -236,10 +241,61 @@ class StatsApp {
     }
   }
 
+  private setupSortHeaders() {
+    const columns = [
+      { key: 'name', index: 0 },
+      { key: 'goals', index: 1 },
+      { key: 'assists', index: 2 },
+      { key: 'blocks', index: 3 },
+      { key: 'steals', index: 4 },
+      { key: 'pointsPlayed', index: 5 },
+      { key: 'plusMinus', index: 6 },
+      { key: 'goalsPerGame', index: 7 },
+      { key: 'assistsPerGame', index: 8 },
+    ];
+
+    const headers = document.querySelectorAll('#player-stats-table thead th');
+    headers.forEach((th, i) => {
+      const col = columns[i];
+      if (!col) return;
+      (th as HTMLElement).style.cursor = 'pointer';
+      (th as HTMLElement).dataset.sortKey = col.key;
+      th.addEventListener('click', () => {
+        if (this.sortColumn === col.key) {
+          this.sortAscending = !this.sortAscending;
+        } else {
+          this.sortColumn = col.key;
+          this.sortAscending = col.key === 'name';
+        }
+        this.renderPlayerStatsTable(this.currentPlayers, this.currentIsAggregated);
+      });
+    });
+  }
+
+  private updateSortIndicators() {
+    const headers = document.querySelectorAll('#player-stats-table thead th');
+    headers.forEach(th => {
+      const el = th as HTMLElement;
+      const key = el.dataset.sortKey;
+      // Remove old indicator
+      const old = el.querySelector('.sort-indicator');
+      if (old) old.remove();
+      if (key === this.sortColumn) {
+        const indicator = document.createElement('span');
+        indicator.className = 'sort-indicator';
+        indicator.textContent = this.sortAscending ? ' \u25B2' : ' \u25BC';
+        el.appendChild(indicator);
+      }
+    });
+  }
+
   private renderPlayerStatsTable(
     players: any[],
     isAggregated: boolean
   ) {
+    this.currentPlayers = players;
+    this.currentIsAggregated = isAggregated;
+
     const tbody = document.querySelector('#player-stats-table tbody');
     if (!tbody) return;
 
@@ -256,7 +312,21 @@ class StatsApp {
       return;
     }
 
-    players.forEach(player => {
+    // Sort players
+    const sorted = [...players].sort((a, b) => {
+      const key = this.sortColumn;
+      let aVal = a[key];
+      let bVal = b[key];
+      if (typeof aVal === 'string') {
+        const cmp = aVal.localeCompare(bVal);
+        return this.sortAscending ? cmp : -cmp;
+      }
+      return this.sortAscending ? aVal - bVal : bVal - aVal;
+    });
+
+    this.updateSortIndicators();
+
+    sorted.forEach(player => {
       const row = document.createElement('tr');
 
       // Name
