@@ -243,29 +243,22 @@ class StatsApp {
 
   private setupSortHeaders() {
     const columns = [
-      { key: 'name', index: 0 },
-      { key: 'goals', index: 1 },
-      { key: 'assists', index: 2 },
-      { key: 'blocks', index: 3 },
-      { key: 'steals', index: 4 },
-      { key: 'pointsPlayed', index: 5 },
-      { key: 'plusMinus', index: 6 },
-      { key: 'goalsPerGame', index: 7 },
-      { key: 'assistsPerGame', index: 8 },
+      'name', 'goals', 'assists', 'blocks', 'steals',
+      'pointsPlayed', 'plusMinus', 'goalsPerGame', 'assistsPerGame',
     ];
 
     const headers = document.querySelectorAll('#player-stats-table thead th');
     headers.forEach((th, i) => {
-      const col = columns[i];
-      if (!col) return;
+      const key = columns[i];
+      if (!key) return;
       (th as HTMLElement).style.cursor = 'pointer';
-      (th as HTMLElement).dataset.sortKey = col.key;
+      (th as HTMLElement).dataset.sortKey = key;
       th.addEventListener('click', () => {
-        if (this.sortColumn === col.key) {
+        if (this.sortColumn === key) {
           this.sortAscending = !this.sortAscending;
         } else {
-          this.sortColumn = col.key;
-          this.sortAscending = col.key === 'name';
+          this.sortColumn = key;
+          this.sortAscending = key === 'name';
         }
         this.renderPlayerStatsTable(this.currentPlayers, this.currentIsAggregated);
       });

@@ -86,9 +86,11 @@ export function calculateLineStats(game: Game): LineStats | null {
     return null;
   }
 
-  const goalEvents = game.events.filter(e => e.type === EventType.GOAL);
+  const scoringEvents = game.events.filter(
+    e => e.type === EventType.GOAL || e.type === EventType.HALFTIME
+  );
 
-  if (goalEvents.length === 0) {
+  if (!scoringEvents.some(e => e.type === EventType.GOAL)) {
     return {
       oLinePoints: 0,
       oLineHolds: 0,
@@ -107,7 +109,13 @@ export function calculateLineStats(game: Game): LineStats | null {
   // Track who has possession at the start of each point
   let weHavePossession = game.startingOnOffense;
 
-  goalEvents.forEach((event) => {
+  scoringEvents.forEach((event) => {
+    // At halftime, the team that received first now pulls
+    if (event.type === EventType.HALFTIME) {
+      weHavePossession = !game.startingOnOffense;
+      return;
+    }
+
     // Determine if this is an O-line or D-line point for us
     if (weHavePossession) {
       // We're on offense
