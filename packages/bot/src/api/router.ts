@@ -102,6 +102,15 @@ export class Router {
         const gameId = this.getGameIdFromPath(path);
         response = await this.addEvent(gameId, request);
       }
+      // Delete specific event by ID
+      else if (
+        path.match(/^\/games\/[^/]+\/events\/[^/]+$/) &&
+        request.method === 'DELETE'
+      ) {
+        const gameId = this.getGameIdFromPath(path);
+        const eventId = path.split('/')[4];
+        response = await this.deleteEvent(gameId, eventId);
+      }
       // Undo last event
       else if (
         path.match(/^\/games\/[^/]+\/undo$/) &&
@@ -289,10 +298,12 @@ export class Router {
 
     const data = await response.json() as AddEventResponse;
 
-    // Save to database
-    await this.db.saveGame(data.game);
+    if (response.ok) {
+      await this.db.saveGame(data.game);
+    }
 
     return new Response(JSON.stringify(data), {
+      status: response.status,
       headers: { 'Content-Type': 'application/json' },
     });
   }
@@ -324,10 +335,43 @@ export class Router {
 
     const data = await response.json() as AddEventResponse;
 
-    // Update database
-    await this.db.saveGame(data.game);
+    if (response.ok) {
+      await this.db.saveGame(data.game);
+    }
 
     return new Response(JSON.stringify(data), {
+      status: response.status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async deleteEvent(gameId: string, eventId: string): Promise<Response> {
+    const game = await this.db.getGame(gameId);
+    if (!game || !game.chatId) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const stub = await this.ensureDOHydrated(game.chatId, game);
+    if (!stub) {
+      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
+        status: 500, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const response = await stub.fetch(
+      new Request(`https://fake-host/events/${eventId}`, { method: 'DELETE' })
+    );
+
+    const data = await response.json() as AddEventResponse;
+
+    if (response.ok) {
+      await this.db.saveGame(data.game);
+    }
+
+    return new Response(JSON.stringify(data), {
+      status: response.status,
       headers: { 'Content-Type': 'application/json' },
     });
   }

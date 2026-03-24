@@ -11,6 +11,7 @@ import {
   TeamSide,
   Score,
   generateId,
+  calculateScoreFromEvents,
   CreateGameRequest,
   CreateGameResponse,
   AddEventRequest,
@@ -80,6 +81,10 @@ export class GameState implements DurableObject {
         case 'DELETE':
           if (path === '/events/last') {
             return await this.undoLastEvent();
+          }
+          if (path.match(/^\/events\/[^/]+$/)) {
+            const eventId = path.split('/')[2];
+            return await this.deleteEvent(eventId);
           }
           break;
       }
@@ -287,35 +292,35 @@ export class GameState implements DurableObject {
     }
 
     const lastEvent = this.game.events.pop();
-
-    // Recalculate score from remaining events
-    this.game.score = { us: 0, them: 0 };
-    for (const event of this.game.events) {
-      if (event.type === EventType.GOAL && event.team) {
-        this.game.score[event.team]++;
-      }
-    }
-
-    // Update status based on remaining events
-    const lastRemainingEvent = this.game.events[this.game.events.length - 1];
-    if (lastRemainingEvent) {
-      if (lastRemainingEvent.type === EventType.HALFTIME) {
-        this.game.status = GameStatus.HALFTIME;
-      } else if (lastRemainingEvent.type === EventType.SECOND_HALF_START) {
-        this.game.status = GameStatus.SECOND_HALF;
-      } else if (lastRemainingEvent.type === EventType.GAME_START) {
-        this.game.status = GameStatus.FIRST_HALF;
-      }
-    } else {
-      this.game.status = GameStatus.NOT_STARTED;
-      this.game.startedAt = undefined;
-    }
-
-    this.game.updatedAt = Date.now();
+    this.recalculateGameState();
     await this.saveGame();
 
     return new Response(
       JSON.stringify({ game: this.game, undone: lastEvent }),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  private async deleteEvent(eventId: string): Promise<Response> {
+    if (!this.game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const idx = this.game.events.findIndex(e => e.id === eventId);
+    if (idx === -1) {
+      return new Response(JSON.stringify({ error: 'Event not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const [removed] = this.game.events.splice(idx, 1);
+    this.recalculateGameState();
+    await this.saveGame();
+
+    return new Response(
+      JSON.stringify({ game: this.game, deleted: removed }),
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -340,6 +345,31 @@ export class GameState implements DurableObject {
     return new Response(JSON.stringify({ game: this.game }), {
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  private recalculateGameState(): void {
+    if (!this.game) return;
+
+    this.game.score = calculateScoreFromEvents(this.game.events);
+
+    let status = GameStatus.NOT_STARTED;
+    this.game.startedAt = undefined;
+    this.game.finishedAt = undefined;
+    for (const event of this.game.events) {
+      if (event.type === EventType.GAME_START) {
+        status = GameStatus.FIRST_HALF;
+        this.game.startedAt = event.timestamp;
+      } else if (event.type === EventType.HALFTIME) {
+        status = GameStatus.HALFTIME;
+      } else if (event.type === EventType.SECOND_HALF_START) {
+        status = GameStatus.SECOND_HALF;
+      } else if (event.type === EventType.GAME_END) {
+        status = GameStatus.FINISHED;
+        this.game.finishedAt = event.timestamp;
+      }
+    }
+    this.game.status = status;
+    this.game.updatedAt = Date.now();
   }
 
   private async saveGame(): Promise<void> {
