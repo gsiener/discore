@@ -47,6 +47,11 @@ export interface GameEvent {
   defensivePlay?: 'block' | 'steal'; // For goals scored off defensive plays
 }
 
+export interface PointLineup {
+  pointNumber: number; // 1-indexed, corresponds to sequential goals
+  players: string[];   // Player names on the field for this point
+}
+
 export interface Game {
   id: string;
   status: GameStatus;
@@ -56,6 +61,7 @@ export interface Game {
   };
   score: Score;
   events: GameEvent[];
+  lineups?: PointLineup[]; // Per-point lineup data
   startedAt?: number; // Unix timestamp in milliseconds
   finishedAt?: number; // Unix timestamp in milliseconds
   chatId?: string; // WhatsApp chat ID
@@ -120,6 +126,14 @@ export interface AddEventRequest {
 
 export interface AddEventResponse {
   event: GameEvent;
+  game: Game;
+}
+
+export interface SetLineupsRequest {
+  lineups: PointLineup[];
+}
+
+export interface SetLineupsResponse {
   game: Game;
 }
 

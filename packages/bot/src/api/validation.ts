@@ -34,3 +34,15 @@ export const AddEventRequestSchema = z.object({
     })
     .optional(),
 });
+
+/**
+ * Schema for PUT /games/:id/lineups - Set lineups for a game
+ */
+export const PointLineupSchema = z.object({
+  pointNumber: z.number().int().positive(),
+  players: z.array(z.string().min(1)).min(1),
+});
+
+export const SetLineupsRequestSchema = z.object({
+  lineups: z.array(PointLineupSchema).min(1),
+});

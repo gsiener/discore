@@ -124,17 +124,33 @@ export class StatsCalculator {
       }
     }
 
-    // Calculate plus/minus for each player
-    this.calculatePlusMinus(playerMap, pointScores, game.score);
+    if (game.lineups && game.lineups.length > 0) {
+      // Authoritative calculation from lineup data
+      const goalEvents = game.events.filter(e => e.type === EventType.GOAL);
 
-    // Calculate points played (approximate from touches and appearances)
-    playerMap.forEach(stats => {
-      // Estimate: each goal/assist = 1 point, additional touches count as fractional points
-      stats.pointsPlayed = Math.min(
-        stats.goals + stats.assists + Math.floor(stats.touches / 2),
-        game.score.us + game.score.them // Cap at total points
-      );
-    });
+      for (const lineup of game.lineups) {
+        const goalEvent = goalEvents[lineup.pointNumber - 1];
+        if (!goalEvent) continue;
+
+        const scoreDiff = goalEvent.team === TeamSide.US ? 1 : -1;
+
+        for (const playerName of lineup.players) {
+          const stats = this.getOrCreatePlayerStats(playerMap, playerName);
+          stats.pointsPlayed++;
+          stats.plusMinus += scoreDiff;
+        }
+      }
+    } else {
+      // Fallback: heuristic from event mentions
+      this.calculatePlusMinus(playerMap, pointScores, game.score);
+
+      playerMap.forEach(stats => {
+        stats.pointsPlayed = Math.min(
+          stats.goals + stats.assists + Math.floor(stats.touches / 2),
+          game.score.us + game.score.them
+        );
+      });
+    }
 
     return Array.from(playerMap.values()).sort((a, b) => {
       // Sort by goals first, then assists

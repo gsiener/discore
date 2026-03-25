@@ -8,7 +8,7 @@ import { DatabaseService } from '../db/database';
 import { GameState } from '../durable-objects/GameState';
 import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse, GetAdvancedStatsResponse, GetAggregatedStatsResponse, Game } from '@scorebot/shared';
 import { StatsCalculator } from '../services/StatsCalculator';
-import { CreateGameRequestSchema, AddEventRequestSchema } from './validation';
+import { CreateGameRequestSchema, AddEventRequestSchema, SetLineupsRequestSchema } from './validation';
 
 export class Router {
   private db: DatabaseService;
@@ -101,6 +101,14 @@ export class Router {
       ) {
         const gameId = this.getGameIdFromPath(path);
         response = await this.addEvent(gameId, request);
+      }
+      // Set lineups for a game
+      else if (
+        path.match(/^\/games\/[^/]+\/lineups$/) &&
+        request.method === 'PUT'
+      ) {
+        const gameId = this.getGameIdFromPath(path);
+        response = await this.setLineups(gameId, request);
       }
       // Delete specific event by ID
       else if (
@@ -365,6 +373,49 @@ export class Router {
     );
 
     const data = await response.json() as AddEventResponse;
+
+    if (response.ok) {
+      await this.db.saveGame(data.game);
+    }
+
+    return new Response(JSON.stringify(data), {
+      status: response.status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async setLineups(gameId: string, request: Request): Promise<Response> {
+    const body = await request.json();
+    const parsed = SetLineupsRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const game = await this.db.getGame(gameId);
+    if (!game || !game.chatId) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const stub = await this.ensureDOHydrated(game.chatId, game);
+    if (!stub) {
+      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
+        status: 500, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const response = await stub.fetch(
+      new Request('https://fake-host/lineups', {
+        method: 'PATCH',
+        body: JSON.stringify(parsed.data),
+      })
+    );
+
+    const data = await response.json() as { game: Game };
 
     if (response.ok) {
       await this.db.saveGame(data.game);

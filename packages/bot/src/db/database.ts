@@ -18,8 +18,8 @@ export class DatabaseService {
           id, status, our_team_name, their_team_name,
           score_us, score_them, started_at, finished_at,
           chat_id, tournament_name, game_date, game_order,
-          starting_on_offense, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          starting_on_offense, lineups, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         game.id,
@@ -35,6 +35,7 @@ export class DatabaseService {
         game.gameDate || null,
         game.gameOrder || 0,
         game.startingOnOffense !== undefined ? (game.startingOnOffense ? 1 : 0) : null,
+        game.lineups ? JSON.stringify(game.lineups) : null,
         game.createdAt,
         game.updatedAt
       )
@@ -169,6 +170,7 @@ export class DatabaseService {
         parsedBy: row.parsed_by,
         defensivePlay: row.defensive_play,
       })),
+      lineups: gameRow.lineups ? JSON.parse(gameRow.lineups as string) : undefined,
       startedAt: gameRow.started_at,
       finishedAt: gameRow.finished_at,
       chatId: gameRow.chat_id,

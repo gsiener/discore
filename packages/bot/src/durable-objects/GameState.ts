@@ -16,6 +16,7 @@ import {
   CreateGameResponse,
   AddEventRequest,
   AddEventResponse,
+  SetLineupsRequest,
 } from '@scorebot/shared';
 import { Env } from '../types';
 
@@ -75,6 +76,9 @@ export class GameState implements DurableObject {
         case 'PATCH':
           if (path === '/update') {
             return await this.updateFields(request);
+          }
+          if (path === '/lineups') {
+            return await this.setLineups(request);
           }
           break;
 
@@ -339,6 +343,23 @@ export class GameState implements DurableObject {
       this.game.startingOnOffense = updates.startingOnOffense;
     }
 
+    this.game.updatedAt = Date.now();
+    await this.saveGame();
+
+    return new Response(JSON.stringify({ game: this.game }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private async setLineups(request: Request): Promise<Response> {
+    if (!this.game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404, headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { lineups } = await request.json() as SetLineupsRequest;
+    this.game.lineups = lineups;
     this.game.updatedAt = Date.now();
     await this.saveGame();
 
