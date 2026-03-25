@@ -181,6 +181,9 @@ class StatsApp {
     // Show stats view
     this.showStats();
 
+    // Hide per-game columns for single game view
+    this.togglePerGameColumns(false);
+
     // Render player stats
     this.renderPlayerStatsTable(stats.playerStats, false);
 
@@ -202,6 +205,9 @@ class StatsApp {
   ) {
     // Show stats view
     this.showStats();
+
+    // Show per-game columns for aggregated view
+    this.togglePerGameColumns(true);
 
     // Render player stats
     this.renderPlayerStatsTable(players, true);
@@ -239,6 +245,17 @@ class StatsApp {
     if (gameContextSection) {
       gameContextSection.classList.add('hidden');
     }
+  }
+
+  private togglePerGameColumns(show: boolean) {
+    const table = document.getElementById('player-stats-table');
+    if (!table) return;
+    const headers = table.querySelectorAll('thead th');
+    // G/Game and A/Game are the last two columns
+    const lastTwo = [headers[headers.length - 2], headers[headers.length - 1]];
+    lastTwo.forEach(th => {
+      if (th) (th as HTMLElement).classList.toggle('hidden', !show);
+    });
   }
 
   private setupSortHeaders() {
@@ -371,17 +388,6 @@ class StatsApp {
         assistsPerGameCell.className = 'mobile-hidden';
         assistsPerGameCell.textContent = player.assistsPerGame.toFixed(1);
         row.appendChild(assistsPerGameCell);
-      } else {
-        // Empty cells for non-aggregated
-        const emptyCell1 = document.createElement('td');
-        emptyCell1.className = 'mobile-hidden';
-        emptyCell1.textContent = '-';
-        row.appendChild(emptyCell1);
-
-        const emptyCell2 = document.createElement('td');
-        emptyCell2.className = 'mobile-hidden';
-        emptyCell2.textContent = '-';
-        row.appendChild(emptyCell2);
       }
 
       tbody.appendChild(row);

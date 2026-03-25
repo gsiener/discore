@@ -10,6 +10,7 @@ import { renderGameHeader } from './components/gameHeader.js';
 import { renderTimeline } from './components/timeline.js';
 import { renderProgressionTable } from './components/progressionTable.js';
 import { renderEfficiencyStats } from './components/efficiencyStats.js';
+import { renderLineupTable } from './components/lineupTable.js';
 
 const POLL_INTERVAL = 3000; // 3 seconds
 
@@ -177,6 +178,7 @@ class DiscoreApp {
     renderGameHeader(game);
     renderProgressionTable(game);
     renderEfficiencyStats(game);
+    renderLineupTable(game);
     renderTimeline(game);
   }
 

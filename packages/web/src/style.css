@@ -377,6 +377,101 @@ body {
   font-weight: 500;
 }
 
+/* Lineup Table */
+.lineup-table-container {
+  background: var(--color-surface);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.lineup-table-container h3 {
+  margin-bottom: 16px;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.lineup-table-scroll {
+  overflow-x: auto;
+}
+
+.lineup-table {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.lineup-table th,
+.lineup-table td {
+  padding: 6px 4px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.lineup-table .lineup-player-col {
+  text-align: left;
+  font-weight: 600;
+  padding-right: 12px;
+  position: sticky;
+  left: 0;
+  background: var(--color-surface);
+  z-index: 1;
+  min-width: 80px;
+}
+
+.lineup-table thead .lineup-player-col {
+  background: var(--color-surface);
+}
+
+.lineup-table .lineup-point-col {
+  min-width: 28px;
+  color: #d1d5db;
+  font-size: 0.8rem;
+}
+
+.lineup-table thead .lineup-point-col {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.lineup-table thead .point-us {
+  color: var(--color-success);
+}
+
+.lineup-table thead .point-them {
+  color: var(--color-warning);
+}
+
+.lineup-table .lineup-played {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.lineup-table .lineup-played.point-us {
+  color: var(--color-success);
+}
+
+.lineup-table .lineup-played.point-them {
+  color: var(--color-warning);
+}
+
+.lineup-table .lineup-total-col {
+  font-weight: 700;
+  color: var(--color-text);
+  border-left: 2px solid var(--color-border);
+  min-width: 36px;
+}
+
+.lineup-table .first-point {
+  border-left: 2px solid var(--color-border);
+}
+
+.lineup-table .before-halftime {
+  border-right: 3px solid var(--color-success);
+}
+
 .timeline-container {
   background: var(--color-surface);
   padding: 25px;
