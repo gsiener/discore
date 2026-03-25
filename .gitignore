@@ -56,3 +56,7 @@ Screenshot*.png
 
 # Loading scripts
 packages/bot/scripts/load*.ts
+
+# Database backups
+*.backup.sql
+scorebot-backup.sql

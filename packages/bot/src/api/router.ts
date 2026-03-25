@@ -10,6 +10,19 @@ import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventRespons
 import { StatsCalculator } from '../services/StatsCalculator';
 import { CreateGameRequestSchema, AddEventRequestSchema, SetLineupsRequestSchema } from './validation';
 
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+function jsonError(message: string, status: number): Response {
+  return new Response(
+    JSON.stringify({ error: message }),
+    { status, headers: JSON_HEADERS }
+  );
+}
+
+function jsonResponse(data: unknown, status: number = 200): Response {
+  return new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
+}
+
 export class Router {
   private db: DatabaseService;
   private statsCalculator: StatsCalculator;
@@ -66,10 +79,7 @@ export class Router {
 
       // Health check
       if (path === '/health') {
-        response = new Response(
-          JSON.stringify({ status: 'ok', timestamp: Date.now() }),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
+        response = jsonResponse({ status: 'ok', timestamp: Date.now() });
       }
       // Create new game
       else if (path === '/games' && request.method === 'POST') {
@@ -162,14 +172,88 @@ export class Router {
     }
   }
 
+  /**
+   * Ensure a Durable Object has game state, rehydrating from D1 if needed.
+   * Returns the DO stub ready for use, or null if rehydration failed.
+   */
+  private async ensureDOHydrated(
+    chatId: string,
+    gameForRehydration?: Game
+  ): Promise<DurableObjectStub | null> {
+    const id = this.env.GAME_STATE.idFromName(chatId);
+    const stub = this.env.GAME_STATE.get(id);
+
+    // Check if DO already has state
+    const checkResponse = await stub.fetch('https://fake-host/');
+    if (checkResponse.status !== 404) {
+      return stub;
+    }
+
+    // DO was evicted — need full game data to rehydrate
+    const game = gameForRehydration || await this.db.getGame(chatId);
+    if (!game) return null;
+
+    const rehydrateResponse = await stub.fetch(
+      new Request('https://fake-host/rehydrate', {
+        method: 'POST',
+        body: JSON.stringify(game),
+      })
+    );
+
+    if (rehydrateResponse.ok) {
+      return stub;
+    }
+
+    return null;
+  }
+
+  /**
+   * Forward a mutation to a game's Durable Object and persist the result.
+   * Handles: lookup game → hydrate DO → forward request → save to DB.
+   */
+  private async mutateGameViaDO(
+    gameId: string,
+    doPath: string,
+    doMethod: string,
+    body?: unknown,
+    saveStrategy: 'metadata' | 'events' = 'events',
+  ): Promise<Response> {
+    // Only need metadata (chatId) for routing — avoid fetching all events
+    const game = await this.db.getGameMetadata(gameId);
+    if (!game || !game.chatId) {
+      return jsonError('Game not found', 404);
+    }
+
+    const stub = await this.ensureDOHydrated(game.chatId);
+    if (!stub) {
+      return jsonError('Failed to restore game state', 500);
+    }
+
+    const response = await stub.fetch(
+      new Request(`https://fake-host${doPath}`, {
+        method: doMethod,
+        ...(body !== undefined && { body: JSON.stringify(body) }),
+      })
+    );
+
+    const data = await response.json() as { game: Game };
+
+    if (response.ok) {
+      if (saveStrategy === 'metadata') {
+        await this.db.saveGameMetadata(data.game);
+      } else {
+        await this.db.saveGameWithEvents(data.game);
+      }
+    }
+
+    return jsonResponse(data, response.status);
+  }
+
   private async createGame(request: Request): Promise<Response> {
     const body = await request.json();
     const parsed = CreateGameRequestSchema.safeParse(body);
     if (!parsed.success) {
-      return new Response(
-        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return jsonError('Validation error', 400);
     }
     const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = parsed.data;
 
@@ -187,54 +271,16 @@ export class Router {
 
     const data = await response.json() as CreateGameResponse;
 
-    // Save to database
+    // Save to database (full save for new game)
     await this.db.saveGame(data.game);
 
-    return new Response(JSON.stringify(data), {
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  /**
-   * Ensure a Durable Object has game state, rehydrating from D1 if needed.
-   * Returns the DO stub ready for use, or null if rehydration failed.
-   */
-  private async ensureDOHydrated(
-    chatId: string,
-    game: Game
-  ): Promise<DurableObjectStub | null> {
-    const id = this.env.GAME_STATE.idFromName(chatId);
-    const stub = this.env.GAME_STATE.get(id);
-
-    // Check if DO already has state
-    const checkResponse = await stub.fetch('https://fake-host/');
-    if (checkResponse.status !== 404) {
-      return stub;
-    }
-
-    // DO was evicted — rehydrate from D1 data
-    const rehydrateResponse = await stub.fetch(
-      new Request('https://fake-host/rehydrate', {
-        method: 'POST',
-        body: JSON.stringify(game),
-      })
-    );
-
-    if (rehydrateResponse.ok) {
-      return stub;
-    }
-
-    return null;
+    return jsonResponse(data);
   }
 
   private async getGame(gameId: string): Promise<Response> {
-    // Get game from database to find chatId
     const game = await this.db.getGame(gameId);
     if (!game) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonError('Game not found', 404);
     }
 
     // Try to get fresh state from Durable Object if chatId exists
@@ -249,9 +295,7 @@ export class Router {
       }
     }
 
-    return new Response(JSON.stringify({ game }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ game });
   }
 
   private async listGames(request: Request): Promise<Response> {
@@ -260,171 +304,35 @@ export class Router {
 
     const games = await this.db.listGames(limit);
 
-    return new Response(JSON.stringify({ games }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ games });
   }
 
-  private async addEvent(
-    gameId: string,
-    request: Request
-  ): Promise<Response> {
+  private async addEvent(gameId: string, request: Request): Promise<Response> {
     const body = await request.json();
     const parsed = AddEventRequestSchema.safeParse(body);
     if (!parsed.success) {
-      return new Response(
-        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-    const eventData = parsed.data;
-
-    // Get game from database to find chatId
-    const game = await this.db.getGame(gameId);
-    if (!game || !game.chatId) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonError('Validation error', 400);
     }
 
-    // Ensure DO is hydrated before adding event
-    const stub = await this.ensureDOHydrated(game.chatId, game);
-    if (!stub) {
-      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const response = await stub.fetch(
-      new Request('https://fake-host/events', {
-        method: 'POST',
-        body: JSON.stringify(eventData),
-      })
-    );
-
-    const data = await response.json() as AddEventResponse;
-
-    if (response.ok) {
-      await this.db.saveGame(data.game);
-    }
-
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return this.mutateGameViaDO(gameId, '/events', 'POST', parsed.data, 'events');
   }
 
   private async undoLastEvent(gameId: string): Promise<Response> {
-    // Get game from database to find chatId
-    const game = await this.db.getGame(gameId);
-    if (!game || !game.chatId) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Ensure DO is hydrated before undoing
-    const stub = await this.ensureDOHydrated(game.chatId, game);
-    if (!stub) {
-      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const response = await stub.fetch(
-      new Request('https://fake-host/events/last', {
-        method: 'DELETE',
-      })
-    );
-
-    const data = await response.json() as AddEventResponse;
-
-    if (response.ok) {
-      await this.db.saveGame(data.game);
-    }
-
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return this.mutateGameViaDO(gameId, '/events/last', 'DELETE', undefined, 'events');
   }
 
   private async deleteEvent(gameId: string, eventId: string): Promise<Response> {
-    const game = await this.db.getGame(gameId);
-    if (!game || !game.chatId) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404, headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const stub = await this.ensureDOHydrated(game.chatId, game);
-    if (!stub) {
-      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
-        status: 500, headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const response = await stub.fetch(
-      new Request(`https://fake-host/events/${eventId}`, { method: 'DELETE' })
-    );
-
-    const data = await response.json() as AddEventResponse;
-
-    if (response.ok) {
-      await this.db.saveGame(data.game);
-    }
-
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return this.mutateGameViaDO(gameId, `/events/${eventId}`, 'DELETE', undefined, 'events');
   }
 
   private async setLineups(gameId: string, request: Request): Promise<Response> {
     const body = await request.json();
     const parsed = SetLineupsRequestSchema.safeParse(body);
     if (!parsed.success) {
-      return new Response(
-        JSON.stringify({ error: 'Validation error', details: parsed.error.format() }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return jsonError('Validation error', 400);
     }
 
-    const game = await this.db.getGame(gameId);
-    if (!game || !game.chatId) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404, headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const stub = await this.ensureDOHydrated(game.chatId, game);
-    if (!stub) {
-      return new Response(JSON.stringify({ error: 'Failed to restore game state' }), {
-        status: 500, headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const response = await stub.fetch(
-      new Request('https://fake-host/lineups', {
-        method: 'PATCH',
-        body: JSON.stringify(parsed.data),
-      })
-    );
-
-    const data = await response.json() as { game: Game };
-
-    if (response.ok) {
-      await this.db.saveGame(data.game);
-    }
-
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return this.mutateGameViaDO(gameId, '/lineups', 'PATCH', parsed.data, 'metadata');
   }
 
   private async updateGame(
@@ -433,13 +341,9 @@ export class Router {
   ): Promise<Response> {
     const updates = await request.json() as { startingOnOffense?: boolean };
 
-    // Get game from database
-    const game = await this.db.getGame(gameId);
+    const game = await this.db.getGameMetadata(gameId);
     if (!game) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonError('Game not found', 404);
     }
 
     // Update fields
@@ -449,13 +353,13 @@ export class Router {
 
     game.updatedAt = Date.now();
 
-    // Update in database
-    await this.db.saveGame(game);
+    // Update in database (metadata only)
+    await this.db.saveGameMetadata(game);
 
-    // If game has a chatId, also update the Durable Object (rehydrating if needed)
+    // If game has a chatId, also update the Durable Object
     if (game.chatId) {
       try {
-        const stub = await this.ensureDOHydrated(game.chatId, game);
+        const stub = await this.ensureDOHydrated(game.chatId);
         if (stub) {
           await stub.fetch(
             new Request('https://fake-host/update', {
@@ -465,105 +369,59 @@ export class Router {
           );
         }
       } catch (error) {
-        // Continue even if Durable Object update fails
         console.warn('Failed to update Durable Object:', error);
       }
     }
 
-    return new Response(JSON.stringify({ game }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ game });
   }
 
   private async deleteGame(gameId: string): Promise<Response> {
-    // Get game from database first
-    const game = await this.db.getGame(gameId);
+    const game = await this.db.getGameMetadata(gameId);
     if (!game) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonError('Game not found', 404);
     }
 
-    // Delete from database (will cascade delete events)
     await this.db.deleteGame(gameId);
 
-    return new Response(JSON.stringify({ success: true, deleted: gameId }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ success: true, deleted: gameId });
   }
 
   private async processWhatsAppMessage(request: Request): Promise<Response> {
-    // This will be implemented when WhatsApp integration is added
-    return new Response(
-      JSON.stringify({ message: 'WhatsApp integration coming soon' }),
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+    return jsonResponse({ message: 'WhatsApp integration coming soon' });
   }
 
   private async getGameStats(gameId: string): Promise<Response> {
-    // Get game from database
     const game = await this.db.getGame(gameId);
     if (!game) {
-      return new Response(JSON.stringify({ error: 'Game not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonError('Game not found', 404);
     }
 
-    // Calculate stats
     const stats = this.statsCalculator.calculateGameStats(game);
-
     const response: GetAdvancedStatsResponse = { stats };
 
-    return new Response(JSON.stringify(response), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(response);
   }
 
   private async getAggregatedStats(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '50', 10);
-    const tournamentName = url.searchParams.get('tournament');
-    const fromDate = url.searchParams.get('from');
-    const toDate = url.searchParams.get('to');
+    const tournamentName = url.searchParams.get('tournament') || undefined;
+    const fromDate = url.searchParams.get('from') || undefined;
+    const toDate = url.searchParams.get('to') || undefined;
 
-    // Get games from database
-    let games = await this.db.listGames(limit);
-
-    // Filter by tournament if specified
-    if (tournamentName) {
-      games = games.filter(g => g.tournamentName === tournamentName);
-    }
-
-    // Filter by date range if specified
-    if (fromDate) {
-      games = games.filter(g => g.gameDate && g.gameDate >= fromDate);
-    }
-    if (toDate) {
-      games = games.filter(g => g.gameDate && g.gameDate <= toDate);
-    }
-
-    // Fetch full game data for each game
-    const fullGames = await Promise.all(
-      games.map(async g => {
-        const game = await this.db.getGame(g.id);
-        return game;
-      })
-    );
-
-    // Filter out nulls
-    const validGames = fullGames.filter(g => g !== null);
+    // Single query with JOIN instead of N+1
+    const games = await this.db.listGamesWithEvents(limit, tournamentName, fromDate, toDate);
 
     // Calculate aggregated stats
-    const players = this.statsCalculator.aggregatePlayerStats(validGames);
-    const teamTrends = validGames.length > 0 ? this.statsCalculator.calculateTeamTrends(validGames) : undefined;
-    const playerChemistry = validGames.length > 0 ? this.statsCalculator.calculatePlayerChemistry(validGames) : undefined;
+    const players = this.statsCalculator.aggregatePlayerStats(games);
+    const teamTrends = games.length > 0 ? this.statsCalculator.calculateTeamTrends(games) : undefined;
+    const playerChemistry = games.length > 0 ? this.statsCalculator.calculatePlayerChemistry(games) : undefined;
 
     // Determine date range
     let dateRange: { from: string; to: string } | undefined;
-    if (validGames.length > 0) {
-      const dates = validGames
+    if (games.length > 0) {
+      const dates = games
         .filter(g => g.gameDate)
         .map(g => g.gameDate!)
         .sort();
@@ -578,14 +436,12 @@ export class Router {
 
     const response: GetAggregatedStatsResponse = {
       players,
-      totalGames: validGames.length,
+      totalGames: games.length,
       dateRange,
       teamTrends,
       playerChemistry,
     };
 
-    return new Response(JSON.stringify(response), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(response);
   }
 }

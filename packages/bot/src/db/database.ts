@@ -9,9 +9,9 @@ export class DatabaseService {
   constructor(private db: D1Database) {}
 
   /**
-   * Save game to database
+   * Save game metadata only (no events). Use for updates that don't change events.
    */
-  async saveGame(game: Game): Promise<void> {
+  async saveGameMetadata(game: Game): Promise<void> {
     await this.db
       .prepare(
         `INSERT OR REPLACE INTO games (
@@ -40,8 +40,40 @@ export class DatabaseService {
         game.updatedAt
       )
       .run();
+  }
 
-    // Save all events
+  /**
+   * Save game with all events. Use for game creation and full resyncs.
+   */
+  async saveGame(game: Game): Promise<void> {
+    await this.saveGameMetadata(game);
+
+    for (const event of game.events) {
+      await this.saveEvent(event);
+    }
+  }
+
+  /**
+   * Save game metadata + sync events (delete removed, upsert current).
+   * Use after mutations that add/remove events.
+   */
+  async saveGameWithEvents(game: Game): Promise<void> {
+    await this.saveGameMetadata(game);
+
+    // Delete events no longer in the game, then upsert current ones
+    const eventIds = game.events.map(e => `'${e.id}'`).join(',');
+    if (eventIds) {
+      await this.db
+        .prepare(`DELETE FROM events WHERE game_id = ? AND id NOT IN (${eventIds})`)
+        .bind(game.id)
+        .run();
+    } else {
+      await this.db
+        .prepare('DELETE FROM events WHERE game_id = ?')
+        .bind(game.id)
+        .run();
+    }
+
     for (const event of game.events) {
       await this.saveEvent(event);
     }
@@ -74,7 +106,21 @@ export class DatabaseService {
   }
 
   /**
-   * Get game by ID
+   * Get game metadata only (no events). Use when you just need chatId or summary info.
+   */
+  async getGameMetadata(gameId: string): Promise<Game | null> {
+    const gameResult = await this.db
+      .prepare('SELECT * FROM games WHERE id = ?')
+      .bind(gameId)
+      .first();
+
+    if (!gameResult) return null;
+
+    return this.mapToGame(gameResult, []);
+  }
+
+  /**
+   * Get game by ID with all events
    */
   async getGame(gameId: string): Promise<Game | null> {
     const gameResult = await this.db
@@ -131,6 +177,78 @@ export class DatabaseService {
       .all();
 
     return (result.results || []).map((row) => this.mapToGameSummary(row));
+  }
+
+  /**
+   * List full games with events using a single JOIN query.
+   * Use for aggregated stats to avoid N+1 queries.
+   */
+  async listGamesWithEvents(
+    limit: number = 50,
+    tournamentName?: string,
+    fromDate?: string,
+    toDate?: string,
+  ): Promise<Game[]> {
+    let whereClause = "WHERE g.status = 'finished'";
+    const binds: any[] = [];
+
+    if (tournamentName) {
+      whereClause += ' AND g.tournament_name = ?';
+      binds.push(tournamentName);
+    }
+    if (fromDate) {
+      whereClause += ' AND g.game_date >= ?';
+      binds.push(fromDate);
+    }
+    if (toDate) {
+      whereClause += ' AND g.game_date <= ?';
+      binds.push(toDate);
+    }
+
+    binds.push(limit);
+
+    // Fetch games
+    const gamesResult = await this.db
+      .prepare(`
+        SELECT * FROM games g
+        ${whereClause}
+        ORDER BY
+          COALESCE(g.game_date, DATE(g.finished_at / 1000, 'unixepoch')) DESC,
+          g.game_order ASC,
+          g.finished_at DESC
+        LIMIT ?
+      `)
+      .bind(...binds)
+      .all();
+
+    const gameRows = gamesResult.results || [];
+    if (gameRows.length === 0) return [];
+
+    // Fetch all events for these games in one query
+    const gameIds = gameRows.map(g => g.id as string);
+    const placeholders = gameIds.map(() => '?').join(',');
+    const eventsResult = await this.db
+      .prepare(`
+        SELECT * FROM events
+        WHERE game_id IN (${placeholders})
+        ORDER BY timestamp ASC
+      `)
+      .bind(...gameIds)
+      .all();
+
+    // Group events by game_id
+    const eventsByGame = new Map<string, any[]>();
+    for (const row of (eventsResult.results || [])) {
+      const gameId = row.game_id as string;
+      if (!eventsByGame.has(gameId)) {
+        eventsByGame.set(gameId, []);
+      }
+      eventsByGame.get(gameId)!.push(row);
+    }
+
+    return gameRows.map(gameRow =>
+      this.mapToGame(gameRow, eventsByGame.get(gameRow.id as string) || [])
+    );
   }
 
   /**

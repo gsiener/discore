@@ -248,29 +248,19 @@ class StatsApp {
   }
 
   private togglePerGameColumns(show: boolean) {
-    const table = document.getElementById('player-stats-table');
-    if (!table) return;
-    const headers = table.querySelectorAll('thead th');
-    // G/Game and A/Game are the last two columns
-    const lastTwo = [headers[headers.length - 2], headers[headers.length - 1]];
-    lastTwo.forEach(th => {
-      if (th) (th as HTMLElement).classList.toggle('hidden', !show);
+    const perGameCols = document.querySelectorAll('#player-stats-table [data-per-game]');
+    perGameCols.forEach(el => {
+      (el as HTMLElement).classList.toggle('hidden', !show);
     });
   }
 
   private setupSortHeaders() {
-    const columns = [
-      'name', 'goals', 'assists', 'blocks', 'steals',
-      'pointsPlayed', 'plusMinus', 'goalsPerGame', 'assistsPerGame',
-    ];
-
-    const headers = document.querySelectorAll('#player-stats-table thead th');
-    headers.forEach((th, i) => {
-      const key = columns[i];
-      if (!key) return;
-      (th as HTMLElement).style.cursor = 'pointer';
-      (th as HTMLElement).dataset.sortKey = key;
-      th.addEventListener('click', () => {
+    const headers = document.querySelectorAll('#player-stats-table thead th[data-sort-key]');
+    headers.forEach(th => {
+      const el = th as HTMLElement;
+      const key = el.dataset.sortKey!;
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => {
         if (this.sortColumn === key) {
           this.sortAscending = !this.sortAscending;
         } else {
