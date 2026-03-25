@@ -228,6 +228,7 @@ body {
 
 .progression-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.9rem;
 }
@@ -243,7 +244,7 @@ body {
 
 .progression-table th.team-col {
   text-align: left;
-  min-width: 150px;
+  width: 120px;
 }
 
 .progression-table th.point-col {
@@ -253,7 +254,7 @@ body {
 .progression-table th.final-col {
   font-weight: 700;
   color: var(--color-text);
-  min-width: 50px;
+  width: 50px;
 }
 
 .progression-table td {
@@ -423,6 +424,8 @@ body {
 }
 
 .lineup-table {
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.85rem;
 }
@@ -443,7 +446,7 @@ body {
   left: 0;
   background: var(--color-surface);
   z-index: 1;
-  min-width: 80px;
+  width: 120px;
 }
 
 .lineup-table thead .lineup-player-col {
@@ -451,7 +454,7 @@ body {
 }
 
 .lineup-table .lineup-point-col {
-  min-width: 28px;
+  min-width: 32px;
   color: #d1d5db;
   font-size: 0.8rem;
 }
@@ -486,7 +489,7 @@ body {
   font-weight: 700;
   color: var(--color-text);
   border-left: 2px solid var(--color-border);
-  min-width: 36px;
+  width: 50px;
 }
 
 .lineup-table .first-point {

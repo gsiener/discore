@@ -6,6 +6,7 @@
 import type { Game } from '@scorebot/shared';
 import { EventType } from '@scorebot/shared';
 import { isBreakScore } from './breakDetection.js';
+import { findHalftimePointIndex } from './gameUtils.js';
 
 export function renderProgressionTable(game: Game): void {
   const table = document.getElementById('progression-table');
@@ -23,19 +24,7 @@ export function renderProgressionTable(game: Game): void {
   const container = document.getElementById('progression-table-container');
   if (container) container.classList.remove('hidden');
 
-  // Find halftime event index
-  const halftimeEvent = game.events.find(e => e.type === EventType.HALFTIME);
-  let halftimePointIndex = -1;
-  if (halftimeEvent) {
-    // Find the goal event that happened just before halftime
-    for (let i = 0; i < goalEvents.length; i++) {
-      if (goalEvents[i].timestamp < halftimeEvent.timestamp) {
-        halftimePointIndex = i;
-      } else {
-        break;
-      }
-    }
-  }
+  const halftimePointIndex = findHalftimePointIndex(goalEvents, game.events);
 
   const isBreak = (index: number): boolean => {
     return isBreakScore(goalEvents[index], game.events, game);

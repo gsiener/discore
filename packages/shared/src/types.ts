@@ -133,10 +133,6 @@ export interface SetLineupsRequest {
   lineups: PointLineup[];
 }
 
-export interface SetLineupsResponse {
-  game: Game;
-}
-
 /**
  * O-line/D-line efficiency statistics
  */
