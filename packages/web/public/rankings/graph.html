@@ -72,6 +72,7 @@
   <div class="controls">
     <label><input type="checkbox" id="toggle-labels" checked> Show labels</label>
     <button id="toggle-bridges">Highlight bridges</button>
+    <button id="toggle-map">Map view</button>
     <button id="reset-zoom">Reset zoom</button>
   </div>
 
@@ -84,6 +85,7 @@
   <div id="graph-container"></div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
   <script>
     const DATA = {
   "lastUpdated": "2026-03-25",
@@ -11998,6 +12000,79 @@
   ]
 };
 
+    // --- Team geographic coordinates [longitude, latitude] ---
+    const TEAM_COORDS = {
+      // NYC
+      "Brooklyn Tech": [-73.98, 40.69], "Brooklyn Tech B": [-73.97, 40.70],
+      "Columbia": [-73.96, 40.81], "Columbia JV": [-73.955, 40.81], "Columbia JV-B": [-73.95, 40.81],
+      "Stuyvesant": [-74.01, 40.72], "Beacon": [-73.99, 40.74], "Bronx Science": [-73.89, 40.88],
+      "Hunter": [-73.97, 40.77], "Bard": [-73.95, 40.81], "HSMSE Dragons": [-74.00, 40.74],
+      "Murrow Magic": [-73.96, 40.63], "Brooklyn Magic": [-73.97, 40.67],
+      // NJ
+      "Bergen Ultimate": [-74.07, 40.92], "Montclair": [-74.21, 40.83], "Montclair JV": [-74.22, 40.83],
+      "Westfield": [-74.35, 40.66], "Watchung Hills": [-74.50, 40.63], "Princeton PRISMS": [-74.66, 40.35],
+      "Impulse": [-74.10, 40.85],
+      // PA
+      "Wissahickon": [-75.22, 40.15], "Strath Haven": [-75.37, 39.90], "SLA": [-75.16, 39.95],
+      "Haverford": [-75.30, 40.01], "Pennsbury": [-74.85, 40.18], "Lower Merion": [-75.29, 40.00],
+      "Holy Ghost": [-74.94, 40.10], "Radnor": [-75.36, 40.03], "Harriton": [-75.32, 40.01],
+      "St Joe's Prep": [-75.15, 40.00], "JR Masterman": [-75.16, 39.96], "PWHS Wolfpack": [-75.26, 40.10],
+      // DC / VA / MD
+      "Jackson-Reed": [-77.06, 38.94], "Washington-Liberty": [-77.10, 38.88], "HB Woodlawn": [-77.09, 38.89],
+      "South Lakes": [-77.35, 38.94], "Whitman": [-77.10, 38.98], "Bethesda CC": [-77.09, 38.98],
+      "Digital Harbor": [-76.61, 39.28], "DCI": [-77.02, 38.90], "Lake Braddock": [-77.28, 38.78],
+      "WACC": [-77.08, 38.92], "Mason": [-77.17, 38.87], "Episcopal": [-77.08, 38.81],
+      "Fairfax": [-77.31, 38.85], "Yorktown": [-77.13, 38.89], "Alexandria": [-77.05, 38.80],
+      "Springfield": [-77.19, 38.79], "Blair": [-77.01, 38.99], "Hampton": [-77.03, 39.02],
+      "CUDO": [-77.05, 38.92], "Walls": [-77.00, 39.00], "Madison": [-77.26, 38.90],
+      // NC
+      "Chapel Hill": [-79.05, 35.91], "East Chapel Hill": [-79.04, 35.92], "Carrboro": [-79.08, 35.91],
+      "Jordan": [-78.98, 35.89], "NCSSM+DSA": [-78.91, 36.01], "JT Williams": [-80.84, 35.21],
+      "Carolina Friends": [-79.00, 35.95], "Athens Drive": [-78.70, 35.74], "Asheville": [-82.55, 35.60],
+      // MA
+      "Lexington": [-71.23, 42.45],
+      // CO
+      "Fort Collins Club": [-105.08, 40.59], "Fairview": [-105.27, 40.01], "East CO": [-104.95, 39.74],
+      "Monarch Fun A": [-105.13, 39.98], "Lafayette B": [-105.09, 39.99], "Gold Rush": [-105.00, 39.75],
+      "East High": [-104.96, 39.74],
+      // TN
+      "Nolensville": [-86.67, 35.95], "McCallie": [-85.30, 35.05], "Stewart's Creek": [-86.52, 35.98],
+      "USN": [-86.80, 36.16], "Ravenwood": [-86.78, 35.99], "Independence": [-86.90, 35.80],
+      "Parkway": [-86.75, 36.10], "Pi": [-86.70, 36.15], "HFC": [-86.85, 36.05], "Lebanon": [-86.29, 36.21],
+      // PNW - Seattle
+      "Lincoln Lynx": [-122.34, 47.62], "Northwest": [-122.38, 47.70], "Garfield HS": [-122.31, 47.61],
+      "WTTWS": [-122.33, 47.63], "Roosevelt SEA": [-122.32, 47.68], "Lakeside": [-122.27, 47.72],
+      "Franklin HS": [-122.31, 47.55], "Franklin JV Storm": [-122.31, 47.54],
+      "Overlake Owls": [-122.11, 47.66], "Nathan Hale": [-122.30, 47.70],
+      "Eastside Prep": [-122.19, 47.68], "Horned Haze": [-122.33, 47.60],
+      "University Prep": [-122.32, 47.65], "RCU A SEA": [-122.33, 47.64],
+      "RCU B": [-122.34, 47.64], "RCU C": [-122.35, 47.64],
+      "OAK Storm": [-122.33, 47.61], "OWLC": [-122.35, 47.62], "Roosevelt Inferno": [-122.33, 47.67],
+      // PNW - Oregon
+      "Grant HS": [-122.63, 45.56], "Albany Cougars": [-123.10, 44.63],
+      "Cleveland Varsity PDX": [-122.63, 45.47], "South Eugene": [-123.09, 44.03],
+      "Franklin Varsity PDX": [-122.61, 45.49], "Westside Ultimate": [-122.75, 45.50],
+      // UT
+      "Green Canyon": [-111.79, 41.77],
+      // MN
+      "Northfield JV": [-93.16, 44.46], "Edina Varsity": [-93.35, 44.89],
+      "Washburn Open": [-93.29, 44.91], "St. Paul Central": [-93.10, 44.94],
+      "Great River School": [-93.17, 44.96], "Providence Academy": [-93.46, 44.99],
+      "Hopkins MMP": [-93.42, 44.92], "SLP Open Varsity": [-93.35, 44.93],
+      "SLP Panthers": [-93.36, 44.93], "Mounds View Green": [-93.21, 45.12],
+      "Mounds View White": [-93.22, 45.12], "WBL Bears X": [-93.01, 45.08],
+      "WBL Bears Y": [-93.02, 45.08], "Woodbury": [-92.96, 44.92],
+      "Blitz Open": [-93.25, 44.95], "Aura Open": [-93.30, 44.90],
+      "McDaniel V": [-93.28, 44.93], "7H Red": [-93.27, 44.88], "7H Blue": [-93.28, 44.88],
+      "South Squall": [-93.26, 44.92], "DHS Open Varsity": [-93.20, 44.94],
+      // GA
+      "Lakeside ATL": [-84.27, 33.83], "Midtown": [-84.38, 33.78], "Druid Hills": [-84.33, 33.78],
+      "Paideia": [-84.35, 33.76], "Maynard Jackson": [-84.37, 33.73], "Forsyth Central": [-84.14, 34.21],
+      "West Jess": [-84.55, 33.80], "Revolution": [-84.40, 33.80],
+      // Other
+      "Center Grove": [-86.10, 39.61], "Middleton": [-89.50, 43.10], "Edwardsville": [-89.95, 38.81],
+    };
+
     // --- Build graph ---
     const teams = DATA.teams;
     const teamMap = new Map(teams.map(t => [t.name, t]));
@@ -12165,6 +12240,37 @@
       .scaleExtent([0.1, 8])
       .on("zoom", (event) => g.attr("transform", event.transform));
     svg.call(zoom);
+
+    // Map projection + states layer
+    const projection = d3.geoAlbersUsa()
+      .translate([width / 2, height / 2])
+      .scale(width);
+    const statesGroup = g.append("g").attr("class", "states").style("display", "none");
+
+    // Load US states in background
+    let usStatesLoaded = false;
+    fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json")
+      .then(r => r.json())
+      .then(topo => {
+        const states = topojson.feature(topo, topo.objects.states);
+        const path = d3.geoPath(projection);
+        statesGroup.selectAll("path.state")
+          .data(states.features)
+          .join("path")
+          .attr("class", "state")
+          .attr("d", path)
+          .attr("fill", "rgba(255,255,255,0.03)")
+          .attr("stroke", "rgba(255,255,255,0.08)")
+          .attr("stroke-width", 0.5);
+        statesGroup.append("path")
+          .datum(topojson.mesh(topo, topo.objects.states, (a, b) => a === b))
+          .attr("d", path)
+          .attr("fill", "none")
+          .attr("stroke", "rgba(255,255,255,0.15)")
+          .attr("stroke-width", 1);
+        usStatesLoaded = true;
+      })
+      .catch(() => { /* offline fallback: map works without states outline */ });
 
     // Defs for glow
     const defs = svg.append("defs");
@@ -12364,6 +12470,55 @@
 
     document.getElementById("reset-zoom").addEventListener("click", () => {
       svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    });
+
+    // --- Map view toggle ---
+    let mapMode = false;
+    document.getElementById("toggle-map").addEventListener("click", function() {
+      mapMode = !mapMode;
+      this.classList.toggle("active", mapMode);
+      this.textContent = mapMode ? "Force layout" : "Map view";
+
+      if (mapMode) {
+        statesGroup.style("display", null);
+        simulation.stop();
+
+        // Fix nodes to geographic positions
+        nodes.forEach(n => {
+          const coord = TEAM_COORDS[n.id];
+          if (coord) {
+            const projected = projection(coord);
+            if (projected) {
+              n.fx = projected[0];
+              n.fy = projected[1];
+            }
+          }
+        });
+
+        // Animate transition
+        const dur = 1200;
+        nodeElements.transition().duration(dur).ease(d3.easeCubicInOut)
+          .attr("transform", d => "translate(" + (d.fx != null ? d.fx : d.x) + "," + (d.fy != null ? d.fy : d.y) + ")");
+        linkElements.transition().duration(dur).ease(d3.easeCubicInOut)
+          .attr("x1", d => d.source.fx != null ? d.source.fx : d.source.x)
+          .attr("y1", d => d.source.fy != null ? d.source.fy : d.source.y)
+          .attr("x2", d => d.target.fx != null ? d.target.fx : d.target.x)
+          .attr("y2", d => d.target.fy != null ? d.target.fy : d.target.y);
+
+        // After transition, sync x/y so tooltips etc. work
+        setTimeout(() => {
+          nodes.forEach(n => {
+            if (n.fx != null) { n.x = n.fx; n.y = n.fy; }
+          });
+        }, dur + 50);
+
+      } else {
+        statesGroup.style("display", "none");
+
+        // Release positions
+        nodes.forEach(n => { n.fx = null; n.fy = null; });
+        simulation.alpha(0.3).restart();
+      }
     });
 
     // Touch support is built into d3.zoom and d3.drag
