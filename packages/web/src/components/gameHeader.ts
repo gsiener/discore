@@ -11,6 +11,7 @@ export function renderGameHeader(game: Game): void {
   renderTeamNames(game);
   renderScores(game);
   renderStatus(game);
+  renderVideoLink(game);
 }
 
 function renderGameMeta(game: Game): void {
@@ -71,6 +72,18 @@ function renderStatus(game: Game): void {
   if (statusBadge) {
     statusBadge.textContent = formatStatus(game.status);
     statusBadge.className = `status-badge ${game.status.replace('_', '-')}`;
+  }
+}
+
+function renderVideoLink(game: Game): void {
+  const linkEl = document.getElementById('game-video-link') as HTMLAnchorElement | null;
+  if (!linkEl) return;
+
+  if (game.videoUrl) {
+    linkEl.href = game.videoUrl;
+    linkEl.classList.remove('hidden');
+  } else {
+    linkEl.classList.add('hidden');
   }
 }
 

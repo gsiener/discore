@@ -117,8 +117,14 @@ body {
   font-weight: 500;
 }
 
-.game-field {
+.game-video-link {
   font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.game-video-link:hover {
+  text-decoration: underline;
 }
 
 .game-header {

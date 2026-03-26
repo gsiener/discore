@@ -62,6 +62,7 @@ export interface Game {
   score: Score;
   events: GameEvent[];
   lineups?: PointLineup[]; // Per-point lineup data
+  videoUrl?: string; // Link to game video (e.g., YouTube)
   startedAt?: number; // Unix timestamp in milliseconds
   finishedAt?: number; // Unix timestamp in milliseconds
   chatId?: string; // WhatsApp chat ID
@@ -84,6 +85,7 @@ export interface GameSummary {
   startedAt?: number;
   finishedAt?: number;
   startingOnOffense?: boolean;
+  videoUrl?: string;
   tournamentName?: string;
   gameDate?: string;
   gameOrder?: number;
