@@ -337,10 +337,13 @@ export class GameState implements DurableObject {
       });
     }
 
-    const updates = await request.json() as { startingOnOffense?: boolean };
+    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string };
 
     if (updates.startingOnOffense !== undefined) {
       this.game.startingOnOffense = updates.startingOnOffense;
+    }
+    if (updates.videoUrl !== undefined) {
+      this.game.videoUrl = updates.videoUrl;
     }
 
     this.game.updatedAt = Date.now();
