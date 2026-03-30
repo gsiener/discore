@@ -60,3 +60,6 @@ packages/bot/scripts/load*.ts
 # Database backups
 *.backup.sql
 scorebot-backup.sql
+
+# Generated rankings files (re-generated from Google Drive on deploy)
+packages/web/public/rankings/
