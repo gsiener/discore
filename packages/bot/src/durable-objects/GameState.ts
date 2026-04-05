@@ -207,9 +207,14 @@ export class GameState implements DurableObject {
       }
     }
 
-    // Update score if it's a goal (and no custom score provided for backfilling)
-    if (type === EventType.GOAL && team && !score) {
-      this.game.score[team as TeamSide]++;
+    // Update score if it's a goal
+    if (type === EventType.GOAL && team) {
+      if (score) {
+        // Backfilling: use the provided score directly
+        this.game.score = { ...score };
+      } else {
+        this.game.score[team as TeamSide]++;
+      }
     }
 
     // Update game status based on event type
@@ -337,13 +342,22 @@ export class GameState implements DurableObject {
       });
     }
 
-    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string };
+    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string; ourTeamName?: string; opponentName?: string; tournamentName?: string };
 
     if (updates.startingOnOffense !== undefined) {
       this.game.startingOnOffense = updates.startingOnOffense;
     }
     if (updates.videoUrl !== undefined) {
       this.game.videoUrl = updates.videoUrl;
+    }
+    if (updates.ourTeamName !== undefined) {
+      this.game.teams.us.name = updates.ourTeamName;
+    }
+    if (updates.tournamentName !== undefined) {
+      this.game.tournamentName = updates.tournamentName;
+    }
+    if (updates.opponentName !== undefined) {
+      this.game.teams.them.name = updates.opponentName;
     }
 
     this.game.updatedAt = Date.now();

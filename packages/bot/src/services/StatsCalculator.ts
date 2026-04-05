@@ -28,7 +28,6 @@ import { PlayerNameParser } from './PlayerNameParser.js';
 export class StatsCalculator {
   // Game classification constants
   private static readonly CLOSE_GAME_THRESHOLD = 2; // Points within to consider "close"
-  private static readonly BLOWOUT_THRESHOLD = 5; // Point margin to consider "blowout"
 
   private nameParser = new PlayerNameParser();
 
@@ -591,13 +590,14 @@ export class StatsCalculator {
       const absMargin = Math.abs(margin);
 
       // Track margins
+      // Blowout: winner score > 2 * loser score + 1
       if (margin > 0) {
         victoriesMargins.push(margin);
-        if (margin >= StatsCalculator.BLOWOUT_THRESHOLD) blowoutWins++;
+        if (game.score.us > 2 * game.score.them + 1) blowoutWins++;
         if (margin <= StatsCalculator.CLOSE_GAME_THRESHOLD) closeWins++;
       } else if (margin < 0) {
         defeatMargins.push(absMargin);
-        if (absMargin >= StatsCalculator.BLOWOUT_THRESHOLD) blowoutLosses++;
+        if (game.score.them > 2 * game.score.us + 1) blowoutLosses++;
         if (absMargin <= StatsCalculator.CLOSE_GAME_THRESHOLD) closeLosses++;
       }
 

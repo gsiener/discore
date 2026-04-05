@@ -186,12 +186,12 @@ body {
   width: 25%;
 }
 
-.col-team1 {
+.games-table .col-team1 {
   text-align: right;
   padding-right: 1.25rem;
 }
 
-.col-team2 {
+.games-table .col-team2 {
   text-align: left;
   padding-left: 1.25rem;
 }
@@ -201,7 +201,7 @@ body {
   color: var(--color-text);
 }
 
-.col-score {
+.games-table .col-score {
   text-align: center;
   width: 140px;
   font-weight: 600;

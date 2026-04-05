@@ -339,7 +339,7 @@ export class Router {
     gameId: string,
     request: Request
   ): Promise<Response> {
-    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string };
+    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string; ourTeamName?: string; opponentName?: string; tournamentName?: string };
 
     const game = await this.db.getGameMetadata(gameId);
     if (!game) {
@@ -352,6 +352,15 @@ export class Router {
     }
     if (updates.videoUrl !== undefined) {
       game.videoUrl = updates.videoUrl;
+    }
+    if (updates.ourTeamName !== undefined) {
+      game.teams.us.name = updates.ourTeamName;
+    }
+    if (updates.opponentName !== undefined) {
+      game.teams.them.name = updates.opponentName;
+    }
+    if (updates.tournamentName !== undefined) {
+      game.tournamentName = updates.tournamentName;
     }
 
     game.updatedAt = Date.now();
