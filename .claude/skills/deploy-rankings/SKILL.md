@@ -34,8 +34,6 @@ Run as a SEPARATE Bash call (do NOT chain with Step 1 using &&):
 cd /Users/grahamsiener/src/discore/packages/web && npm run deploy 2>&1
 ```
 
-Why separate? The shell working directory persists across Bash calls. If Step 1 ended at the project root, Step 2 needs its own `cd` to reach `packages/web`. Chaining them in one call risks the deploy running from the wrong directory if the session already had a different cwd.
-
 ### Step 3 — Verify the live site
 
 ```bash
