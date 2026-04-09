@@ -16,7 +16,7 @@ The shell working directory **persists across Bash tool calls** in a session. Ne
 
 ### Step 1 — Copy files from Google Drive
 
-Run this as a single Bash call:
+Run as its own Bash call (absolute cd to project root):
 
 ```bash
 cd /Users/grahamsiener/src/discore && mkdir -p packages/web/public/rankings && cp \
@@ -26,11 +26,15 @@ cd /Users/grahamsiener/src/discore && mkdir -p packages/web/public/rankings && c
   packages/web/public/rankings/
 ```
 
-### Step 2 — Deploy (use absolute path for cd)
+### Step 2 — Deploy
+
+Run as a SEPARATE Bash call (do NOT chain with Step 1 using &&):
 
 ```bash
 cd /Users/grahamsiener/src/discore/packages/web && npm run deploy 2>&1
 ```
+
+Why separate? The shell working directory persists across Bash calls. If Step 1 ended at the project root, Step 2 needs its own `cd` to reach `packages/web`. Chaining them in one call risks the deploy running from the wrong directory if the session already had a different cwd.
 
 ### Step 3 — Verify the live site
 
