@@ -37,10 +37,10 @@ cd /Users/grahamsiener/src/discore/packages/web && npm run deploy 2>&1
 ### Step 3 — Verify the live site
 
 ```bash
-curl -s "https://score.kcuda.org/rankings/" | grep '"lastUpdated"' | head -1
+curl -s "https://score.kcuda.org/rankings/data.json" | python3 -c "import json,sys; d=json.load(sys.stdin); print(f'totalGames: {d[\"totalGames\"]}')"
 ```
 
-Confirm the date matches today's date. If it's stale or 0 files were uploaded, the working directory was wrong — go back to Step 1.
+Confirm `totalGames` is a reasonable number (not 0). If it's 0 or the fetch fails, the working directory was wrong — go back to Step 1.
 
 ## Files
 
