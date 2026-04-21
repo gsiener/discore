@@ -60,7 +60,8 @@ export class StatsCalculator {
     const pointScores: Array<{ score: { us: number; them: number }; players: Set<string> }> = [];
     let currentPointPlayers = new Set<string>();
 
-    for (const event of game.events) {
+    for (let i = 0; i < game.events.length; i++) {
+      const event = game.events[i];
       if (!event.message) continue;
 
       // Extract player names from messages
@@ -86,13 +87,14 @@ export class StatsCalculator {
           stats.touches++;
         }
 
-        // Check for defensive play
-        if (event.defensivePlay === 'block' && scorer) {
-          const stats = this.getOrCreatePlayerStats(playerMap, scorer);
-          stats.blocks++;
-        } else if (event.defensivePlay === 'steal' && scorer) {
-          const stats = this.getOrCreatePlayerStats(playerMap, scorer);
-          stats.steals++;
+        // Credit defensive play to the player from the preceding note event
+        if (event.defensivePlay) {
+          const dPlayer = this.findDefensivePlayer(game.events, i, event.defensivePlay);
+          if (dPlayer) {
+            const stats = this.getOrCreatePlayerStats(playerMap, dPlayer);
+            if (event.defensivePlay === 'block') stats.blocks++;
+            else stats.steals++;
+          }
         }
 
         // Record point completion for plus/minus
@@ -156,6 +158,37 @@ export class StatsCalculator {
       if (b.goals !== a.goals) return b.goals - a.goals;
       return b.assists - a.assists;
     });
+  }
+
+  /**
+   * Find the player who made a defensive play by looking at preceding note events
+   * within the same point (back to the last goal or game start).
+   */
+  private findDefensivePlayer(
+    events: GameEvent[],
+    goalIndex: number,
+    playType: 'block' | 'steal'
+  ): string | null {
+    // Walk backwards from the goal to find the most recent note with the play type
+    for (let j = goalIndex - 1; j >= 0; j--) {
+      const prev = events[j];
+      // Stop at a previous goal (different point)
+      if (prev.type === EventType.GOAL || prev.type === EventType.HALFTIME ||
+          prev.type === EventType.SECOND_HALF_START || prev.type === EventType.GAME_START) {
+        break;
+      }
+      if (prev.type === EventType.NOTE && prev.message) {
+        const msg = prev.message.toLowerCase();
+        if (playType === 'block' && msg.includes('block')) {
+          const match = prev.message.match(/^([A-Z][a-z]+)\s+(?:diving\s+)?block/i);
+          if (match) return match[1];
+        } else if (playType === 'steal' && msg.includes('steal')) {
+          const match = prev.message.match(/^([A-Z][a-z]+)\s+steal/i);
+          if (match) return match[1];
+        }
+      }
+    }
+    return null;
   }
 
   /**
