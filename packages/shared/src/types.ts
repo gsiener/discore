@@ -156,7 +156,6 @@ export interface PlayerStats {
   assists: number; // Total assists (thrower on scoring plays)
   blocks: number; // Total blocks
   steals: number; // Total steals
-  pointsPlayed: number; // Approximate count of points played (based on event appearances)
   plusMinus: number; // Score differential when player was on field
   touches: number; // Total times player is mentioned in events
 }

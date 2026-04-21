@@ -147,20 +147,12 @@ export class StatsCalculator {
 
         for (const playerName of lineup.players) {
           const stats = this.getOrCreatePlayerStats(playerMap, playerName);
-          stats.pointsPlayed++;
           stats.plusMinus += scoreDiff;
         }
       }
     } else {
       // Fallback: heuristic from event mentions
       this.calculatePlusMinus(playerMap, pointScores, game.score);
-
-      playerMap.forEach(stats => {
-        stats.pointsPlayed = Math.min(
-          stats.goals + stats.assists + Math.floor(stats.touches / 2),
-          game.score.us + game.score.them
-        );
-      });
     }
 
     return Array.from(playerMap.values()).sort((a, b) => {
@@ -184,7 +176,6 @@ export class StatsCalculator {
         assists: 0,
         blocks: 0,
         steals: 0,
-        pointsPlayed: 0,
         plusMinus: 0,
         touches: 0,
       });
@@ -433,7 +424,6 @@ export class StatsCalculator {
             assists: 0,
             blocks: 0,
             steals: 0,
-            pointsPlayed: 0,
             plusMinus: 0,
             touches: 0,
             gamesPlayed: 0,
@@ -450,7 +440,6 @@ export class StatsCalculator {
         aggregated.assists += playerStat.assists;
         aggregated.blocks += playerStat.blocks;
         aggregated.steals += playerStat.steals;
-        aggregated.pointsPlayed += playerStat.pointsPlayed;
         aggregated.plusMinus += playerStat.plusMinus;
         aggregated.touches += playerStat.touches;
         aggregated.gamesPlayed++;

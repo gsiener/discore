@@ -355,11 +355,6 @@ class StatsApp {
       stealsCell.textContent = player.steals.toString();
       row.appendChild(stealsCell);
 
-      // Points Played
-      const pointsCell = document.createElement('td');
-      pointsCell.textContent = player.pointsPlayed.toString();
-      row.appendChild(pointsCell);
-
       // Plus/Minus
       const plusMinusCell = document.createElement('td');
       const plusMinus = player.plusMinus;
