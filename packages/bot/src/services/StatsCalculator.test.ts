@@ -125,28 +125,42 @@ describe('StatsCalculator', () => {
       expect(nico?.goals).toBe(1); // greatest to Nico
     });
 
-    it('should track blocks and steals', () => {
+    it('should track blocks and steals from note events', () => {
       const game = createMockGame();
       game.events = [
         {
           id: generateId('event'),
           gameId: game.id,
-          type: EventType.GOAL,
+          type: EventType.NOTE,
           timestamp: Date.now(),
-          score: { us: 1, them: 0 },
-          team: TeamSide.US,
-          message: 'Ellis block, scores 1-0',
-          defensivePlay: 'block',
+          score: { us: 0, them: 0 },
+          message: 'Ellis block',
         },
         {
           id: generateId('event'),
           gameId: game.id,
           type: EventType.GOAL,
+          timestamp: Date.now() + 500,
+          score: { us: 1, them: 0 },
+          team: TeamSide.US,
+          message: 'Ellis scores 1-0',
+        },
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.NOTE,
           timestamp: Date.now() + 1000,
+          score: { us: 1, them: 0 },
+          message: 'Sarah steal',
+        },
+        {
+          id: generateId('event'),
+          gameId: game.id,
+          type: EventType.GOAL,
+          timestamp: Date.now() + 1500,
           score: { us: 2, them: 0 },
           team: TeamSide.US,
-          message: 'Sarah steal, scores 2-0',
-          defensivePlay: 'steal',
+          message: 'Sarah scores 2-0',
         },
       ];
       game.score = { us: 2, them: 0 };
@@ -201,8 +215,8 @@ describe('StatsCalculator', () => {
       const mason = stats.playerStats.find(p => p.name === 'Mason');
       const jake = stats.playerStats.find(p => p.name === 'Jake');
 
-      expect(mason?.pointsPlayed).toBeGreaterThan(0);
-      expect(jake?.pointsPlayed).toBeGreaterThan(0);
+      expect(mason?.touches).toBeGreaterThan(0);
+      expect(jake?.touches).toBeGreaterThan(0);
     });
 
     it('should sort players by goals then assists', () => {
