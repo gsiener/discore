@@ -109,13 +109,13 @@ export class StatsCalculator {
         // Credit blocks and steals directly from note events
         const msg = event.message.toLowerCase();
         if (msg.includes('block')) {
-          const match = event.message.match(/^([A-Z][a-z]+)\s+(?:diving\s+)?block/i);
+          const match = event.message.match(/^([A-Z][a-z]+)\s+(?:diving\s+)?block/);
           if (match) {
             const stats = this.getOrCreatePlayerStats(playerMap, match[1]);
             stats.blocks++;
           }
         } else if (msg.includes('steal')) {
-          const match = event.message.match(/^([A-Z][a-z]+)\s+steal/i);
+          const match = event.message.match(/^([A-Z][a-z]+)\s+steal/);
           if (match) {
             const stats = this.getOrCreatePlayerStats(playerMap, match[1]);
             stats.steals++;

@@ -32,6 +32,8 @@ export class PlayerNameParser {
     'Columbia', 'Westfield', 'Montclair', 'Beacon',
     ...PlayerNameParser.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
     'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
+    'Soft', 'Cap', 'Correction', 'Playing', 'Leaping',
+    'Stuy', 'Wiss', 'Lex',
   ]);
 
   /**
@@ -41,14 +43,14 @@ export class PlayerNameParser {
   extractPlayerNames(message: string, game: Game): string[] {
     const names: string[] = [];
 
-    // Add team names to exclusion list
+    // Add team names to exclusion list (split on whitespace and hyphens)
     const teamWords = new Set<string>();
-    game.teams.us.name.split(/\s+/).forEach(word => {
+    game.teams.us.name.split(/[\s\-]+/).forEach(word => {
       if (word.length > 2 && /^[A-Z]/.test(word)) {
         teamWords.add(word);
       }
     });
-    game.teams.them.name.split(/\s+/).forEach(word => {
+    game.teams.them.name.split(/[\s\-]+/).forEach(word => {
       if (word.length > 2 && /^[A-Z]/.test(word)) {
         teamWords.add(word);
       }
