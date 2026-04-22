@@ -22,6 +22,11 @@ export class PlayerNameParser {
     'i'
   );
 
+  // Player name aliases (formal name -> preferred name)
+  static readonly NAME_ALIASES: Record<string, string> = {
+    'Thaddeus': 'Nate',
+  };
+
   // Common words that aren't player names (hoisted to avoid per-call Set creation)
   static readonly COMMON_WORDS = new Set([
     'Goal', 'Score', 'Point', 'Block', 'Steal', 'Timeout', 'Halftime',
@@ -61,7 +66,7 @@ export class PlayerNameParser {
 
     for (const word of words) {
       if (!PlayerNameParser.COMMON_WORDS.has(word) && !teamWords.has(word) && word.length > 2) {
-        names.push(word);
+        names.push(PlayerNameParser.NAME_ALIASES[word] || word);
       }
     }
 
@@ -76,7 +81,8 @@ export class PlayerNameParser {
     const match = message.match(PlayerNameParser.ASSIST_PATTERN);
 
     if (match && !PlayerNameParser.DESCRIPTOR_CHECK.test(match[1])) {
-      return { assister: match[1], scorer: match[2] };
+      const a = PlayerNameParser.NAME_ALIASES;
+      return { assister: a[match[1]] || match[1], scorer: a[match[2]] || match[2] };
     }
 
     // Pattern: just a name (scorer only)
