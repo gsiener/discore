@@ -177,7 +177,7 @@ describe('StatsCalculator', () => {
       expect(sarah?.blocks).toBe(0);
     });
 
-    it('should calculate points played for players', () => {
+    it('should track touches for players involved in goals', () => {
       const game = createMockGame();
       game.events = [
         {
