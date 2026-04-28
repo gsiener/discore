@@ -81,8 +81,8 @@ export class PlayerNameParser {
     const match = message.match(PlayerNameParser.ASSIST_PATTERN);
 
     if (match && !PlayerNameParser.DESCRIPTOR_CHECK.test(match[1])) {
-      const a = PlayerNameParser.NAME_ALIASES;
-      return { assister: a[match[1]] || match[1], scorer: a[match[2]] || match[2] };
+      const aliases = PlayerNameParser.NAME_ALIASES;
+      return { assister: aliases[match[1]] || match[1], scorer: aliases[match[2]] || match[2] };
     }
 
     // Pattern: just a name (scorer only)
