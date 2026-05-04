@@ -14,15 +14,17 @@ The shell working directory **persists across Bash tool calls** in a session. Ne
 
 ## Workflow
 
+Graham uses two Macs with different usernames (`grahamsiener` and `gsiener`). All paths below use `$HOME` so the skill works on both machines without modification.
+
 ### Step 1 — Copy files from Google Drive
 
 Run as its own Bash call (absolute cd to project root):
 
 ```bash
-cd /Users/grahamsiener/src/discore && mkdir -p packages/web/public/rankings && cp \
-  "/Users/grahamsiener/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/data.json" \
-  "/Users/grahamsiener/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/graph.html" \
-  "/Users/grahamsiener/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/index.html" \
+cd "$HOME/src/discore" && mkdir -p packages/web/public/rankings && cp \
+  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/data.json" \
+  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/graph.html" \
+  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/index.html" \
   packages/web/public/rankings/
 ```
 
@@ -31,7 +33,7 @@ cd /Users/grahamsiener/src/discore && mkdir -p packages/web/public/rankings && c
 Run as a SEPARATE Bash call (do NOT chain with Step 1 using &&):
 
 ```bash
-cd /Users/grahamsiener/src/discore/packages/web && npm run deploy 2>&1
+cd "$HOME/src/discore/packages/web" && npm run deploy 2>&1
 ```
 
 ### Step 3 — Verify the live site
@@ -44,7 +46,7 @@ Confirm `totalGames` is a reasonable number (not 0). If it's 0 or the fetch fail
 
 ## Files
 
-- Source: `/Users/grahamsiener/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/`
+- Source: `$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/`
 - Files: `data.json`, `graph.html`, `index.html`
 - Destination: `packages/web/public/rankings/` (gitignored, recreate each time)
 - Live site: https://score.kcuda.org/rankings/
