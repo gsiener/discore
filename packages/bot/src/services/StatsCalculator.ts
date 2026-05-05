@@ -111,13 +111,15 @@ export class StatsCalculator {
         if (msg.includes('block')) {
           const match = event.message.match(/^([A-Z][a-z]+)\s+(?:diving\s+)?block/);
           if (match) {
-            const stats = this.getOrCreatePlayerStats(playerMap, match[1]);
+            const name = PlayerNameParser.NAME_ALIASES[match[1]] || match[1];
+            const stats = this.getOrCreatePlayerStats(playerMap, name);
             stats.blocks++;
           }
         } else if (msg.includes('steal')) {
           const match = event.message.match(/^([A-Z][a-z]+)\s+steal/);
           if (match) {
-            const stats = this.getOrCreatePlayerStats(playerMap, match[1]);
+            const name = PlayerNameParser.NAME_ALIASES[match[1]] || match[1];
+            const stats = this.getOrCreatePlayerStats(playerMap, name);
             stats.steals++;
           }
         }

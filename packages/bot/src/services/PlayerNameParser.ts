@@ -25,6 +25,7 @@ export class PlayerNameParser {
   // Player name aliases (formal name -> preferred name)
   static readonly NAME_ALIASES: Record<string, string> = {
     'Thaddeus': 'Nate',
+    'Dock': 'Noah',
   };
 
   // Common words that aren't player names (hoisted to avoid per-call Set creation)
@@ -50,12 +51,12 @@ export class PlayerNameParser {
 
     // Add team names to exclusion list (split on whitespace and hyphens)
     const teamWords = new Set<string>();
-    game.teams.us.name.split(/[\s\-]+/).forEach(word => {
+    game.teams.us.name.split(/[^A-Za-z]+/).forEach(word => {
       if (word.length > 2 && /^[A-Z]/.test(word)) {
         teamWords.add(word);
       }
     });
-    game.teams.them.name.split(/[\s\-]+/).forEach(word => {
+    game.teams.them.name.split(/[^A-Za-z]+/).forEach(word => {
       if (word.length > 2 && /^[A-Z]/.test(word)) {
         teamWords.add(word);
       }
