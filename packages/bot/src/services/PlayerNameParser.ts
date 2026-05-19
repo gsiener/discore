@@ -9,13 +9,16 @@ export class PlayerNameParser {
   // Throw/play descriptors that are not player names
   static readonly THROW_DESCRIPTORS = [
     'hammer', 'deep', 'greatest', 'blade', 'huck', 'diving', 'tipped', 'sky',
+    'leaping',
   ];
 
-  // Pre-compiled patterns for parseGoalEvent
+  // Pre-compiled patterns for parseGoalEvent.
+  // Case-sensitive: descriptors are lowercase, player names are capitalized.
+  // Descriptors may appear before "to" (modifying the thrower) or after "to"
+  // (modifying the receiver), e.g. "Ellis to diving Cyrus".
   static readonly THROW_DESCRIPTOR_PATTERN = PlayerNameParser.THROW_DESCRIPTORS.join('|');
   static readonly ASSIST_PATTERN = new RegExp(
-    `\\b([A-Z][a-z]+)\\s+(?:(?:${PlayerNameParser.THROW_DESCRIPTOR_PATTERN})\\s+)?to\\s+([A-Z][a-z]+)\\b`,
-    'i'
+    `\\b([A-Z][a-z]+)\\s+(?:(?:${PlayerNameParser.THROW_DESCRIPTOR_PATTERN})\\s+)?to\\s+(?:(?:${PlayerNameParser.THROW_DESCRIPTOR_PATTERN})\\s+)?([A-Z][a-z]+)\\b`,
   );
   static readonly DESCRIPTOR_CHECK = new RegExp(
     `^(?:${PlayerNameParser.THROW_DESCRIPTOR_PATTERN})$`,
@@ -38,7 +41,7 @@ export class PlayerNameParser {
     'Columbia', 'Westfield', 'Montclair', 'Beacon',
     ...PlayerNameParser.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
     'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
-    'Soft', 'Cap', 'Correction', 'Playing', 'Leaping',
+    'Soft', 'Cap', 'Correction', 'Playing',
     'Stuy', 'Wiss', 'Lex',
   ]);
 

@@ -58,6 +58,20 @@ describe('PlayerNameParser', () => {
       expect(result.assister).toBe('Mason');
     });
 
+    it('should parse "Ellis to diving Cyrus" with diving as a receiver descriptor', () => {
+      const game = createMockGame();
+      const result = parser.parseGoalEvent('Ellis to diving Cyrus', game);
+      expect(result.scorer).toBe('Cyrus');
+      expect(result.assister).toBe('Ellis');
+    });
+
+    it('should parse "Toby to leaping Mason" with leaping as a receiver descriptor', () => {
+      const game = createMockGame();
+      const result = parser.parseGoalEvent('Toby to leaping Mason', game);
+      expect(result.scorer).toBe('Mason');
+      expect(result.assister).toBe('Toby');
+    });
+
     it('should parse "Jake scores" as scorer=Jake with no assister', () => {
       const game = createMockGame();
       const result = parser.parseGoalEvent('Jake scores', game);
