@@ -12,14 +12,33 @@ export class DatabaseService {
    * Save game metadata only (no events). Use for updates that don't change events.
    */
   async saveGameMetadata(game: Game): Promise<void> {
+    // UPSERT (not INSERT OR REPLACE): REPLACE deletes-then-inserts, which
+    // triggers ON DELETE CASCADE on the events table and silently wipes a
+    // game's events on every metadata update. UPSERT keeps the row identity.
     await this.db
       .prepare(
-        `INSERT OR REPLACE INTO games (
+        `INSERT INTO games (
           id, status, our_team_name, their_team_name,
           score_us, score_them, started_at, finished_at,
           chat_id, tournament_name, game_date, game_order,
           starting_on_offense, lineups, video_url, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          status=excluded.status,
+          our_team_name=excluded.our_team_name,
+          their_team_name=excluded.their_team_name,
+          score_us=excluded.score_us,
+          score_them=excluded.score_them,
+          started_at=excluded.started_at,
+          finished_at=excluded.finished_at,
+          chat_id=excluded.chat_id,
+          tournament_name=excluded.tournament_name,
+          game_date=excluded.game_date,
+          game_order=excluded.game_order,
+          starting_on_offense=excluded.starting_on_offense,
+          lineups=excluded.lineups,
+          video_url=excluded.video_url,
+          updated_at=excluded.updated_at`
       )
       .bind(
         game.id,
