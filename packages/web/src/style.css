@@ -319,8 +319,8 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
   overflow: hidden;
-  --gs-us-bg: #0f766e;
-  --gs-us-bg-2: #0d5a55;
+  --gs-us-bg: #1e3a8a;
+  --gs-us-bg-2: #172554;
   --gs-them-bg: #475569;
   --gs-them-bg-2: #334155;
 }
