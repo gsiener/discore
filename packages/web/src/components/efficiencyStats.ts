@@ -45,12 +45,15 @@ export function toSummaryStats(line: LineStats, gameCount: number): SummaryStats
   const themBreaks = line.oLinePoints - line.oLineHolds;
   const themDPoints = line.oLinePoints;
   const forcedTurns = line.dLineBreaks + line.dLineFailedConversions;
+  // Opp dirty holds = D-line points where opp scored despite a logged Tech
+  // forced turn — i.e. our missed break chances are their dirty holds.
   return {
     us: {
       holds: line.oLineHolds,
       oPoints: line.oLinePoints,
       breaks: line.dLineBreaks,
       dPoints: line.dLinePoints,
+      dirtyHolds: line.oLineDirtyHolds,
       forcedTurns,
     },
     them: {
@@ -58,6 +61,7 @@ export function toSummaryStats(line: LineStats, gameCount: number): SummaryStats
       oPoints: themOPoints,
       breaks: themBreaks,
       dPoints: themDPoints,
+      dirtyHolds: line.dLineFailedConversions,
     },
     gameCount,
   };

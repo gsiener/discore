@@ -526,6 +526,7 @@ class StatsApp {
         oPoints: eff.oLinePoints,
         breaks: eff.dLineBreaks,
         dPoints: eff.dLinePoints,
+        dirtyHolds: eff.oLineDirtyHolds,
         forcedTurns,
       },
       them: {
@@ -533,6 +534,7 @@ class StatsApp {
         oPoints: themOPoints,
         breaks: themBreaks,
         dPoints: themDPoints,
+        dirtyHolds: eff.dLineFailedConversions,
       },
       gameCount: eff.gamesIncluded,
     });

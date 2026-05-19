@@ -9,6 +9,7 @@ export interface SummaryStats {
     oPoints: number;
     breaks: number;
     dPoints: number;
+    dirtyHolds: number; // holds where we turned it over but got it back
     forcedTurns: number; // breaks + failed conversions (logged)
   };
   them: {
@@ -16,6 +17,7 @@ export interface SummaryStats {
     oPoints: number;
     breaks: number;
     dPoints: number;
+    dirtyHolds: number; // opp holds we forced a turnover on (= our failed break chances)
   };
   gameCount: number;
 }
@@ -23,12 +25,15 @@ export interface SummaryStats {
 export function renderGameSummaryRows(container: HTMLElement, stats: SummaryStats): void {
   container.innerHTML = '';
   container.appendChild(rateRow('HOLDS', stats.us.holds, stats.us.oPoints, stats.them.holds, stats.them.oPoints));
+  // Clean hold rate: (holds - dirty) / holds. A high % means the offense
+  // held without coughing the disc up and reclaiming it.
+  container.appendChild(rateRow(
+    'CLEAN HOLDS',
+    stats.us.holds - stats.us.dirtyHolds, stats.us.holds,
+    stats.them.holds - stats.them.dirtyHolds, stats.them.holds,
+  ));
   container.appendChild(rateRow('BREAKS', stats.us.breaks, stats.us.dPoints, stats.them.breaks, stats.them.dPoints));
-  // Break conversion: breaks / (breaks + failed). For "them" we only know what
-  // we forced — we can't know how many turns they forced from us — so the
-  // opponent column shows the symmetric value: their breaks divided by our
-  // forced turns. (Their breaks = our O-line points we lost.)
-  // Skip break conversion for opponents since we don't track their forced turns.
+  // Break conversion is Tech-only — we don't log opponents' forced turns.
   container.appendChild(rateRow('BREAK CONVERSION', stats.us.breaks, stats.us.forcedTurns, null, null));
   container.appendChild(singleRow('FORCED TURNS', stats.us.forcedTurns));
 }
