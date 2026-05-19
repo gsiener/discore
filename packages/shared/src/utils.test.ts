@@ -358,9 +358,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 0,
       oLineHolds: 0,
       oLineHoldPercentage: 0,
+      oLineDirtyHolds: 0,
       dLinePoints: 0,
       dLineBreaks: 0,
       dLineBreakPercentage: 0,
+      dLineFailedConversions: 0,
     });
   });
 
@@ -377,9 +379,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 2,
       oLineHolds: 2,
       oLineHoldPercentage: 100,
+      oLineDirtyHolds: 0,
       dLinePoints: 1,
       dLineBreaks: 0,
       dLineBreakPercentage: 0,
+      dLineFailedConversions: 0,
     });
   });
 
@@ -399,9 +403,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 1,
       oLineHolds: 1,
       oLineHoldPercentage: 100,
+      oLineDirtyHolds: 0,
       dLinePoints: 2,
       dLineBreaks: 1,
       dLineBreakPercentage: 50,
+      dLineFailedConversions: 0,
     });
   });
 
@@ -420,9 +426,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 2,
       oLineHolds: 2,
       oLineHoldPercentage: 100, // 2/2 = 100%
+      oLineDirtyHolds: 0,
       dLinePoints: 3,
       dLineBreaks: 2,
       dLineBreakPercentage: 67, // 2/3 = 66.67% rounds to 67%
+      dLineFailedConversions: 0,
     });
   });
 
@@ -441,9 +449,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 2,
       oLineHolds: 2,
       oLineHoldPercentage: 100, // 2/2 = 100%
+      oLineDirtyHolds: 0,
       dLinePoints: 3,
       dLineBreaks: 1,
       dLineBreakPercentage: 33, // 1/3 = 33.33% rounds to 33%
+      dLineFailedConversions: 0,
     });
   });
 
@@ -496,9 +506,11 @@ describe('calculateLineStats', () => {
       oLinePoints: 3,
       oLineHolds: 3,
       oLineHoldPercentage: 100,
+      oLineDirtyHolds: 0,
       dLinePoints: 3,
       dLineBreaks: 0,
       dLineBreakPercentage: 0,
+      dLineFailedConversions: 0,
     });
   });
 
@@ -593,5 +605,111 @@ describe('calculateLineStats', () => {
       TeamSide.US,   // D-break
     ]);
     expect(calculateLineStats(game2)?.dLineBreakPercentage).toBe(67); // 2/3 = 66.67% rounds to 67%
+  });
+
+  /**
+   * Build a game with arbitrary events (not just goals) so we can test dirty
+   * hold and failed conversion detection. Sequence entries are either
+   * { goal: TeamSide } or { note: string }.
+   */
+  const buildGame = (
+    startingOnOffense: boolean,
+    sequence: Array<{ goal: TeamSide } | { note: string } | { halftime: true }>,
+  ): Game => {
+    const events: GameEvent[] = sequence.map((entry, index) => {
+      const base = {
+        id: `event_${index}`,
+        gameId: 'game1',
+        timestamp: Date.now() + index * 1000,
+        score: { us: 0, them: 0 },
+      };
+      if ('goal' in entry) {
+        return { ...base, type: EventType.GOAL, team: entry.goal };
+      }
+      if ('halftime' in entry) {
+        return { ...base, type: EventType.HALFTIME };
+      }
+      return { ...base, type: EventType.NOTE, message: entry.note };
+    });
+    return {
+      id: 'game1',
+      status: GameStatus.FINISHED,
+      teams: {
+        us: { name: 'Team A', side: TeamSide.US },
+        them: { name: 'Team B', side: TeamSide.THEM },
+      },
+      score: { us: 0, them: 0 },
+      events,
+      startingOnOffense,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+  };
+
+  it('counts a dirty hold when we receive, turn it over, get it back, and score', () => {
+    // Tech starts on O. During the point Mason gets a block (we'd turned it over
+    // to force the block to even be possible). Tech then scores. = dirty hold.
+    const game = buildGame(true, [
+      { note: 'Mason block' },
+      { goal: TeamSide.US },
+    ]);
+    const stats = calculateLineStats(game);
+    expect(stats?.oLineHolds).toBe(1);
+    expect(stats?.oLineDirtyHolds).toBe(1);
+    expect(stats?.dLineFailedConversions).toBe(0);
+  });
+
+  it('counts a failed conversion when D-line forces a turn but opponent still scores', () => {
+    const game = buildGame(false, [
+      { note: 'Theo steal' },
+      { goal: TeamSide.THEM },
+    ]);
+    const stats = calculateLineStats(game);
+    expect(stats?.dLinePoints).toBe(1);
+    expect(stats?.dLineBreaks).toBe(0);
+    expect(stats?.dLineFailedConversions).toBe(1);
+  });
+
+  it('does not count a clean hold as dirty', () => {
+    const game = buildGame(true, [{ goal: TeamSide.US }]);
+    const stats = calculateLineStats(game);
+    expect(stats?.oLineHolds).toBe(1);
+    expect(stats?.oLineDirtyHolds).toBe(0);
+  });
+
+  it('does not count a D-line break as a failed conversion', () => {
+    const game = buildGame(false, [
+      { note: 'Asher block' },
+      { goal: TeamSide.US },
+    ]);
+    const stats = calculateLineStats(game);
+    expect(stats?.dLineBreaks).toBe(1);
+    expect(stats?.dLineFailedConversions).toBe(0);
+  });
+
+  it('resets the "forced turn" flag between points', () => {
+    // Point 1: D-line, forced turn, failed conversion.
+    // Point 2: D-line, no forced turn, opponent holds (should NOT count as failed).
+    const game = buildGame(false, [
+      { note: 'Mason block' },
+      { goal: TeamSide.THEM }, // P1: failed conversion
+      { goal: TeamSide.US },   // P2: O-line, clean hold (after they scored, we receive)
+      { goal: TeamSide.THEM }, // P3: D-line, NO forced turn
+    ]);
+    const stats = calculateLineStats(game);
+    expect(stats?.dLinePoints).toBe(2);
+    expect(stats?.dLineFailedConversions).toBe(1);
+    expect(stats?.oLineHolds).toBe(1);
+    expect(stats?.oLineDirtyHolds).toBe(0);
+  });
+
+  it('ignores non-defensive notes (no block/steal keyword)', () => {
+    const game = buildGame(true, [
+      { note: 'Game to 11' },
+      { note: 'Universe point' },
+      { goal: TeamSide.US },
+    ]);
+    const stats = calculateLineStats(game);
+    expect(stats?.oLineDirtyHolds).toBe(0);
   });
 });

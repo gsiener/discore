@@ -28,6 +28,14 @@ export function renderEfficiencyStats(game: Game): void {
     oLineRecord.textContent = `(${lineStats.oLineHolds}/${lineStats.oLinePoints})`;
   }
 
+  // Dirty holds: held the point, but only after turning it over and getting it back
+  const dirtyCount = document.getElementById('o-line-dirty-count');
+  const dirtyRecord = document.getElementById('o-line-dirty-record');
+  if (dirtyCount && dirtyRecord) {
+    dirtyCount.textContent = lineStats.oLineDirtyHolds.toString();
+    dirtyRecord.textContent = `(${lineStats.oLineDirtyHolds} of ${lineStats.oLineHolds} ${pluralize('hold', lineStats.oLineHolds)})`;
+  }
+
   // Update D-line stats
   const dLinePercentage = document.getElementById('d-line-percentage');
   const dLineRecord = document.getElementById('d-line-record');
@@ -35,4 +43,16 @@ export function renderEfficiencyStats(game: Game): void {
     dLinePercentage.textContent = `${lineStats.dLineBreakPercentage}%`;
     dLineRecord.textContent = `(${lineStats.dLineBreaks}/${lineStats.dLinePoints})`;
   }
+
+  // Missed break chances: forced a turnover on D but still gave up the point
+  const failedCount = document.getElementById('d-line-failed-count');
+  const failedRecord = document.getElementById('d-line-failed-record');
+  if (failedCount && failedRecord) {
+    failedCount.textContent = lineStats.dLineFailedConversions.toString();
+    failedRecord.textContent = `(${lineStats.dLineFailedConversions} of ${lineStats.dLinePoints} D ${pluralize('point', lineStats.dLinePoints)})`;
+  }
+}
+
+function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
 }

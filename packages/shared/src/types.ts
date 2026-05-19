@@ -142,9 +142,11 @@ export interface LineStats {
   oLinePoints: number; // Total O-line points played
   oLineHolds: number; // O-line points that resulted in holds
   oLineHoldPercentage: number; // Percentage of O-line holds
+  oLineDirtyHolds: number; // Holds where we turned the disc over but got it back
   dLinePoints: number; // Total D-line points played
   dLineBreaks: number; // D-line points that resulted in breaks
   dLineBreakPercentage: number; // Percentage of D-line breaks
+  dLineFailedConversions: number; // D-line points where we forced a turn but didn't break
 }
 
 /**

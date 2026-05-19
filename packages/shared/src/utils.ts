@@ -78,7 +78,17 @@ export function getGameDuration(game: Game): number | null {
 }
 
 /**
- * Calculate O-line/D-line efficiency statistics from game events
+ * Calculate O-line/D-line efficiency statistics from game events.
+ *
+ * Beyond the headline hold/break counts, this also tracks:
+ *   - oLineDirtyHolds: O-line points we held but only after turning it back over
+ *     and reclaiming via a block/steal (counts as a hold but signals sloppy O).
+ *   - dLineFailedConversions: D-line points where we forced at least one turn
+ *     (logged Tech block/steal) but still gave up the goal.
+ *
+ * Detection of a "forced turn within this point" relies on note events whose
+ * message starts with a capitalized player name followed by "block" or "steal",
+ * or on goal events carrying a `defensivePlay` field.
  */
 export function calculateLineStats(game: Game): LineStats | null {
   // Can't calculate without knowing starting possession
@@ -86,69 +96,87 @@ export function calculateLineStats(game: Game): LineStats | null {
     return null;
   }
 
-  const scoringEvents = game.events.filter(
-    e => e.type === EventType.GOAL || e.type === EventType.HALFTIME
-  );
-
-  if (!scoringEvents.some(e => e.type === EventType.GOAL)) {
+  const goalCount = game.events.filter(e => e.type === EventType.GOAL).length;
+  if (goalCount === 0) {
     return {
       oLinePoints: 0,
       oLineHolds: 0,
       oLineHoldPercentage: 0,
+      oLineDirtyHolds: 0,
       dLinePoints: 0,
       dLineBreaks: 0,
       dLineBreakPercentage: 0,
+      dLineFailedConversions: 0,
     };
   }
 
   let oLinePoints = 0;
   let oLineHolds = 0;
+  let oLineDirtyHolds = 0;
   let dLinePoints = 0;
   let dLineBreaks = 0;
+  let dLineFailedConversions = 0;
 
-  // Track who has possession at the start of each point
+  // Track who has possession at the start of each point and whether we logged
+  // a Tech defensive play during the current point.
   let weHavePossession = game.startingOnOffense;
+  let forcedTurnThisPoint = false;
 
-  scoringEvents.forEach((event) => {
-    // At halftime, the team that received first now pulls
+  for (const event of game.events) {
     if (event.type === EventType.HALFTIME) {
+      // The team that received first now pulls
       weHavePossession = !game.startingOnOffense;
-      return;
+      forcedTurnThisPoint = false;
+      continue;
     }
 
-    // Determine if this is an O-line or D-line point for us
+    if (event.type === EventType.NOTE && isTechDefensivePlayNote(event.message)) {
+      forcedTurnThisPoint = true;
+      continue;
+    }
+
+    if (event.type !== EventType.GOAL) continue;
+
+    // A goal with defensivePlay tagged is itself a Tech-forced turn that scored.
+    const goalHadDefensivePlay = event.team === TeamSide.US && !!event.defensivePlay;
+    const hadForcedTurn = forcedTurnThisPoint || goalHadDefensivePlay;
+
     if (weHavePossession) {
-      // We're on offense
       oLinePoints++;
-      if (event.team === 'us') {
-        // We scored while on offense = hold
+      if (event.team === TeamSide.US) {
         oLineHolds++;
+        if (hadForcedTurn) oLineDirtyHolds++;
       }
-      // If they scored, we didn't hold (no increment)
     } else {
-      // We're on defense
       dLinePoints++;
-      if (event.team === 'us') {
-        // We scored while on defense = break
+      if (event.team === TeamSide.US) {
         dLineBreaks++;
+      } else if (hadForcedTurn) {
+        dLineFailedConversions++;
       }
-      // If they scored, we didn't break (no increment)
     }
 
     // After each goal, possession switches to the team that didn't score
-    if (event.team === 'us') {
-      weHavePossession = false; // They receive next
-    } else {
-      weHavePossession = true; // We receive next
-    }
-  });
+    weHavePossession = event.team !== TeamSide.US;
+    forcedTurnThisPoint = false;
+  }
 
   return {
     oLinePoints,
     oLineHolds,
     oLineHoldPercentage: oLinePoints > 0 ? Math.round((oLineHolds / oLinePoints) * 100) : 0,
+    oLineDirtyHolds,
     dLinePoints,
     dLineBreaks,
     dLineBreakPercentage: dLinePoints > 0 ? Math.round((dLineBreaks / dLinePoints) * 100) : 0,
+    dLineFailedConversions,
   };
+}
+
+/** Match note messages like "Mason block", "Theo steal", "Mason foot block". */
+const TECH_DEFENSIVE_NOTE_PATTERN = /^[A-Z][a-z]+\b.*\b(?:block|steal)\b/;
+
+function isTechDefensivePlayNote(message: string | undefined): boolean {
+  if (!message) return false;
+  return TECH_DEFENSIVE_NOTE_PATTERN.test(message);
 }
