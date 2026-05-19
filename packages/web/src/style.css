@@ -319,20 +319,20 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
   overflow: hidden;
-  --gs-us-bg: #6b21a8;
-  --gs-us-bg-2: #581c87;
-  --gs-them-bg: #991b1b;
-  --gs-them-bg-2: #7f1d1d;
+  --gs-us-bg: #0f766e;
+  --gs-us-bg-2: #0d5a55;
+  --gs-them-bg: #475569;
+  --gs-them-bg-2: #334155;
 }
 
 .game-summary .gs-title {
-  background: #111827;
+  background: #1f2937;
   color: #f9fafb;
   text-align: center;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 2px;
-  padding: 10px 16px;
+  padding: 6px 16px;
   text-transform: uppercase;
 }
 
@@ -345,7 +345,7 @@ body {
 .game-summary .gs-team {
   display: flex;
   align-items: center;
-  padding: 18px 24px;
+  padding: 10px 24px;
   gap: 16px;
   font-weight: 800;
 }
@@ -361,7 +361,7 @@ body {
 }
 
 .game-summary .gs-team-name {
-  font-size: 1.4rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   white-space: nowrap;
@@ -370,7 +370,7 @@ body {
 }
 
 .game-summary .gs-score {
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   line-height: 1;
 }
 
@@ -383,7 +383,7 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 14px 24px;
+  padding: 8px 18px;
   gap: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
@@ -403,7 +403,7 @@ body {
 }
 
 .game-summary .gs-pct {
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.92);
   min-width: 3.5em;
@@ -413,7 +413,7 @@ body {
 .game-summary .gs-cell.gs-them .gs-pct { text-align: right; }
 
 .game-summary .gs-frac {
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #fff;
   min-width: 2.5em;
@@ -423,7 +423,7 @@ body {
 .game-summary .gs-cell.gs-them .gs-frac { text-align: right; }
 
 .game-summary .gs-num {
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: #fff;
 }
@@ -445,14 +445,14 @@ body {
 
 @media (max-width: 640px) {
   .game-summary .gs-header { grid-template-columns: 1fr 1fr; }
-  .game-summary .gs-team { padding: 14px 14px; gap: 8px; }
-  .game-summary .gs-team-name { font-size: 1rem; letter-spacing: 0.5px; }
-  .game-summary .gs-score { font-size: 1.8rem; }
-  .game-summary .gs-row { padding: 12px 14px; gap: 8px; }
-  .game-summary .gs-pct { font-size: 1.05rem; min-width: 2.6em; }
-  .game-summary .gs-frac { font-size: 1.2rem; }
-  .game-summary .gs-num { font-size: 1.4rem; }
-  .game-summary .gs-label { font-size: 0.75rem; letter-spacing: 0.5px; padding: 0 4px; }
+  .game-summary .gs-team { padding: 8px 12px; gap: 8px; }
+  .game-summary .gs-team-name { font-size: 0.85rem; letter-spacing: 0.5px; }
+  .game-summary .gs-score { font-size: 1.3rem; }
+  .game-summary .gs-row { padding: 6px 12px; gap: 8px; }
+  .game-summary .gs-pct { font-size: 0.85rem; min-width: 2.6em; }
+  .game-summary .gs-frac { font-size: 0.95rem; }
+  .game-summary .gs-num { font-size: 1.05rem; }
+  .game-summary .gs-label { font-size: 0.7rem; letter-spacing: 0.5px; padding: 0 4px; }
 }
 
 /* Lineup Table */
