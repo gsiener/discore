@@ -25,12 +25,13 @@ export interface SummaryStats {
 export function renderGameSummaryRows(container: HTMLElement, stats: SummaryStats): void {
   container.innerHTML = '';
   container.appendChild(rateRow('HOLDS', stats.us.holds, stats.us.oPoints, stats.them.holds, stats.them.oPoints));
-  // Clean hold rate: (holds - dirty) / holds. A high % means the offense
-  // held without coughing the disc up and reclaiming it.
+  // Clean hold rate: (holds - dirty) / holds. Only shown for us because
+  // detecting an opp dirty hold relies on logging opp's defensive plays,
+  // which we don't track — biasing their clean-hold rate artificially high.
   container.appendChild(rateRow(
     'CLEAN HOLDS',
     stats.us.holds - stats.us.dirtyHolds, stats.us.holds,
-    stats.them.holds - stats.them.dirtyHolds, stats.them.holds,
+    null, null,
   ));
   container.appendChild(rateRow('BREAKS', stats.us.breaks, stats.us.dPoints, stats.them.breaks, stats.them.dPoints));
   // Break conversion is Tech-only — we don't log opponents' forced turns.
@@ -68,6 +69,7 @@ function rateCell(num: number | null, den: number | null, side: 'us' | 'them'): 
   cell.className = `gs-cell gs-${side}`;
   if (num === null || den === null) {
     cell.innerHTML = `<span class="gs-num gs-num-dim">—</span>`;
+    cell.title = "We don't log opponent defensive plays, so this isn't comparable";
     return cell;
   }
   const pct = den > 0 ? Math.round((num / den) * 100) : null;
