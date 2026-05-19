@@ -10,6 +10,7 @@ import {
   TeamTrends,
   PlayerChemistry,
 } from '@scorebot/shared';
+import { renderGameSummaryRows } from './components/gameSummaryRows.js';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:8787';
@@ -492,40 +493,49 @@ class StatsApp {
 
   private renderEfficiencySummary(eff: TeamTrends['efficiency']) {
     const container = document.getElementById('efficiency-summary-container');
-    const coverage = document.getElementById('efficiency-summary-coverage');
     if (!container) return;
 
-    // Hide the panel entirely when no game in the selection had startingOnOffense set
     if (!eff || eff.gamesIncluded === 0) {
       container.classList.add('hidden');
       return;
     }
     container.classList.remove('hidden');
 
-    if (coverage) {
-      coverage.textContent = `Aggregated across ${eff.gamesIncluded} ${eff.gamesIncluded === 1 ? 'game' : 'games'} with point-by-point data.`;
-    }
+    const filteredGames = this.currentTournament
+      ? this.games.filter(g => g.tournamentName === this.currentTournament)
+      : this.games;
+    const totalUs = filteredGames.reduce((s, g) => s + (g.score?.us || 0), 0);
+    const totalThem = filteredGames.reduce((s, g) => s + (g.score?.them || 0), 0);
 
-    // Offensive
-    this.setTextContent('agg-hold-percentage', `${eff.oLineHoldPercentage}%`);
-    this.setTextContent('agg-hold-record', `(${eff.oLineHolds}/${eff.oLinePoints})`);
-    const cleanHolds = eff.oLineHolds - eff.oLineDirtyHolds;
-    this.setTextContent('agg-clean-hold-percentage', eff.oLineHolds > 0 ? `${eff.oLineCleanHoldPercentage}%` : '—');
-    this.setTextContent('agg-clean-hold-record', `(${cleanHolds} of ${eff.oLineHolds} ${eff.oLineHolds === 1 ? 'hold' : 'holds'})`);
-    this.setTextContent('agg-o-points-per-game', eff.oLinePointsPerGame.toFixed(1));
-    this.setTextContent('agg-o-points-total', `(${eff.oLinePoints} total)`);
+    this.setTextContent('agg-gs-title', this.currentTournament
+      ? `${this.currentTournament} — ${eff.gamesIncluded} games`
+      : `Season Summary — ${eff.gamesIncluded} games`);
+    this.setTextContent('agg-score-us', String(totalUs));
+    this.setTextContent('agg-score-them', String(totalThem));
 
-    // Defensive
-    this.setTextContent('agg-break-percentage', `${eff.dLineBreakPercentage}%`);
-    this.setTextContent('agg-break-record', `(${eff.dLineBreaks}/${eff.dLinePoints})`);
+    const body = document.getElementById('agg-gs-body');
+    if (!body) return;
+    const themOPoints = eff.dLinePoints;
+    const themDPoints = eff.oLinePoints;
+    const themHolds = eff.dLinePoints - eff.dLineBreaks;
+    const themBreaks = eff.oLinePoints - eff.oLineHolds;
     const forcedTurns = eff.dLineBreaks + eff.dLineFailedConversions;
-    this.setTextContent(
-      'agg-break-conversion-percentage',
-      forcedTurns > 0 ? `${eff.dLineBreakConversionPercentage}%` : '—',
-    );
-    this.setTextContent('agg-break-conversion-record', `(${eff.dLineBreaks} of ${forcedTurns} forced ${forcedTurns === 1 ? 'turn' : 'turns'})`);
-    this.setTextContent('agg-forced-per-game', eff.forcedTurnsPerGame.toFixed(1));
-    this.setTextContent('agg-forced-total', `(${forcedTurns} total)`);
+    renderGameSummaryRows(body, {
+      us: {
+        holds: eff.oLineHolds,
+        oPoints: eff.oLinePoints,
+        breaks: eff.dLineBreaks,
+        dPoints: eff.dLinePoints,
+        forcedTurns,
+      },
+      them: {
+        holds: themHolds,
+        oPoints: themOPoints,
+        breaks: themBreaks,
+        dPoints: themDPoints,
+      },
+      gameCount: eff.gamesIncluded,
+    });
   }
 
   private renderPlayerChemistry(chemistry: PlayerChemistry[]) {

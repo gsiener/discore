@@ -60,40 +60,19 @@
             </table>
           </div>
 
-          <div id="efficiency-stats-container" class="efficiency-stats-container hidden">
-            <h3>O-Line / D-Line Efficiency</h3>
-            <div class="efficiency-grid">
-              <div class="efficiency-card o-line-card">
-                <div class="efficiency-label">O-Line Hold %</div>
-                <div class="efficiency-value">
-                  <span id="o-line-percentage" class="percentage">0%</span>
-                  <span id="o-line-record" class="record">(0/0)</span>
-                </div>
+          <div id="efficiency-stats-container" class="game-summary hidden">
+            <div class="gs-title">Game Summary</div>
+            <div class="gs-header">
+              <div class="gs-team gs-team-us">
+                <span id="gs-team-us" class="gs-team-name">Us</span>
+                <span id="gs-score-us" class="gs-score">0</span>
               </div>
-              <div class="efficiency-card o-line-card">
-                <div class="efficiency-label">Clean Hold %</div>
-                <div class="efficiency-value">
-                  <span id="o-line-clean-percentage" class="percentage">0%</span>
-                  <span id="o-line-clean-record" class="record">(0 of 0 holds)</span>
-                </div>
-                <div class="efficiency-sub">Held without a turnover</div>
-              </div>
-              <div class="efficiency-card d-line-card">
-                <div class="efficiency-label">D-Line Break %</div>
-                <div class="efficiency-value">
-                  <span id="d-line-percentage" class="percentage">0%</span>
-                  <span id="d-line-record" class="record">(0/0)</span>
-                </div>
-              </div>
-              <div class="efficiency-card d-line-card">
-                <div class="efficiency-label">Break Conversion</div>
-                <div class="efficiency-value">
-                  <span id="d-line-conversion-percentage" class="percentage">0%</span>
-                  <span id="d-line-conversion-record" class="record">(0 of 0 forced turns)</span>
-                </div>
-                <div class="efficiency-sub">Converted a forced turn into a break</div>
+              <div class="gs-team gs-team-them">
+                <span id="gs-score-them" class="gs-score">0</span>
+                <span id="gs-team-them" class="gs-team-name">Them</span>
               </div>
             </div>
+            <div class="gs-body" id="gs-body"></div>
           </div>
 
           <details id="lineup-table-container" class="lineup-table-container hidden">

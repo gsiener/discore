@@ -127,59 +127,19 @@
               </div>
             </div>
 
-            <div id="efficiency-summary-container" class="subsection">
-              <h3>Offensive &amp; Defensive Efficiency</h3>
-              <p class="section-description" id="efficiency-summary-coverage">Aggregated across selected games.</p>
-              <div class="efficiency-grid efficiency-grid-aggregate">
-                <div class="efficiency-card o-line-card">
-                  <div class="efficiency-label">Hold %</div>
-                  <div class="efficiency-value">
-                    <span id="agg-hold-percentage" class="percentage">0%</span>
-                    <span id="agg-hold-record" class="record">(0/0)</span>
-                  </div>
-                  <div class="efficiency-sub">Held when on offense</div>
+            <div id="efficiency-summary-container" class="game-summary subsection">
+              <div class="gs-title" id="agg-gs-title">Season Summary</div>
+              <div class="gs-header">
+                <div class="gs-team gs-team-us">
+                  <span class="gs-team-name">Tech Support</span>
+                  <span id="agg-score-us" class="gs-score">0</span>
                 </div>
-                <div class="efficiency-card o-line-card">
-                  <div class="efficiency-label">Clean Hold %</div>
-                  <div class="efficiency-value">
-                    <span id="agg-clean-hold-percentage" class="percentage">0%</span>
-                    <span id="agg-clean-hold-record" class="record">(0 of 0 holds)</span>
-                  </div>
-                  <div class="efficiency-sub">Held without a turnover</div>
-                </div>
-                <div class="efficiency-card o-line-card">
-                  <div class="efficiency-label">O Points / Game</div>
-                  <div class="efficiency-value">
-                    <span id="agg-o-points-per-game" class="percentage">0</span>
-                    <span id="agg-o-points-total" class="record">(0 total)</span>
-                  </div>
-                  <div class="efficiency-sub">How many times we received</div>
-                </div>
-                <div class="efficiency-card d-line-card">
-                  <div class="efficiency-label">Break %</div>
-                  <div class="efficiency-value">
-                    <span id="agg-break-percentage" class="percentage">0%</span>
-                    <span id="agg-break-record" class="record">(0/0)</span>
-                  </div>
-                  <div class="efficiency-sub">Broke when on defense</div>
-                </div>
-                <div class="efficiency-card d-line-card">
-                  <div class="efficiency-label">Break Conversion</div>
-                  <div class="efficiency-value">
-                    <span id="agg-break-conversion-percentage" class="percentage">0%</span>
-                    <span id="agg-break-conversion-record" class="record">(0 of 0 forced turns)</span>
-                  </div>
-                  <div class="efficiency-sub">Forced turns we converted</div>
-                </div>
-                <div class="efficiency-card d-line-card">
-                  <div class="efficiency-label">Forced Turns / Game</div>
-                  <div class="efficiency-value">
-                    <span id="agg-forced-per-game" class="percentage">0</span>
-                    <span id="agg-forced-total" class="record">(0 total)</span>
-                  </div>
-                  <div class="efficiency-sub">Logged blocks + steals</div>
+                <div class="gs-team gs-team-them">
+                  <span id="agg-score-them" class="gs-score">0</span>
+                  <span class="gs-team-name">Opponents</span>
                 </div>
               </div>
+              <div class="gs-body" id="agg-gs-body"></div>
             </div>
           </section>
 

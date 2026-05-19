@@ -1,0 +1,84 @@
+/**
+ * Render the body of the Game Summary panel: comparison rows for HOLDS,
+ * BREAKS, BREAK CONVERSION (both teams), plus a Tech-only FORCED TURNS row.
+ */
+
+export interface SummaryStats {
+  us: {
+    holds: number;
+    oPoints: number;
+    breaks: number;
+    dPoints: number;
+    forcedTurns: number; // breaks + failed conversions (logged)
+  };
+  them: {
+    holds: number;
+    oPoints: number;
+    breaks: number;
+    dPoints: number;
+  };
+  gameCount: number;
+}
+
+export function renderGameSummaryRows(container: HTMLElement, stats: SummaryStats): void {
+  container.innerHTML = '';
+  container.appendChild(rateRow('HOLDS', stats.us.holds, stats.us.oPoints, stats.them.holds, stats.them.oPoints));
+  container.appendChild(rateRow('BREAKS', stats.us.breaks, stats.us.dPoints, stats.them.breaks, stats.them.dPoints));
+  // Break conversion: breaks / (breaks + failed). For "them" we only know what
+  // we forced — we can't know how many turns they forced from us — so the
+  // opponent column shows the symmetric value: their breaks divided by our
+  // forced turns. (Their breaks = our O-line points we lost.)
+  // Skip break conversion for opponents since we don't track their forced turns.
+  container.appendChild(rateRow('BREAK CONVERSION', stats.us.breaks, stats.us.forcedTurns, null, null));
+  container.appendChild(singleRow('FORCED TURNS', stats.us.forcedTurns));
+}
+
+function rateRow(label: string, usNum: number, usDen: number, themNum: number | null, themDen: number | null): HTMLElement {
+  const row = document.createElement('div');
+  row.className = 'gs-row';
+  row.appendChild(rateCell(usNum, usDen, 'us'));
+  row.appendChild(labelCell(label));
+  row.appendChild(rateCell(themNum, themDen, 'them'));
+  return row;
+}
+
+function singleRow(label: string, value: number): HTMLElement {
+  const row = document.createElement('div');
+  row.className = 'gs-row gs-row-single';
+  const v1 = document.createElement('div');
+  v1.className = 'gs-cell gs-us gs-cell-single';
+  v1.innerHTML = `<span class="gs-num">${value}</span>`;
+  row.appendChild(v1);
+  row.appendChild(labelCell(label));
+  const v2 = document.createElement('div');
+  v2.className = 'gs-cell gs-them';
+  v2.innerHTML = `<span class="gs-num gs-num-dim">—</span>`;
+  v2.title = 'We only log our own forced turnovers';
+  row.appendChild(v2);
+  return row;
+}
+
+function rateCell(num: number | null, den: number | null, side: 'us' | 'them'): HTMLElement {
+  const cell = document.createElement('div');
+  cell.className = `gs-cell gs-${side}`;
+  if (num === null || den === null) {
+    cell.innerHTML = `<span class="gs-num gs-num-dim">—</span>`;
+    return cell;
+  }
+  const pct = den > 0 ? Math.round((num / den) * 100) : null;
+  const pctText = pct !== null ? `${pct}%` : '—';
+  // PCT outermost, then fraction nearer center
+  if (side === 'us') {
+    cell.innerHTML = `<span class="gs-pct">${pctText}</span><span class="gs-frac">${num}/${den}</span>`;
+  } else {
+    cell.innerHTML = `<span class="gs-frac">${num}/${den}</span><span class="gs-pct">${pctText}</span>`;
+  }
+  return cell;
+}
+
+function labelCell(label: string): HTMLElement {
+  const cell = document.createElement('div');
+  cell.className = 'gs-label';
+  cell.textContent = label;
+  return cell;
+}
