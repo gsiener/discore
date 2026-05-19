@@ -304,7 +304,7 @@ class StatsApp {
     if (players.length === 0) {
       const row = document.createElement('tr');
       const cell = document.createElement('td');
-      cell.colSpan = 9;
+      cell.colSpan = 8;
       cell.textContent = 'No player stats available';
       cell.style.textAlign = 'center';
       row.appendChild(cell);
@@ -312,11 +312,11 @@ class StatsApp {
       return;
     }
 
-    // Sort players
+    // Sort players. 'stocks' is a derived column (blocks + steals).
     const sorted = [...players].sort((a, b) => {
       const key = this.sortColumn;
-      let aVal = a[key];
-      let bVal = b[key];
+      const aVal = key === 'stocks' ? a.blocks + a.steals : a[key];
+      const bVal = key === 'stocks' ? b.blocks + b.steals : b[key];
       if (typeof aVal === 'string') {
         const cmp = aVal.localeCompare(bVal);
         return this.sortAscending ? cmp : -cmp;
@@ -345,15 +345,12 @@ class StatsApp {
       assistsCell.textContent = player.assists.toString();
       row.appendChild(assistsCell);
 
-      // Blocks
-      const blocksCell = document.createElement('td');
-      blocksCell.textContent = player.blocks.toString();
-      row.appendChild(blocksCell);
-
-      // Steals
-      const stealsCell = document.createElement('td');
-      stealsCell.textContent = player.steals.toString();
-      row.appendChild(stealsCell);
+      // Stocks = blocks + steals, surfaced as a combined column but still
+      // tracked separately on the backend. Tooltip exposes the split.
+      const stocksCell = document.createElement('td');
+      stocksCell.textContent = (player.blocks + player.steals).toString();
+      stocksCell.title = `${player.blocks} blocks + ${player.steals} steals`;
+      row.appendChild(stocksCell);
 
       // Plus/Minus
       const plusMinusCell = document.createElement('td');
