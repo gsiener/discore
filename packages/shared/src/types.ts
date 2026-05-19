@@ -273,23 +273,6 @@ export interface ScoringPatterns {
 }
 
 /**
- * Head-to-head record against specific opponent
- */
-export interface OpponentRecord {
-  opponentName: string;
-  wins: number;
-  losses: number;
-  totalPointsScored: number;
-  totalPointsAllowed: number;
-  averagePointsScored: number;
-  averagePointsAllowed: number;
-  lastGameDate?: string;
-  lastGameResult: 'win' | 'loss' | null;
-  winStreak: number; // Current consecutive wins (0 if not winning)
-  lossStreak: number; // Current consecutive losses (0 if not losing)
-}
-
-/**
  * Win/loss streak information
  */
 export interface StreakInfo {
@@ -310,7 +293,7 @@ export interface TeamTrends {
   };
   streaks: StreakInfo;
   scoringPatterns: ScoringPatterns;
-  opponentRecords: OpponentRecord[];
+  efficiency: AggregateLineStats;
   tournamentPerformance: Array<{
     tournamentName: string;
     wins: number;
@@ -318,14 +301,29 @@ export interface TeamTrends {
     avgPointsScored: number;
     avgPointsAllowed: number;
   }>;
-  recentForm: Array<{
-    gameId: string;
-    gameDate?: string;
-    opponent: string;
-    result: 'win' | 'loss';
-    score: Score;
-    margin: number;
-  }>;
+}
+
+/**
+ * Season-aggregate offensive and defensive efficiency rolled up from
+ * per-game LineStats. Only games with startingOnOffense set contribute,
+ * so gamesIncluded may be less than the filter total.
+ */
+export interface AggregateLineStats {
+  gamesIncluded: number;
+  // Offensive
+  oLinePoints: number;
+  oLineHolds: number;
+  oLineHoldPercentage: number;
+  oLineDirtyHolds: number;
+  oLineCleanHoldPercentage: number; // (holds - dirty) / holds
+  oLinePointsPerGame: number;
+  // Defensive
+  dLinePoints: number;
+  dLineBreaks: number;
+  dLineBreakPercentage: number;
+  dLineFailedConversions: number;
+  dLineBreakConversionPercentage: number; // breaks / (breaks + failed)
+  forcedTurnsPerGame: number; // (breaks + failed) / gamesIncluded
 }
 
 /**

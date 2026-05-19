@@ -19,10 +19,11 @@ import {
   TeamTrends,
   ScoringPatterns,
   ScoringRun,
-  OpponentRecord,
   StreakInfo,
   PlayerChemistry,
+  AggregateLineStats,
 } from '@scorebot/shared';
+import { calculateLineStats } from '@scorebot/shared';
 import { PlayerNameParser } from './PlayerNameParser.js';
 
 export class StatsCalculator {
@@ -476,17 +477,60 @@ export class StatsCalculator {
     const overallRecord = this.calculateOverallRecord(sortedGames);
     const streaks = this.calculateStreaks(sortedGames);
     const scoringPatterns = this.calculateScoringPatterns(sortedGames);
-    const opponentRecords = this.calculateOpponentRecords(sortedGames);
+    const efficiency = this.calculateAggregateLineStats(sortedGames);
     const tournamentPerformance = this.calculateTournamentPerformance(sortedGames);
-    const recentForm = this.calculateRecentForm(sortedGames, 10); // Last 10 games
 
     return {
       overallRecord,
       streaks,
       scoringPatterns,
-      opponentRecords,
+      efficiency,
       tournamentPerformance,
-      recentForm,
+    };
+  }
+
+  /**
+   * Roll up per-game LineStats into season-aggregate offensive/defensive
+   * efficiency. Games without startingOnOffense set are excluded.
+   */
+  private calculateAggregateLineStats(games: Game[]): AggregateLineStats {
+    let gamesIncluded = 0;
+    let oLinePoints = 0;
+    let oLineHolds = 0;
+    let oLineDirtyHolds = 0;
+    let dLinePoints = 0;
+    let dLineBreaks = 0;
+    let dLineFailedConversions = 0;
+
+    for (const game of games) {
+      const stats = calculateLineStats(game);
+      if (!stats) continue;
+      gamesIncluded++;
+      oLinePoints += stats.oLinePoints;
+      oLineHolds += stats.oLineHolds;
+      oLineDirtyHolds += stats.oLineDirtyHolds;
+      dLinePoints += stats.dLinePoints;
+      dLineBreaks += stats.dLineBreaks;
+      dLineFailedConversions += stats.dLineFailedConversions;
+    }
+
+    const forcedTurns = dLineBreaks + dLineFailedConversions;
+    const cleanHolds = oLineHolds - oLineDirtyHolds;
+
+    return {
+      gamesIncluded,
+      oLinePoints,
+      oLineHolds,
+      oLineHoldPercentage: oLinePoints > 0 ? Math.round((oLineHolds / oLinePoints) * 100) : 0,
+      oLineDirtyHolds,
+      oLineCleanHoldPercentage: oLineHolds > 0 ? Math.round((cleanHolds / oLineHolds) * 100) : 0,
+      oLinePointsPerGame: gamesIncluded > 0 ? +(oLinePoints / gamesIncluded).toFixed(1) : 0,
+      dLinePoints,
+      dLineBreaks,
+      dLineBreakPercentage: dLinePoints > 0 ? Math.round((dLineBreaks / dLinePoints) * 100) : 0,
+      dLineFailedConversions,
+      dLineBreakConversionPercentage: forcedTurns > 0 ? Math.round((dLineBreaks / forcedTurns) * 100) : 0,
+      forcedTurnsPerGame: gamesIncluded > 0 ? +(forcedTurns / gamesIncluded).toFixed(1) : 0,
     };
   }
 
@@ -733,70 +777,6 @@ export class StatsCalculator {
   }
 
   /**
-   * Calculate head-to-head records against each opponent
-   */
-  private calculateOpponentRecords(games: Game[]): OpponentRecord[] {
-    const recordMap = new Map<string, OpponentRecord>();
-
-    games.forEach(game => {
-      const opponentName = game.teams.them.name;
-      let record = recordMap.get(opponentName);
-
-      if (!record) {
-        record = {
-          opponentName,
-          wins: 0,
-          losses: 0,
-          totalPointsScored: 0,
-          totalPointsAllowed: 0,
-          averagePointsScored: 0,
-          averagePointsAllowed: 0,
-          lastGameResult: null,
-          winStreak: 0,
-          lossStreak: 0,
-        };
-        recordMap.set(opponentName, record);
-      }
-
-      const isWin = game.score.us > game.score.them;
-      const isLoss = game.score.them > game.score.us;
-
-      record.totalPointsScored += game.score.us;
-      record.totalPointsAllowed += game.score.them;
-
-      if (isWin) {
-        record.wins++;
-        record.lastGameResult = 'win';
-        record.lossStreak = 0;
-        record.winStreak++;
-      } else if (isLoss) {
-        record.losses++;
-        record.lastGameResult = 'loss';
-        record.winStreak = 0;
-        record.lossStreak++;
-      }
-
-      if (game.gameDate) {
-        record.lastGameDate = game.gameDate;
-      }
-    });
-
-    // Calculate averages
-    recordMap.forEach(record => {
-      const totalGames = record.wins + record.losses;
-      record.averagePointsScored = totalGames > 0 ? record.totalPointsScored / totalGames : 0;
-      record.averagePointsAllowed = totalGames > 0 ? record.totalPointsAllowed / totalGames : 0;
-    });
-
-    return Array.from(recordMap.values()).sort((a, b) => {
-      // Sort by total games played
-      const aTotal = a.wins + a.losses;
-      const bTotal = b.wins + b.losses;
-      return bTotal - aTotal;
-    });
-  }
-
-  /**
    * Calculate performance by tournament
    */
   private calculateTournamentPerformance(games: Game[]): Array<{
@@ -849,30 +829,6 @@ export class StatsCalculator {
         avgPointsAllowed: stats.totalPointsAllowed / stats.gamesPlayed,
       }))
       .sort((a, b) => (b.wins + b.losses) - (a.wins + a.losses));
-  }
-
-  /**
-   * Get recent game results
-   */
-  private calculateRecentForm(games: Game[], limit: number): Array<{
-    gameId: string;
-    gameDate?: string;
-    opponent: string;
-    result: 'win' | 'loss';
-    score: Score;
-    margin: number;
-  }> {
-    return games
-      .slice(-limit)
-      .reverse()
-      .map(game => ({
-        gameId: game.id,
-        gameDate: game.gameDate,
-        opponent: game.teams.them.name,
-        result: game.score.us > game.score.them ? 'win' as const : 'loss' as const,
-        score: { ...game.score },
-        margin: Math.abs(game.score.us - game.score.them),
-      }));
   }
 
   /**

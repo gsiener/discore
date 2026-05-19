@@ -489,96 +489,46 @@ class StatsApp {
     this.setTextContent('pattern-close-wins', trends.scoringPatterns.closeWins);
     this.setTextContent('pattern-blowout-wins', trends.scoringPatterns.blowoutWins);
 
-    // Opponent Records
-    this.renderOpponentRecords(trends.opponentRecords);
-
-    // Recent Form
-    this.renderRecentForm(trends.recentForm);
+    // Offensive & defensive efficiency aggregated across the filtered games
+    this.renderEfficiencySummary(trends.efficiency);
   }
 
-  private renderOpponentRecords(records: any[]) {
-    const tbody = document.querySelector('#opponent-records-table tbody');
-    if (!tbody) return;
-
-    tbody.innerHTML = '';
-
-    if (records.length === 0) {
-      const row = document.createElement('tr');
-      const cell = document.createElement('td');
-      cell.colSpan = 5;
-      cell.textContent = 'No opponent records available';
-      cell.style.textAlign = 'center';
-      row.appendChild(cell);
-      tbody.appendChild(row);
-      return;
-    }
-
-    records.forEach(record => {
-      const row = document.createElement('tr');
-
-      // Opponent
-      const opponentCell = document.createElement('td');
-      opponentCell.textContent = record.opponentName;
-      opponentCell.className = 'player-name';
-      row.appendChild(opponentCell);
-
-      // W-L
-      const recordCell = document.createElement('td');
-      recordCell.textContent = `${record.wins}-${record.losses}`;
-      row.appendChild(recordCell);
-
-      // Avg Scored
-      const scoredCell = document.createElement('td');
-      scoredCell.textContent = record.averagePointsScored.toFixed(1);
-      row.appendChild(scoredCell);
-
-      // Avg Allowed
-      const allowedCell = document.createElement('td');
-      allowedCell.textContent = record.averagePointsAllowed.toFixed(1);
-      row.appendChild(allowedCell);
-
-      // Last Result
-      const resultCell = document.createElement('td');
-      resultCell.className = 'mobile-hidden';
-      if (record.lastGameResult) {
-        resultCell.textContent = record.lastGameResult === 'win' ? 'W' : 'L';
-        resultCell.className = record.lastGameResult === 'win' ? 'positive mobile-hidden' : 'negative mobile-hidden';
-      } else {
-        resultCell.textContent = '-';
-      }
-      row.appendChild(resultCell);
-
-      tbody.appendChild(row);
-    });
-  }
-
-  private renderRecentForm(recentGames: any[]) {
-    const container = document.getElementById('recent-form-list');
+  private renderEfficiencySummary(eff: TeamTrends['efficiency']) {
+    const container = document.getElementById('efficiency-summary-container');
+    const coverage = document.getElementById('efficiency-summary-coverage');
     if (!container) return;
 
-    container.innerHTML = '';
-
-    if (recentGames.length === 0) {
-      container.innerHTML = '<p>No recent games available</p>';
+    // Hide the panel entirely when no game in the selection had startingOnOffense set
+    if (!eff || eff.gamesIncluded === 0) {
+      container.classList.add('hidden');
       return;
     }
+    container.classList.remove('hidden');
 
-    recentGames.forEach(game => {
-      const gameEl = document.createElement('div');
-      gameEl.className = `recent-game ${game.result}`;
+    if (coverage) {
+      coverage.textContent = `Aggregated across ${eff.gamesIncluded} ${eff.gamesIncluded === 1 ? 'game' : 'games'} with point-by-point data.`;
+    }
 
-      const resultBadge = document.createElement('span');
-      resultBadge.className = `result-badge ${game.result}`;
-      resultBadge.textContent = game.result === 'win' ? 'W' : 'L';
+    // Offensive
+    this.setTextContent('agg-hold-percentage', `${eff.oLineHoldPercentage}%`);
+    this.setTextContent('agg-hold-record', `(${eff.oLineHolds}/${eff.oLinePoints})`);
+    const cleanHolds = eff.oLineHolds - eff.oLineDirtyHolds;
+    this.setTextContent('agg-clean-hold-percentage', eff.oLineHolds > 0 ? `${eff.oLineCleanHoldPercentage}%` : '—');
+    this.setTextContent('agg-clean-hold-record', `(${cleanHolds} of ${eff.oLineHolds} ${eff.oLineHolds === 1 ? 'hold' : 'holds'})`);
+    this.setTextContent('agg-o-points-per-game', eff.oLinePointsPerGame.toFixed(1));
+    this.setTextContent('agg-o-points-total', `(${eff.oLinePoints} total)`);
 
-      const infoEl = document.createElement('span');
-      infoEl.className = 'game-info';
-      infoEl.textContent = `vs ${game.opponent} (${game.score.us}-${game.score.them})`;
-
-      gameEl.appendChild(resultBadge);
-      gameEl.appendChild(infoEl);
-      container.appendChild(gameEl);
-    });
+    // Defensive
+    this.setTextContent('agg-break-percentage', `${eff.dLineBreakPercentage}%`);
+    this.setTextContent('agg-break-record', `(${eff.dLineBreaks}/${eff.dLinePoints})`);
+    const forcedTurns = eff.dLineBreaks + eff.dLineFailedConversions;
+    this.setTextContent(
+      'agg-break-conversion-percentage',
+      forcedTurns > 0 ? `${eff.dLineBreakConversionPercentage}%` : '—',
+    );
+    this.setTextContent('agg-break-conversion-record', `(${eff.dLineBreaks} of ${forcedTurns} forced ${forcedTurns === 1 ? 'turn' : 'turns'})`);
+    this.setTextContent('agg-forced-per-game', eff.forcedTurnsPerGame.toFixed(1));
+    this.setTextContent('agg-forced-total', `(${forcedTurns} total)`);
   }
 
   private renderPlayerChemistry(chemistry: PlayerChemistry[]) {
