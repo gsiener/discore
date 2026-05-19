@@ -1,0 +1,4 @@
+# Legacy rankings URLs from prior layouts (single combined → split by division).
+# Keeps WhatsApp / bookmark links from breaking.
+/rankings/graph        /rankings/graph_boys   301
+/rankings/graph.html   /rankings/graph_boys   301
