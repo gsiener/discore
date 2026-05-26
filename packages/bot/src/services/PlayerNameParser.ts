@@ -43,6 +43,7 @@ export class PlayerNameParser {
     'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
     'Soft', 'Cap', 'Correction', 'Playing',
     'Stuy', 'Wiss', 'Lex',
+    'State', 'Champions', 'Champs', 'Stall', 'Senior',
   ]);
 
   /**
