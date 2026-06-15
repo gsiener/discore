@@ -11,6 +11,7 @@ import {
   PlayerChemistry,
 } from '@scorebot/shared';
 import { renderGameSummaryRows } from './components/gameSummaryRows.js';
+import { toSummaryStats } from './components/efficiencyStats.js';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:8787';
@@ -515,29 +516,7 @@ class StatsApp {
 
     const body = document.getElementById('agg-gs-body');
     if (!body) return;
-    const themOPoints = eff.dLinePoints;
-    const themDPoints = eff.oLinePoints;
-    const themHolds = eff.dLinePoints - eff.dLineBreaks;
-    const themBreaks = eff.oLinePoints - eff.oLineHolds;
-    const forcedTurns = eff.dLineBreaks + eff.dLineFailedConversions;
-    renderGameSummaryRows(body, {
-      us: {
-        holds: eff.oLineHolds,
-        oPoints: eff.oLinePoints,
-        breaks: eff.dLineBreaks,
-        dPoints: eff.dLinePoints,
-        dirtyHolds: eff.oLineDirtyHolds,
-        forcedTurns,
-      },
-      them: {
-        holds: themHolds,
-        oPoints: themOPoints,
-        breaks: themBreaks,
-        dPoints: themDPoints,
-        dirtyHolds: eff.dLineFailedConversions,
-      },
-      gameCount: eff.gamesIncluded,
-    });
+    renderGameSummaryRows(body, toSummaryStats(eff, eff.gamesIncluded));
   }
 
   private renderPlayerChemistry(chemistry: PlayerChemistry[]) {

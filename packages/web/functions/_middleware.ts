@@ -16,13 +16,12 @@ interface Env {
   SITE_PASSWORD: string;
 }
 
-const PUBLIC_PREFIXES = ['/rankings'];
 const USERNAME = 'tech';
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  const url = new URL(context.request.url);
+  const { pathname } = new URL(context.request.url);
 
-  if (isPublic(url.pathname)) {
+  if (pathname === '/rankings' || pathname.startsWith('/rankings/')) {
     return context.next();
   }
 
@@ -32,8 +31,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return new Response('SITE_PASSWORD not configured', { status: 500 });
   }
 
-  const header = context.request.headers.get('Authorization') || '';
-  const supplied = decodeBasic(header);
+  const header = context.request.headers.get('Authorization');
+  const supplied = header ? decodeBasic(header) : null;
   if (supplied && supplied.user === USERNAME && timingSafeEqual(supplied.pass, expected)) {
     return context.next();
   }
@@ -46,12 +45,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     },
   });
 };
-
-function isPublic(pathname: string): boolean {
-  return PUBLIC_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + '/'),
-  );
-}
 
 function decodeBasic(header: string): { user: string; pass: string } | null {
   if (!header.startsWith('Basic ')) return null;

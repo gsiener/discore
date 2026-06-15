@@ -17,7 +17,6 @@ export interface SummaryStats {
     oPoints: number;
     breaks: number;
     dPoints: number;
-    dirtyHolds: number; // opp holds we forced a turnover on (= our failed break chances)
   };
   gameCount: number;
 }
