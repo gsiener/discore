@@ -39,7 +39,16 @@ function setText(id: string, value: string) {
   if (el) el.textContent = value;
 }
 
-export function toSummaryStats(line: LineStats, gameCount: number): SummaryStats {
+/**
+ * Accepts any LineStats-shaped object (per-game LineStats or the season-aggregate
+ * AggregateLineStats) — only the raw point/hold/break counts are read.
+ */
+type LineStatCounts = Pick<
+  LineStats,
+  'oLinePoints' | 'oLineHolds' | 'oLineDirtyHolds' | 'dLinePoints' | 'dLineBreaks' | 'dLineFailedConversions'
+>;
+
+export function toSummaryStats(line: LineStatCounts, gameCount: number): SummaryStats {
   const themHolds = line.dLinePoints - line.dLineBreaks;
   const themOPoints = line.dLinePoints;
   const themBreaks = line.oLinePoints - line.oLineHolds;

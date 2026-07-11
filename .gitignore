@@ -54,8 +54,10 @@ coverage/
 # Screenshots
 Screenshot*.png
 
-# Loading scripts
+# Loading scripts (one-off tournament data dumps, kept local only)
 packages/bot/scripts/load*.ts
+# ...except the committed loader-harness template
+!packages/bot/scripts/load-example-spec.ts
 
 # Database backups
 *.backup.sql

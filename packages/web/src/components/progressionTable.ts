@@ -4,9 +4,7 @@
  */
 
 import type { Game } from '@scorebot/shared';
-import { EventType } from '@scorebot/shared';
-import { isBreakScore } from './breakDetection.js';
-import { findHalftimePointIndex } from './gameUtils.js';
+import { EventType, buildPointLedger } from '@scorebot/shared';
 
 export function renderProgressionTable(game: Game): void {
   const table = document.getElementById('progression-table');
@@ -24,10 +22,14 @@ export function renderProgressionTable(game: Game): void {
   const container = document.getElementById('progression-table-container');
   if (container) container.classList.remove('hidden');
 
-  const halftimePointIndex = findHalftimePointIndex(goalEvents, game.events);
+  // Point ledger indexes 1:1 with goalEvents; break/hold and the halftime
+  // separator both come from it.
+  const points = buildPointLedger(game).points;
+  const firstAfterHalftimeIndex = points.findIndex(p => p.firstAfterHalftime);
+  const halftimePointIndex = firstAfterHalftimeIndex > 0 ? firstAfterHalftimeIndex - 1 : -1;
 
   const isBreak = (index: number): boolean => {
-    return isBreakScore(goalEvents[index], game.events, game);
+    return points[index]?.result === 'break';
   };
 
   // Build header row with point numbers

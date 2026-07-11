@@ -2,15 +2,14 @@
  * Event formatting utilities for displaying game events
  */
 
-import type { Game, GameEvent } from '@scorebot/shared';
+import type { Game, GameEvent, Point } from '@scorebot/shared';
 import { EventType } from '@scorebot/shared';
-import { isBreakScore } from './breakDetection.js';
 
-export function getEventIcon(event: GameEvent, allEvents: GameEvent[], game: Game): string {
+export function getEventIcon(event: GameEvent, pointsByGoalId: Map<string, Point>, game: Game): string {
   switch (event.type) {
     case EventType.GOAL:
       if (!event.team) return '\u26BD';
-      const isBreak = isBreakScore(event, allEvents, game);
+      const isBreak = pointsByGoalId.get(event.id)?.result === 'break';
       return isBreak ? '\u26A0\uFE0F' : '\u2713';
     case EventType.GAME_START:
       return '\uD83C\uDFC1';
@@ -32,7 +31,7 @@ export function getEventIcon(event: GameEvent, allEvents: GameEvent[], game: Gam
   }
 }
 
-export function formatEventType(event: GameEvent, game: Game, allEvents: GameEvent[]): string {
+export function formatEventType(event: GameEvent, game: Game, pointsByGoalId: Map<string, Point>): string {
   switch (event.type) {
     case EventType.GAME_START:
       return 'Game Start';
@@ -41,7 +40,7 @@ export function formatEventType(event: GameEvent, game: Game, allEvents: GameEve
 
       // Determine if this is a hold or break
       const teamName = event.team === 'us' ? game.teams.us.name : game.teams.them.name;
-      const isBreak = isBreakScore(event, allEvents, game);
+      const isBreak = pointsByGoalId.get(event.id)?.result === 'break';
 
       return isBreak
         ? `Break Score for ${teamName}`
