@@ -11,9 +11,12 @@ import {
   PlayerChemistry,
 } from '@scorebot/shared';
 import { renderGameSummaryRows } from './components/gameSummaryRows.js';
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:8787';
+import { toSummaryStats } from './components/efficiencyStats.js';
+import {
+  fetchGames,
+  fetchGameStats,
+  fetchAggregatedStats,
+} from './api/gameClient.js';
 
 class StatsApp {
   private games: GameSummary[] = [];
@@ -55,11 +58,7 @@ class StatsApp {
 
   private async loadGames() {
     try {
-      const response = await fetch(`${API_BASE_URL}/games?limit=100`);
-      if (!response.ok) throw new Error('Failed to fetch games');
-
-      const data = await response.json();
-      this.games = data.games;
+      this.games = await fetchGames();
 
       this.populateTournamentFilter();
       this.updateGameFilter();
@@ -155,25 +154,13 @@ class StatsApp {
   }
 
   private async loadGameStats(gameId: string) {
-    const response = await fetch(`${API_BASE_URL}/games/${gameId}/stats`);
-    if (!response.ok) throw new Error('Failed to fetch game stats');
-
-    const data = await response.json();
-    const stats: AdvancedStats = data.stats;
+    const stats = await fetchGameStats(gameId);
 
     this.renderGameStats(stats);
   }
 
   private async loadAggregatedStats() {
-    let url = `${API_BASE_URL}/stats/aggregated?limit=100`;
-    if (this.currentTournament) {
-      url += `&tournament=${encodeURIComponent(this.currentTournament)}`;
-    }
-
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch aggregated stats');
-
-    const data = await response.json();
+    const data = await fetchAggregatedStats(this.currentTournament || undefined);
 
     this.renderAggregatedStats(data.players, data.totalGames, data.teamTrends, data.playerChemistry);
   }
@@ -515,29 +502,8 @@ class StatsApp {
 
     const body = document.getElementById('agg-gs-body');
     if (!body) return;
-    const themOPoints = eff.dLinePoints;
-    const themDPoints = eff.oLinePoints;
-    const themHolds = eff.dLinePoints - eff.dLineBreaks;
-    const themBreaks = eff.oLinePoints - eff.oLineHolds;
-    const forcedTurns = eff.dLineBreaks + eff.dLineFailedConversions;
-    renderGameSummaryRows(body, {
-      us: {
-        holds: eff.oLineHolds,
-        oPoints: eff.oLinePoints,
-        breaks: eff.dLineBreaks,
-        dPoints: eff.dLinePoints,
-        dirtyHolds: eff.oLineDirtyHolds,
-        forcedTurns,
-      },
-      them: {
-        holds: themHolds,
-        oPoints: themOPoints,
-        breaks: themBreaks,
-        dPoints: themDPoints,
-        dirtyHolds: eff.dLineFailedConversions,
-      },
-      gameCount: eff.gamesIncluded,
-    });
+    // Opponent-by-symmetry math lives once, in toSummaryStats.
+    renderGameSummaryRows(body, toSummaryStats(eff, eff.gamesIncluded));
   }
 
   private renderPlayerChemistry(chemistry: PlayerChemistry[]) {

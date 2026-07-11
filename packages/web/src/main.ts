@@ -5,7 +5,7 @@
 
 import type { Game } from '@scorebot/shared';
 import { formatScore } from '@scorebot/shared';
-import { fetchGames, fetchGame } from './api/gameClient.js';
+import { fetchGames, fetchGame, poll } from './api/gameClient.js';
 import { renderGameHeader } from './components/gameHeader.js';
 import { renderTimeline } from './components/timeline.js';
 import { renderProgressionTable } from './components/progressionTable.js';
@@ -16,7 +16,7 @@ const POLL_INTERVAL = 3000; // 3 seconds
 
 class DiscoreApp {
   private currentGameId: string | null = null;
-  private pollInterval: number | null = null;
+  private stopPolling: (() => void) | null = null;
 
   constructor() {
     this.init();
@@ -135,8 +135,8 @@ class DiscoreApp {
     this.currentGameId = gameId;
 
     // Clear existing poll
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
+    if (this.stopPolling) {
+      this.stopPolling();
     }
 
     if (!gameId) {
@@ -144,13 +144,8 @@ class DiscoreApp {
       return;
     }
 
-    // Load game immediately
-    this.loadGame();
-
-    // Start polling
-    this.pollInterval = window.setInterval(() => {
-      this.loadGame();
-    }, POLL_INTERVAL);
+    // Load game immediately, then keep polling
+    this.stopPolling = poll(() => this.loadGame(), POLL_INTERVAL, true);
   }
 
   private async loadGame() {

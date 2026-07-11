@@ -4,8 +4,7 @@
  */
 
 import type { Game } from '@scorebot/shared';
-import { EventType, TeamSide } from '@scorebot/shared';
-import { findHalftimePointIndex } from './gameUtils.js';
+import { EventType, TeamSide, buildPointLedger } from '@scorebot/shared';
 
 export function renderLineupTable(game: Game): void {
   const container = document.getElementById('lineup-table-container');
@@ -35,7 +34,9 @@ export function renderLineupTable(game: Game): void {
   const playerOrder = [...playerPoints.keys()]
     .sort((a, b) => playerPoints.get(b)!.size - playerPoints.get(a)!.size);
 
-  const halftimePointIndex = findHalftimePointIndex(goalEvents, game.events);
+  const points = buildPointLedger(game).points;
+  const firstAfterHalftimeIndex = points.findIndex(p => p.firstAfterHalftime);
+  const halftimePointIndex = firstAfterHalftimeIndex > 0 ? firstAfterHalftimeIndex - 1 : -1;
   const totalPoints = game.lineups.length;
 
   const table = document.getElementById('lineup-table') as HTMLTableElement;

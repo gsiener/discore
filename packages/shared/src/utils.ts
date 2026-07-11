@@ -2,7 +2,8 @@
  * Shared utility functions
  */
 
-import { Game, GameEvent, Score, TeamSide, LineStats, EventType } from './types.js';
+import { Game, GameEvent, Score, TeamSide, LineStats } from './types.js';
+import { buildPointLedger } from './pointLedger.js';
 
 /**
  * Generate a unique ID for games and events
@@ -91,23 +92,10 @@ export function getGameDuration(game: Game): number | null {
  * or on goal events carrying a `defensivePlay` field.
  */
 export function calculateLineStats(game: Game): LineStats | null {
-  // Can't calculate without knowing starting possession
+  // Can't calculate without knowing starting possession — inferred results
+  // from an unseeded ledger must never feed efficiency stats.
   if (game.startingOnOffense === undefined) {
     return null;
-  }
-
-  const goalCount = game.events.filter(e => e.type === EventType.GOAL).length;
-  if (goalCount === 0) {
-    return {
-      oLinePoints: 0,
-      oLineHolds: 0,
-      oLineHoldPercentage: 0,
-      oLineDirtyHolds: 0,
-      dLinePoints: 0,
-      dLineBreaks: 0,
-      dLineBreakPercentage: 0,
-      dLineFailedConversions: 0,
-    };
   }
 
   let oLinePoints = 0;
@@ -117,48 +105,22 @@ export function calculateLineStats(game: Game): LineStats | null {
   let dLineBreaks = 0;
   let dLineFailedConversions = 0;
 
-  // Track who has possession at the start of each point and whether we logged
-  // a Tech defensive play during the current point.
-  let weHavePossession = game.startingOnOffense;
-  let forcedTurnThisPoint = false;
-
-  for (const event of game.events) {
-    if (event.type === EventType.HALFTIME) {
-      // The team that received first now pulls
-      weHavePossession = !game.startingOnOffense;
-      forcedTurnThisPoint = false;
-      continue;
-    }
-
-    if (event.type === EventType.NOTE && isTechDefensivePlayNote(event.message)) {
-      forcedTurnThisPoint = true;
-      continue;
-    }
-
-    if (event.type !== EventType.GOAL) continue;
-
-    // A goal with defensivePlay tagged is itself a Tech-forced turn that scored.
-    const goalHadDefensivePlay = event.team === TeamSide.US && !!event.defensivePlay;
-    const hadForcedTurn = forcedTurnThisPoint || goalHadDefensivePlay;
-
-    if (weHavePossession) {
+  for (const point of buildPointLedger(game).points) {
+    const scoredByUs = point.scoringTeam === TeamSide.US;
+    if (point.ourLine === 'O') {
       oLinePoints++;
-      if (event.team === TeamSide.US) {
+      if (scoredByUs) {
         oLineHolds++;
-        if (hadForcedTurn) oLineDirtyHolds++;
+        if (point.forcedTurn) oLineDirtyHolds++;
       }
     } else {
       dLinePoints++;
-      if (event.team === TeamSide.US) {
+      if (scoredByUs) {
         dLineBreaks++;
-      } else if (hadForcedTurn) {
+      } else if (point.forcedTurn) {
         dLineFailedConversions++;
       }
     }
-
-    // After each goal, possession switches to the team that didn't score
-    weHavePossession = event.team !== TeamSide.US;
-    forcedTurnThisPoint = false;
   }
 
   return {
@@ -171,12 +133,4 @@ export function calculateLineStats(game: Game): LineStats | null {
     dLineBreakPercentage: dLinePoints > 0 ? Math.round((dLineBreaks / dLinePoints) * 100) : 0,
     dLineFailedConversions,
   };
-}
-
-/** Match note messages like "Mason block", "Theo steal", "Mason foot block". */
-const TECH_DEFENSIVE_NOTE_PATTERN = /^[A-Z][a-z]+\b.*\b(?:block|steal)\b/;
-
-function isTechDefensivePlayNote(message: string | undefined): boolean {
-  if (!message) return false;
-  return TECH_DEFENSIVE_NOTE_PATTERN.test(message);
 }

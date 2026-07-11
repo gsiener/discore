@@ -2,7 +2,7 @@
 
 name = "scorebot-api"
 main = "dist/index.js"
-compatibility_date = "2024-01-01"
+compatibility_date = "2025-10-01"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 

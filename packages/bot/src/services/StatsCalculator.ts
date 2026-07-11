@@ -23,7 +23,7 @@ import {
   PlayerChemistry,
   AggregateLineStats,
 } from '@scorebot/shared';
-import { calculateLineStats } from '@scorebot/shared';
+import { calculateLineStats, buildPointLedger } from '@scorebot/shared';
 import { PlayerNameParser } from './PlayerNameParser.js';
 
 export class StatsCalculator {
@@ -139,14 +139,17 @@ export class StatsCalculator {
     }
 
     if (game.lineups && game.lineups.length > 0) {
-      // Authoritative calculation from lineup data
-      const goalEvents = game.events.filter(e => e.type === EventType.GOAL);
+      // Authoritative calculation from lineup data. Match each lineup to its
+      // point via the ledger's pointNumber rather than raw goal indexing.
+      const pointsByNumber = new Map(
+        buildPointLedger(game).points.map(p => [p.pointNumber, p])
+      );
 
       for (const lineup of game.lineups) {
-        const goalEvent = goalEvents[lineup.pointNumber - 1];
-        if (!goalEvent) continue;
+        const point = pointsByNumber.get(lineup.pointNumber);
+        if (!point) continue;
 
-        const scoreDiff = goalEvent.team === TeamSide.US ? 1 : -1;
+        const scoreDiff = point.scoringTeam === TeamSide.US ? 1 : -1;
 
         for (const playerName of lineup.players) {
           const stats = this.getOrCreatePlayerStats(playerMap, playerName);

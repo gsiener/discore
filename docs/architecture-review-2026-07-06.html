@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Architecture review — discore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+    </script>
+    <style>
+      .seam { stroke-dasharray: 4 4; }
+      .deep-box { background: linear-gradient(135deg, #0f172a, #1e293b); }
+      .mermaid { display: flex; justify-content: center; }
+      .mermaid svg { max-height: 340px; }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-slate-900 font-sans">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-14">
+
+      <!-- ============ HEADER ============ -->
+      <header class="space-y-4">
+        <h1 class="font-serif text-4xl tracking-tight">Architecture review — <span class="text-indigo-700">discore</span></h1>
+        <p class="text-sm text-slate-500">2026-07-06 · packages/shared · packages/bot · packages/web · no CONTEXT.md or ADRs found — domain terms below (Game, Point, break, hold, O-line) are drawn from the code itself</p>
+        <div class="flex flex-wrap gap-4 text-xs text-slate-600 items-center">
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 h-4 border-2 border-slate-400 bg-white rounded-sm"></span> module</span>
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 h-4 deep-box rounded-sm"></span> deep module</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="24" height="10"><line x1="0" y1="5" x2="24" y2="5" stroke="#64748b" stroke-width="2" class="seam"/></svg> seam</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="24" height="10"><line x1="0" y1="5" x2="24" y2="5" stroke="#dc2626" stroke-width="2"/></svg> leakage / duplication</span>
+        </div>
+      </header>
+
+      <!-- ============ CANDIDATES ============ -->
+      <section id="candidates" class="space-y-12">
+
+        <!-- ═══════════ CANDIDATE 1 ═══════════ -->
+        <article id="c1" class="rounded-xl border border-slate-200 bg-white p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl">1 · One possession engine: deepen break/hold into a Point Ledger</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold uppercase tracking-wider">Strong</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">in-process</span>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            shared/src/utils.ts:93–174 · web/src/components/breakDetection.ts:10–39 · web/src/components/efficiencyStats.ts:42–67 · web/src/stats.ts:518–540 · web/src/gameUtils.ts · bot/src/services/StatsCalculator.ts:496–535
+          </div>
+
+          <p class="text-slate-700"><strong>Problem.</strong> “Was this point a break or a hold?” is answered by <em>three unrelated algorithms</em>: <code class="text-sm bg-slate-100 px-1 rounded">calculateLineStats</code> runs possession forward, <code class="text-sm bg-slate-100 px-1 rounded">isBreakScore</code> scans backward from each goal, and <code class="text-sm bg-slate-100 px-1 rounded">gameUtils</code> finds halftime a third way by timestamp. The same game page uses two of them and they can disagree. The opponent-by-symmetry arithmetic (<code class="text-sm bg-slate-100 px-1 rounded">themHolds = dLinePoints − dLineBreaks</code>…) is inlined three times. No locality: a possession rule change lands in four files, two mental models.</p>
+
+          <!-- Before / After -->
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-red-700 font-semibold mb-2">Before — three algorithms, one concept</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-2">
+                <pre class="mermaid">
+flowchart TB
+  G[Game + events]
+  G --> A["calculateLineStats<br/><span style='font-size:10px'>forward possession flag</span>"]
+  G --> B["isBreakScore<br/><span style='font-size:10px'>backward goal scan</span>"]
+  G --> H["findHalftimePointIndex<br/><span style='font-size:10px'>timestamp heuristic</span>"]
+  A --> E[efficiencyStats]
+  B --> T[timeline / progression]
+  H --> T
+  E -. "symmetry math ×3" .-> S[stats.ts summary]
+  A --> SC[bot StatsCalculator]
+  classDef leak stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
+  class A,B,H leak
+                </pre>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">After — one deep Point Ledger module</div>
+              <!-- hand-built deep-module diagram -->
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-full flex flex-col justify-center gap-3">
+                <div class="text-center text-xs uppercase tracking-wider text-slate-500">Game + events</div>
+                <div class="flex justify-center"><svg width="12" height="18"><line x1="6" y1="0" x2="6" y2="12" stroke="#64748b" stroke-width="2"/><path d="M2 10 L6 17 L10 10" fill="#64748b"/></svg></div>
+                <div class="deep-box rounded-lg p-4 text-white mx-auto w-full max-w-sm">
+                  <div class="text-xs uppercase tracking-wider text-emerald-300 mb-2 border-b border-slate-600 pb-1.5">interface · buildPointLedger(game) → Point[]</div>
+                  <div class="text-[11px] text-slate-400 space-y-1">
+                    <div>forward possession model (the tested one)</div>
+                    <div>halftime possession flip</div>
+                    <div>break / hold / failed-conversion per point</div>
+                    <div>O-line / D-line attribution</div>
+                    <div>opponent stats by symmetry (toSummaryStats)</div>
+                  </div>
+                </div>
+                <div class="flex justify-center"><svg width="12" height="18"><line x1="6" y1="0" x2="6" y2="12" stroke="#64748b" stroke-width="2"/><path d="M2 10 L6 17 L10 10" fill="#64748b"/></svg></div>
+                <div class="flex justify-center gap-2 text-[11px] text-slate-600">
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50">timeline</span>
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50">progression</span>
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50">efficiency</span>
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50">StatsCalculator</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-slate-700"><strong>Solution.</strong> Deepen <code class="text-sm bg-slate-100 px-1 rounded">calculateLineStats</code> into a Point Ledger module in <code class="text-sm bg-slate-100 px-1 rounded">shared</code>: one pass over events producing annotated points (scorer, break/hold, line, halftime crossing). Delete <code class="text-sm bg-slate-100 px-1 rounded">isBreakScore</code> and the timestamp halftime heuristic; both web renderers and the bot's StatsCalculator read the ledger. Deletion test on <code class="text-sm bg-slate-100 px-1 rounded">isBreakScore</code>: its complexity reappears — inside the ledger, once.</p>
+
+          <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: possession rules in one module</li>
+            <li>leverage: one interface, 5+ call sites</li>
+            <li>timeline and stats can no longer disagree</li>
+            <li>existing utils.test.ts suite carries over</li>
+            <li>untested divergent algorithm gets deleted</li>
+            <li>pure function — the interface is the test surface</li>
+          </ul>
+        </article>
+
+        <!-- ═══════════ CANDIDATE 2 ═══════════ -->
+        <article id="c2" class="rounded-xl border border-slate-200 bg-white p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl">2 · A GameStore behind one seam: concentrate the DO ↔ D1 dual-write</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold uppercase tracking-wider">Strong</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">local-substitutable</span>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            bot/src/api/router.ts:179–250, 338–389 · bot/src/durable-objects/GameState.ts:31–104, 337–369 · bot/src/db/database.ts:14–96
+          </div>
+
+          <p class="text-slate-700"><strong>Problem.</strong> Every write to a game is a dual-write — Durable Object memory plus D1 — but the pairing rules live in the Router, not behind a seam. <code class="text-sm bg-slate-100 px-1 rounded">mutateGameViaDO</code> writes DO-first-then-D1; <code class="text-sm bg-slate-100 px-1 rounded">updateGame</code> writes D1-first and fire-and-forgets the DO. The five-field patch logic is implemented twice (GameState and Router). Which store is authoritative depends on whether the DO is warm. This seam has already bitten: a comment in database.ts documents that <code class="text-sm bg-slate-100 px-1 rounded">INSERT OR REPLACE</code> cascade-deleted a game's events. None of it is tested — no router.test.ts, no database.test.ts.</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-red-700 font-semibold mb-2">Before — Router orchestrates two stores, two orderings</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-2">
+                <pre class="mermaid">
+sequenceDiagram
+  participant R as Router
+  participant DO as GameState DO
+  participant D1 as DatabaseService
+  Note over R: addEvent / undo / delete
+  R->>DO: POST /events (magic path)
+  DO-->>R: {game}
+  R->>D1: saveStrategy? events : metadata
+  Note over R: updateGame — opposite order
+  R->>D1: saveGameMetadata FIRST
+  R--)DO: PUT /update (fire & forget)
+  Note over DO,D1: divergence on failure
+                </pre>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">After — one GameStore module owns the pairing</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-full flex flex-col justify-center gap-3">
+                <div class="flex justify-center gap-2 text-[11px] text-slate-600">
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50">HTTP Router (thin adapter)</span>
+                </div>
+                <div class="flex justify-center"><svg width="12" height="18"><line x1="6" y1="0" x2="6" y2="12" stroke="#64748b" stroke-width="2"/><path d="M2 10 L6 17 L10 10" fill="#64748b"/></svg></div>
+                <div class="deep-box rounded-lg p-4 text-white mx-auto w-full max-w-sm">
+                  <div class="text-xs uppercase tracking-wider text-emerald-300 mb-2 border-b border-slate-600 pb-1.5">interface · GameStore</div>
+                  <div class="text-[11px] font-mono text-slate-300 mb-2">get · addEvent · update · undo · deleteEvent · setLineups</div>
+                  <div class="text-[11px] text-slate-400 space-y-1">
+                    <div>write ordering (DO → D1, always)</div>
+                    <div>save-strategy selection</div>
+                    <div>rehydration on DO eviction</div>
+                    <div>single updateFields implementation</div>
+                  </div>
+                </div>
+                <div class="relative flex justify-center gap-2 pt-2">
+                  <svg class="absolute top-0 left-0 w-full h-4" preserveAspectRatio="none"><line x1="15%" y1="8" x2="85%" y2="8" stroke="#64748b" stroke-width="1.5" class="seam"/></svg>
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50 text-[11px] text-slate-600 relative">DO adapter</span>
+                  <span class="border border-slate-300 rounded px-2 py-1 bg-stone-50 text-[11px] text-slate-600 relative">D1 adapter</span>
+                  <span class="border-2 border-emerald-400 border-dashed rounded px-2 py-1 bg-emerald-50 text-[11px] text-emerald-700 relative">in-memory fakes (tests)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-slate-700"><strong>Solution.</strong> Extract a <code class="text-sm bg-slate-100 px-1 rounded">GameStore</code> module whose implementation owns both writes, the ordering, and rehydration. The Router shrinks to an HTTP adapter: parse request → call GameStore → serialize. GameStore accepts its DO-namespace and D1 dependencies rather than creating them — two adapters justify the seam: real bindings in prod, in-memory fakes in tests. The dual-write invariants (the exact logic behind the past CASCADE data-loss bug) finally get a test surface.</p>
+
+          <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: sync rules in one implementation</li>
+            <li>dual-write ordering becomes an invariant, not a convention</li>
+            <li>tests hit one interface, no miniflare</li>
+            <li>updateFields duplication deleted</li>
+            <li>interface shrinks: 6 verbs replace 10 magic paths</li>
+          </ul>
+        </article>
+
+        <!-- ═══════════ CANDIDATE 3 ═══════════ -->
+        <article id="c3" class="rounded-xl border border-slate-200 bg-white p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl">3 · One loader harness for 22 tournament scripts</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold uppercase tracking-wider">Strong</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">ports &amp; adapters</span>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            bot/scripts/load-*.ts, reload-*.ts, fix-*.ts — 22 files, ~5,300 lines
+          </div>
+
+          <p class="text-slate-700"><strong>Problem.</strong> Each tournament was onboarded by copying the previous script. 22 files each declare <code class="text-sm bg-slate-100 px-1 rounded">API_URL</code> — and they disagree (9 workers.dev, 5 kcuda.org, 4 localhost, 4 mixed). 13 re-declare the Event shape instead of importing <code class="text-sm bg-slate-100 px-1 rounded">AddEventRequest</code> from shared. 13 carry a hand-rolled <code class="text-sm bg-slate-100 px-1 rounded">edt()</code> time helper with the game's date and a DST offset baked into the body. Deletion test: delete any one script and the logic doesn't vanish — it's already reappeared 13 times.</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-red-700 font-semibold mb-2">Before — 22 shallow modules, interface ≈ implementation</div>
+              <!-- mass diagram -->
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-[320px] flex items-end justify-center gap-[3px] overflow-hidden">
+                <div class="flex items-end gap-[3px]">
+                  <!-- 22 columns -->
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm" title="copied logic"></div><div class="h-24 bg-slate-200 border border-slate-300 rounded-sm" title="data"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-16 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-32 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-12 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-28 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-20 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-14 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-24 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-16 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-28 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-10 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-24 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-32 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-14 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-20 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-24 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-16 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-28 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-12 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-20 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-24 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                  <div class="w-4 flex flex-col gap-[2px]"><div class="h-20 bg-red-200 border border-red-400 rounded-sm"></div><div class="h-16 bg-slate-200 border border-slate-300 rounded-sm"></div></div>
+                </div>
+              </div>
+              <div class="flex gap-4 mt-2 text-[11px] text-slate-500">
+                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-red-200 border border-red-400 rounded-sm inline-block"></span>copied logic (API_URL, edt(), addEvent, Event type)</span>
+                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-slate-200 border border-slate-300 rounded-sm inline-block"></span>actual game data</span>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">After — one deep loader, scripts become data</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-[320px] flex flex-col justify-center gap-3">
+                <div class="flex justify-center gap-1.5 flex-wrap text-[10px] text-slate-600">
+                  <span class="border border-slate-300 rounded px-1.5 py-0.5 bg-stone-50">yula-day1.ts</span>
+                  <span class="border border-slate-300 rounded px-1.5 py-0.5 bg-stone-50">states.ts</span>
+                  <span class="border border-slate-300 rounded px-1.5 py-0.5 bg-stone-50">amherst.ts</span>
+                  <span class="border border-slate-300 rounded px-1.5 py-0.5 bg-stone-50">…</span>
+                  <span class="text-slate-400 self-center">← games + events only</span>
+                </div>
+                <div class="flex justify-center"><svg width="12" height="18"><line x1="6" y1="0" x2="6" y2="12" stroke="#64748b" stroke-width="2"/><path d="M2 10 L6 17 L10 10" fill="#64748b"/></svg></div>
+                <div class="deep-box rounded-lg p-4 text-white mx-auto w-full max-w-sm">
+                  <div class="text-xs uppercase tracking-wider text-emerald-300 mb-2 border-b border-slate-600 pb-1.5">interface · loadTournament(spec)</div>
+                  <div class="text-[11px] text-slate-400 space-y-1">
+                    <div>one API_URL, env-driven</div>
+                    <div>timezone-correct time helper (date is data)</div>
+                    <div>shared AddEventRequest type from @scorebot/shared</div>
+                    <div>createGame / addEvent / endGame HTTP adapter</div>
+                    <div>idempotent re-run (reload = same interface)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-slate-700"><strong>Solution.</strong> One <code class="text-sm bg-slate-100 px-1 rounded">scripts/lib/loader.ts</code> module: <code class="text-sm bg-slate-100 px-1 rounded">loadTournament(spec)</code> takes a declarative tournament spec (date, games, events); its implementation owns the HTTP adapter, the timezone math, and idempotent re-runs. Existing scripts shrink to data. The "fix" scripts (<code class="text-sm bg-slate-100 px-1 rounded">fix-missing-dplays</code> et al.) become ordinary re-loads through the same interface.</p>
+
+          <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-700 list-disc list-inside">
+            <li>leverage: one implementation, 22 call sites</li>
+            <li>next tournament = a data file, zero logic</li>
+            <li>one API_URL instead of 22 disagreeing ones</li>
+            <li>DST bugs concentrate in one time helper</li>
+            <li>~2,000 lines of copied logic deleted</li>
+          </ul>
+        </article>
+
+        <!-- ═══════════ CANDIDATE 4 ═══════════ -->
+        <article id="c4" class="rounded-xl border border-slate-200 bg-white p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl">4 · Finish the gameClient seam: one path from pages to the API</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold uppercase tracking-wider">Worth exploring</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">ports &amp; adapters</span>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            web/src/api/gameClient.ts:7–24 · web/src/main.ts:8,15,151 · web/src/stats.ts:15,56–70,157–179 · web/src/games.ts:11,32–49
+          </div>
+
+          <p class="text-slate-700"><strong>Problem.</strong> The seam exists — <code class="text-sm bg-slate-100 px-1 rounded">gameClient.ts</code> — but only <code class="text-sm bg-slate-100 px-1 rounded">main.ts</code> crosses it. <code class="text-sm bg-slate-100 px-1 rounded">stats.ts</code> and <code class="text-sm bg-slate-100 px-1 rounded">games.ts</code> route around it with hand-rolled fetches; <code class="text-sm bg-slate-100 px-1 rounded">API_BASE_URL</code> is declared three times; “list games” has two different URLs (<code class="text-sm bg-slate-100 px-1 rounded">/games</code> vs <code class="text-sm bg-slate-100 px-1 rounded">/games?limit=100</code>); each page owns its own setInterval poller and try/catch/showError block. The client currently fails the deletion test — one caller — because the other pages leak past it.</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-red-700 font-semibold mb-2">Before — seam bypassed by 2 of 3 pages</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-2">
+                <pre class="mermaid">
+flowchart LR
+  M[main.ts] --> C[gameClient]
+  C --> API[(Worker API)]
+  S[stats.ts] -- "own fetch ×2<br/>own API_BASE_URL" --> API
+  GA[games.ts] -- "own fetch + poller<br/>own API_BASE_URL" --> API
+  linkStyle 2,3 stroke:#dc2626,stroke-width:2px;
+                </pre>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">After — every page crosses the same seam</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-2">
+                <pre class="mermaid">
+flowchart LR
+  M[main.ts] --> C
+  S[stats.ts] --> C
+  GA[games.ts] --> C
+  subgraph C[gameClient — deep]
+    direction TB
+    I["fetchGames · fetchGame · fetchStats<br/>poll(fn, interval) · one base URL · one error path"]
+  end
+  C --> API[(Worker API)]
+  style C fill:#0f172a,color:#fff,stroke:#0f172a
+  style I fill:#1e293b,color:#cbd5e1,stroke:#334155
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-slate-700"><strong>Solution.</strong> Deepen <code class="text-sm bg-slate-100 px-1 rounded">gameClient</code> into the only module that knows the base URL, endpoints, error handling, and polling cadence; pages call typed functions. With a fake adapter at this seam, page logic becomes testable without a network — two adapters make it a real seam.</p>
+
+          <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: endpoint/auth changes in one module</li>
+            <li>“list games” means one thing again</li>
+            <li>poller written once, three call sites</li>
+            <li>fake adapter unlocks page tests</li>
+          </ul>
+        </article>
+
+        <!-- ═══════════ CANDIDATE 5 ═══════════ -->
+        <article id="c5" class="rounded-xl border border-slate-200 bg-white p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl">5 · Give renderers an interface: data in, element out</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider">Speculative</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">in-process</span>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            web/src/components/*.ts · web/src/stats.ts:22,293,380 · web/index.html · web/stats.html
+          </div>
+
+          <p class="text-slate-700"><strong>Problem.</strong> Every renderer is a void function that reaches into <code class="text-sm bg-slate-100 px-1 rounded">document.getElementById('…')</code> for elements that must pre-exist in the HTML scaffold. The interface between TS and HTML is a bag of ~30 untyped string IDs checked by nothing, and <code class="text-sm bg-slate-100 px-1 rounded">stats.ts</code> types its inputs as <code class="text-sm bg-slate-100 px-1 rounded">any</code> despite <code class="text-sm bg-slate-100 px-1 rounded">PlayerStats</code>/<code class="text-sm bg-slate-100 px-1 rounded">GameContextStats</code> existing in shared. Result: zero web tests, because nothing can be exercised without booting the exact page DOM.</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="text-xs uppercase tracking-wider text-red-700 font-semibold mb-2">Before — interface as wide as the implementation</div>
+              <!-- mass diagram -->
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-[300px] flex items-center justify-center gap-8">
+                <div class="text-center">
+                  <div class="w-36 h-24 bg-red-100 border-2 border-red-400 rounded-t-lg flex items-center justify-center text-[10px] text-red-800 px-2">interface: 30+ element IDs, ambient DOM, <code>any</code> inputs, call-order rules</div>
+                  <div class="w-36 h-28 bg-slate-100 border-2 border-t-0 border-slate-300 rounded-b-lg flex items-center justify-center text-[10px] text-slate-600 px-2">implementation: formatting + table building</div>
+                  <div class="text-[10px] uppercase tracking-wider text-slate-400 mt-1.5">shallow</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-2">After — short interface, tall implementation</div>
+              <div class="rounded-lg border border-slate-200 bg-white p-4 h-[300px] flex items-center justify-center gap-8">
+                <div class="text-center">
+                  <div class="w-36 h-10 bg-emerald-50 border-2 border-emerald-500 rounded-t-lg flex items-center justify-center text-[10px] text-emerald-800 px-2">render(stats: PlayerStats[]) → HTMLElement</div>
+                  <div class="w-36 h-40 deep-box border-2 border-t-0 border-slate-700 rounded-b-lg flex items-center justify-center text-[10px] text-slate-300 px-2">implementation: all formatting, tables, badges; page shell mounts the result</div>
+                  <div class="text-[10px] uppercase tracking-wider text-slate-400 mt-1.5">deep</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-slate-700"><strong>Solution.</strong> Renderers take typed data and return an element; only the page shell touches <code class="text-sm bg-slate-100 px-1 rounded">document</code>. Restore the shared types at the interface (delete the <code class="text-sm bg-slate-100 px-1 rounded">any</code>s). Speculative because it touches every component for a payoff that mostly lands if web tests are actually wanted — a cheap first step is just typing the seam: replace <code class="text-sm bg-slate-100 px-1 rounded">any</code> with the shared types, no structural change.</p>
+
+          <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-slate-700 list-disc list-inside">
+            <li>the interface becomes the test surface</li>
+            <li>compiler checks the shared contract again</li>
+            <li>ID-string coupling to HTML shrinks to the shell</li>
+          </ul>
+        </article>
+
+        <!-- ═══════════ SMALLER FINDINGS ═══════════ -->
+        <article class="rounded-xl border border-slate-200 bg-stone-100/60 p-8 space-y-3">
+          <h2 class="font-serif text-xl text-slate-700">Smaller findings (no card warranted)</h2>
+          <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside">
+            <li><strong>Three regexes recognize “a defensive play in a note”</strong> — MessageParser.ts:197, StatsCalculator.ts:113, shared/utils.ts:177. Folds naturally into the Point Ledger work (candidate 1) or a small shared recognizer.</li>
+            <li><strong>Dead export:</strong> <code class="bg-white px-1 rounded">getGameDuration</code> (shared/utils.ts:74) has no caller outside its own tests — a tested pass-through; delete it. <code class="bg-white px-1 rounded">getGameByChatId</code> (database.ts:164) is likewise unused.</li>
+            <li><strong>shared/utils is two things fused:</strong> a deep core (types + calculateLineStats) plus single-caller one-liners (<code class="bg-white px-1 rounded">formatScore</code>, <code class="bg-white px-1 rounded">formatTime</code>) that add interface without leverage.</li>
+            <li><strong>“Point index” is reconstructed three ways</strong> — possession toggle, goal-event index, and <code class="bg-white px-1 rounded">lineups[].pointNumber</code> — assumed aligned with no shared helper guaranteeing it. Also folds into candidate 1.</li>
+            <li><strong>innerHTML vs createElement</strong> coexist with no rule (games.ts:172, timeline.ts:103 vs the rest) — pick one in candidate 5.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- ============ TOP RECOMMENDATION ============ -->
+      <section id="top-recommendation">
+        <div class="rounded-xl deep-box text-white p-8 space-y-3 shadow-lg">
+          <div class="text-xs uppercase tracking-wider text-emerald-300">Top recommendation</div>
+          <h2 class="font-serif text-2xl"><a href="#c1" class="underline decoration-emerald-400 underline-offset-4 hover:text-emerald-200">Start with the Point Ledger (candidate 1)</a></h2>
+          <p class="text-slate-300 text-sm leading-relaxed max-w-3xl">It deepens the domain heart of the whole system — break/hold is what the product <em>is</em> — and both adapters already exist (bot StatsCalculator and web renderers), so the seam is real, not hypothetical. It's a pure-function refactor with a test suite already in place to extend, it deletes an untested divergent algorithm that can visibly disagree with the stats on the same page, and it hands candidates 2 and 5 a cleaner shape to build on. The GameStore (candidate 2) is the follow-up: it guards the one seam that has already caused data loss.</p>
+        </div>
+      </section>
+
+      <footer class="text-xs text-slate-400 pb-8">Generated by /improve-codebase-architecture · vocabulary from /codebase-design · all four Strong/Worth-exploring candidates were implemented 2026-07-11</footer>
+    </main>
+  </body>
+</html>

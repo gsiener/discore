@@ -3,8 +3,8 @@
  * Displays events in reverse chronological order with WFDF-style layout
  */
 
-import type { Game, GameEvent } from '@scorebot/shared';
-import { EventType, formatTime } from '@scorebot/shared';
+import type { Game, GameEvent, Point } from '@scorebot/shared';
+import { EventType, formatTime, buildPointLedger } from '@scorebot/shared';
 import { getEventIcon, formatEventType } from './eventFormatter.js';
 
 export function renderTimeline(game: Game): void {
@@ -20,16 +20,21 @@ export function renderTimeline(game: Game): void {
 
   timeline.innerHTML = '';
 
+  // Build the point ledger once; break/hold indicators are looked up by goal id.
+  const pointsByGoalId = new Map<string, Point>(
+    buildPointLedger(game).points.map(p => [p.goalEvent.id, p])
+  );
+
   // Filter out game end events and render in reverse order (most recent first)
   const filteredEvents = events.filter(e => e.type !== EventType.GAME_END);
   const reversedEvents = [...filteredEvents].reverse();
   reversedEvents.forEach((event) => {
-    const eventEl = createEventElement(event, game, events);
+    const eventEl = createEventElement(event, game, pointsByGoalId);
     timeline.appendChild(eventEl);
   });
 }
 
-function createEventElement(event: GameEvent, game: Game, allEvents: GameEvent[]): HTMLElement {
+function createEventElement(event: GameEvent, game: Game, pointsByGoalId: Map<string, Point>): HTMLElement {
   const div = document.createElement('div');
   div.className = 'timeline-event';
 
@@ -51,11 +56,11 @@ function createEventElement(event: GameEvent, game: Game, allEvents: GameEvent[]
 
   const icon = document.createElement('span');
   icon.className = 'event-icon';
-  icon.textContent = getEventIcon(event, allEvents, game);
+  icon.textContent = getEventIcon(event, pointsByGoalId, game);
 
   const type = document.createElement('span');
   type.className = 'event-type';
-  type.textContent = formatEventType(event, game, allEvents);
+  type.textContent = formatEventType(event, game, pointsByGoalId);
 
   header.appendChild(time);
   header.appendChild(icon);

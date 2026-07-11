@@ -7,9 +7,8 @@ import {
   GameSummary,
   GameStatus,
 } from '@scorebot/shared';
+import { fetchGames, poll } from './api/gameClient.js';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:8787';
 const POLL_INTERVAL = 10000;
 
 interface TournamentGroup {
@@ -18,7 +17,7 @@ interface TournamentGroup {
 }
 
 class GamesListApp {
-  private pollInterval: number | null = null;
+  private stopPolling: (() => void) | null = null;
 
   constructor() {
     this.init();
@@ -30,18 +29,13 @@ class GamesListApp {
   }
 
   private setupPolling() {
-    this.pollInterval = window.setInterval(() => {
-      this.loadGames();
-    }, POLL_INTERVAL);
+    this.stopPolling = poll(() => this.loadGames(), POLL_INTERVAL);
   }
 
   private async loadGames() {
     try {
-      const response = await fetch(`${API_BASE_URL}/games?limit=100`);
-      if (!response.ok) throw new Error('Failed to fetch games');
-
-      const data = await response.json();
-      this.renderGames(data.games);
+      const games = await fetchGames();
+      this.renderGames(games);
     } catch (error) {
       console.error('Error loading games:', error);
       this.showError('Failed to load games. Please try again later.');

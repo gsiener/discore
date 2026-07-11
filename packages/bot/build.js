@@ -32,7 +32,9 @@ async function build() {
       format: 'esm',
       platform: 'browser',
       target: 'es2022',
-      external: [],
+      // `cloudflare:workers` is provided by the Workers runtime — keep it
+      // external so workerd resolves it instead of esbuild trying to bundle it.
+      external: ['cloudflare:workers'],
       conditions: ['worker', 'browser'],
       mainFields: ['browser', 'module', 'main'],
       resolveExtensions: ['.ts', '.js'],

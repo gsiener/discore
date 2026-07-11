@@ -1,12 +1,15 @@
 /**
  * API Router for Scorebot
- * Handles HTTP requests and routes them to appropriate handlers
+ * Thin HTTP adapter: parse request → call GameStore → serialize response.
+ * All DO/D1 coordination lives in GameStore; the Router does no store save
+ * calls, holds no DO stubs, and contains no hydration logic.
  */
 
 import { Env } from '../types';
 import { DatabaseService } from '../db/database';
-import { GameState } from '../durable-objects/GameState';
-import { CreateGameRequest, CreateGameResponse, AddEventRequest, AddEventResponse, GetAdvancedStatsResponse, GetAggregatedStatsResponse, Game } from '@scorebot/shared';
+import { GameStore } from '../store/GameStore';
+import { GameStateError } from '../durable-objects/GameState';
+import { GetAdvancedStatsResponse, GetAggregatedStatsResponse } from '@scorebot/shared';
 import { StatsCalculator } from '../services/StatsCalculator';
 import { CreateGameRequestSchema, AddEventRequestSchema, SetLineupsRequestSchema } from './validation';
 
@@ -25,10 +28,12 @@ function jsonResponse(data: unknown, status: number = 200): Response {
 
 export class Router {
   private db: DatabaseService;
+  private store: GameStore;
   private statsCalculator: StatsCalculator;
 
   constructor(private env: Env) {
     this.db = new DatabaseService(env.DB);
+    this.store = new GameStore(env.GAME_STATE, this.db);
     this.statsCalculator = new StatsCalculator();
   }
 
@@ -158,6 +163,11 @@ export class Router {
 
       return this.addCorsHeaders(response, corsHeaders);
     } catch (error) {
+      // Domain failures carry their intended HTTP status.
+      if (error instanceof GameStateError) {
+        return this.addCorsHeaders(jsonError(error.message, error.status), corsHeaders);
+      }
+
       console.error('Router error:', error);
       return new Response(
         JSON.stringify({
@@ -172,127 +182,21 @@ export class Router {
     }
   }
 
-  /**
-   * Ensure a Durable Object has game state, rehydrating from D1 if needed.
-   * Returns the DO stub ready for use, or null if rehydration failed.
-   */
-  private async ensureDOHydrated(
-    chatId: string,
-    gameForRehydration?: Game
-  ): Promise<DurableObjectStub | null> {
-    const id = this.env.GAME_STATE.idFromName(chatId);
-    const stub = this.env.GAME_STATE.get(id);
-
-    // Check if DO already has state
-    const checkResponse = await stub.fetch('https://fake-host/');
-    if (checkResponse.status !== 404) {
-      return stub;
-    }
-
-    // DO was evicted — need full game data to rehydrate
-    const game = gameForRehydration || await this.db.getGame(chatId);
-    if (!game) return null;
-
-    const rehydrateResponse = await stub.fetch(
-      new Request('https://fake-host/rehydrate', {
-        method: 'POST',
-        body: JSON.stringify(game),
-      })
-    );
-
-    if (rehydrateResponse.ok) {
-      return stub;
-    }
-
-    return null;
-  }
-
-  /**
-   * Forward a mutation to a game's Durable Object and persist the result.
-   * Handles: lookup game → hydrate DO → forward request → save to DB.
-   */
-  private async mutateGameViaDO(
-    gameId: string,
-    doPath: string,
-    doMethod: string,
-    body?: unknown,
-    saveStrategy: 'metadata' | 'events' = 'events',
-  ): Promise<Response> {
-    // Only need metadata (chatId) for routing — avoid fetching all events
-    const game = await this.db.getGameMetadata(gameId);
-    if (!game || !game.chatId) {
-      return jsonError('Game not found', 404);
-    }
-
-    const stub = await this.ensureDOHydrated(game.chatId);
-    if (!stub) {
-      return jsonError('Failed to restore game state', 500);
-    }
-
-    const response = await stub.fetch(
-      new Request(`https://fake-host${doPath}`, {
-        method: doMethod,
-        ...(body !== undefined && { body: JSON.stringify(body) }),
-      })
-    );
-
-    const data = await response.json() as { game: Game };
-
-    if (response.ok) {
-      if (saveStrategy === 'metadata') {
-        await this.db.saveGameMetadata(data.game);
-      } else {
-        await this.db.saveGameWithEvents(data.game);
-      }
-    }
-
-    return jsonResponse(data, response.status);
-  }
-
   private async createGame(request: Request): Promise<Response> {
     const body = await request.json();
     const parsed = CreateGameRequestSchema.safeParse(body);
     if (!parsed.success) {
       return jsonError('Validation error', 400);
     }
-    const { chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder } = parsed.data;
 
-    // Get or create Durable Object for this game
-    const id = this.env.GAME_STATE.idFromName(chatId);
-    const stub = this.env.GAME_STATE.get(id);
-
-    // Initialize game in Durable Object
-    const response = await stub.fetch(
-      new Request('https://fake-host/init', {
-        method: 'POST',
-        body: JSON.stringify({ chatId, ourTeamName, opponentName, tournamentName, gameDate, gameOrder }),
-      })
-    );
-
-    const data = await response.json() as CreateGameResponse;
-
-    // Save to database (full save for new game)
-    await this.db.saveGame(data.game);
-
-    return jsonResponse(data);
+    const game = await this.store.createGame(parsed.data);
+    return jsonResponse({ game });
   }
 
   private async getGame(gameId: string): Promise<Response> {
-    const game = await this.db.getGame(gameId);
+    const game = await this.store.getGame(gameId);
     if (!game) {
       return jsonError('Game not found', 404);
-    }
-
-    // Try to get fresh state from Durable Object if chatId exists
-    if (game.chatId) {
-      try {
-        const stub = await this.ensureDOHydrated(game.chatId, game);
-        if (stub) {
-          return await stub.fetch('https://fake-host/');
-        }
-      } catch {
-        // Fall back to database version
-      }
     }
 
     return jsonResponse({ game });
@@ -302,7 +206,7 @@ export class Router {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '50', 10);
 
-    const games = await this.db.listGames(limit);
+    const games = await this.store.listGames(limit);
 
     return jsonResponse({ games });
   }
@@ -314,15 +218,18 @@ export class Router {
       return jsonError('Validation error', 400);
     }
 
-    return this.mutateGameViaDO(gameId, '/events', 'POST', parsed.data, 'events');
+    const result = await this.store.addEvent(gameId, parsed.data);
+    return jsonResponse(result);
   }
 
   private async undoLastEvent(gameId: string): Promise<Response> {
-    return this.mutateGameViaDO(gameId, '/events/last', 'DELETE', undefined, 'events');
+    const result = await this.store.undoLastEvent(gameId);
+    return jsonResponse(result);
   }
 
   private async deleteEvent(gameId: string, eventId: string): Promise<Response> {
-    return this.mutateGameViaDO(gameId, `/events/${eventId}`, 'DELETE', undefined, 'events');
+    const result = await this.store.deleteEvent(gameId, eventId);
+    return jsonResponse(result);
   }
 
   private async setLineups(gameId: string, request: Request): Promise<Response> {
@@ -332,69 +239,28 @@ export class Router {
       return jsonError('Validation error', 400);
     }
 
-    return this.mutateGameViaDO(gameId, '/lineups', 'PATCH', parsed.data, 'metadata');
+    const game = await this.store.setLineups(gameId, parsed.data);
+    return jsonResponse({ game });
   }
 
-  private async updateGame(
-    gameId: string,
-    request: Request
-  ): Promise<Response> {
-    const updates = await request.json() as { startingOnOffense?: boolean; videoUrl?: string; ourTeamName?: string; opponentName?: string; tournamentName?: string };
+  private async updateGame(gameId: string, request: Request): Promise<Response> {
+    const updates = await request.json() as {
+      startingOnOffense?: boolean;
+      videoUrl?: string;
+      ourTeamName?: string;
+      opponentName?: string;
+      tournamentName?: string;
+    };
 
-    const game = await this.db.getGameMetadata(gameId);
-    if (!game) {
-      return jsonError('Game not found', 404);
-    }
-
-    // Update fields
-    if (updates.startingOnOffense !== undefined) {
-      game.startingOnOffense = updates.startingOnOffense;
-    }
-    if (updates.videoUrl !== undefined) {
-      game.videoUrl = updates.videoUrl;
-    }
-    if (updates.ourTeamName !== undefined) {
-      game.teams.us.name = updates.ourTeamName;
-    }
-    if (updates.opponentName !== undefined) {
-      game.teams.them.name = updates.opponentName;
-    }
-    if (updates.tournamentName !== undefined) {
-      game.tournamentName = updates.tournamentName;
-    }
-
-    game.updatedAt = Date.now();
-
-    // Update in database (metadata only)
-    await this.db.saveGameMetadata(game);
-
-    // If game has a chatId, also update the Durable Object
-    if (game.chatId) {
-      try {
-        const stub = await this.ensureDOHydrated(game.chatId);
-        if (stub) {
-          await stub.fetch(
-            new Request('https://fake-host/update', {
-              method: 'PATCH',
-              body: JSON.stringify(updates),
-            })
-          );
-        }
-      } catch (error) {
-        console.warn('Failed to update Durable Object:', error);
-      }
-    }
-
+    const game = await this.store.updateGame(gameId, updates);
     return jsonResponse({ game });
   }
 
   private async deleteGame(gameId: string): Promise<Response> {
-    const game = await this.db.getGameMetadata(gameId);
-    if (!game) {
+    const deleted = await this.store.deleteGame(gameId);
+    if (!deleted) {
       return jsonError('Game not found', 404);
     }
-
-    await this.db.deleteGame(gameId);
 
     return jsonResponse({ success: true, deleted: gameId });
   }
