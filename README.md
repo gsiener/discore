@@ -37,9 +37,11 @@ A WhatsApp chatbot that automatically tracks ultimate frisbee game scores in rea
 
 Built as a TypeScript monorepo with three packages:
 
-1. **@scorebot/shared** - Shared types and utilities
-2. **@scorebot/bot** - Cloudflare Worker API + WhatsApp client
-3. **@scorebot/web** - Web interface (static site)
+1. **@scorebot/shared** - Shared types and utilities, including the **Point Ledger** (`pointLedger.ts`) — the single forward-pass module that derives every point's hold/break, line, and forced-turn from a game's events
+2. **@scorebot/bot** - Cloudflare Worker API + WhatsApp client. The **GameStore** (`src/store/`) is the sole coordinator of the Durable Object ↔ D1 dual-write; the router is a thin HTTP adapter over it
+3. **@scorebot/web** - Web interface (static site). All API access goes through one client (`src/api/gameClient.ts`)
+
+The domain vocabulary (Point, hold, break, dirty hold, forced turn, …) is defined in [CONTEXT.md](./CONTEXT.md). Architectural decisions — notably the DO-first dual-write and the Durable Object RPC transport — are recorded in [docs/adr/](./docs/adr/).
 
 ### Technology Stack
 
@@ -82,8 +84,10 @@ npx wrangler d1 create scorebot
 
 # Update wrangler.toml with the database_id from the output
 
-# Run migrations
-npx wrangler d1 execute scorebot --local --file=./migrations/0001_initial_schema.sql
+# Run migrations (apply all, in order)
+for f in migrations/*.sql; do
+  npx wrangler d1 execute scorebot --local --file="$f"
+done
 ```
 
 4. Start the Worker locally:
@@ -156,7 +160,8 @@ The system automatically tracks:
 
 ### Viewing Games
 
-Open https://score.kcuda.org to see:
+Open https://score.kcuda.org (shared HTTP Basic Auth; the public `/rankings/`
+pages are exempt) to see:
 - **Live score updates** with winner indicators (for finished games)
 - **WFDF-style timeline** with event-by-event breakdown
   - Colored bars indicating scoring team (green for your team, orange for opponent)
@@ -181,8 +186,10 @@ cd packages/bot
 npx wrangler d1 create scorebot
 # Update wrangler.toml with production database_id
 
-# Run migrations
-npx wrangler d1 execute scorebot --file=./migrations/0001_initial_schema.sql
+# Run migrations (apply all, in order)
+for f in migrations/*.sql; do
+  npx wrangler d1 execute scorebot --file="$f"
+done
 
 # Deploy
 npm run deploy
@@ -241,23 +248,33 @@ pm2 startup  # Follow instructions to enable auto-start
 
 ```
 scorebot/
+├── CONTEXT.md           # Domain glossary (ubiquitous language)
+├── docs/adr/            # Architectural decision records
 ├── packages/
 │   ├── shared/          # Shared types and utilities
 │   │   └── src/
 │   │       ├── types.ts
-│   │       └── utils.ts
+│   │       ├── utils.ts
+│   │       └── pointLedger.ts   # Point Ledger (break/hold engine)
 │   ├── bot/             # Backend API and WhatsApp client
 │   │   ├── src/
-│   │   │   ├── api/           # API router
-│   │   │   ├── db/            # Database service
-│   │   │   ├── durable-objects/  # Game state management
+│   │   │   ├── api/           # HTTP router (thin adapter over GameStore)
+│   │   │   ├── store/         # GameStore — DO ↔ D1 coordinator
+│   │   │   ├── db/            # D1 database service
+│   │   │   ├── durable-objects/  # GameState (RPC) — live game state
+│   │   │   ├── services/      # StatsCalculator
 │   │   │   ├── parser/        # Message parser
 │   │   │   └── whatsapp/      # WhatsApp client
+│   │   ├── scripts/
+│   │   │   ├── lib/loader.ts        # loadTournament(spec) harness
+│   │   │   ├── load-example-spec.ts # template for new tournaments
+│   │   │   └── archive/             # one-off historical load scripts
 │   │   ├── migrations/        # Database migrations
 │   │   └── wrangler.toml      # Cloudflare config
 │   └── web/             # Web interface
 │       └── src/
-│           ├── index.html
+│           ├── api/           # gameClient — sole path to the API
+│           ├── components/    # Renderers (timeline, tables, …)
 │           ├── main.ts
 │           └── style.css
 ├── package.json
@@ -271,10 +288,34 @@ See [CLAUDE.md](./CLAUDE.md) for detailed development guidance.
 ### Running Tests
 
 ```bash
-# Test the API
+# Run the full suite across all packages (Vitest)
+npm test
+
+# Or a single package
+cd packages/shared && npm test   # Point Ledger, line stats, utils
+cd packages/bot && npm test      # GameStore, GameState, parser, stats
+```
+
+You can also exercise the API directly:
+
+```bash
 curl -X POST http://localhost:8787/games \
   -H "Content-Type: application/json" \
   -d '{"chatId":"test","ourTeamName":"Team A","opponentName":"Team B"}'
+```
+
+### Loading Historical Games
+
+Tournaments are loaded from declarative spec files through one harness
+(`scripts/lib/loader.ts`). Copy the template, edit the data, and run it:
+
+```bash
+cd packages/bot
+cp scripts/load-example-spec.ts scripts/load-my-tournament.ts
+# Edit the spec: dates, teams, per-event times (timezone-aware), scores
+
+# Point at an environment (defaults to http://localhost:8787) and run
+SCOREBOT_API_URL=https://api.score.kcuda.org npx tsx scripts/load-my-tournament.ts --run
 ```
 
 ## Troubleshooting
