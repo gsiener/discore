@@ -19,35 +19,87 @@
         </div>
       </nav>
 
-      <main id="main-content">
-        <div id="rankings-meta" class="rankings-meta"></div>
-        <p class="algo-note">
-          Unofficial HS adaptation (<span id="ruleset-version"></span>). Ratings are weighted
-          averages of per-game ratings vs opponents, iterated to convergence; blowouts auto-ignored.
-          Effect = game rating minus team rating (explanatory, not causal).
-        </p>
+      <main id="main-content" class="rk-main">
+        <div class="rk-toolbar">
+          <div class="rk-tabs" role="navigation" aria-label="Rankings tools">
+            <button class="rk-tab rk-tab-active" type="button">Rankings</button>
+            <button class="rk-tab" type="button" disabled title="Coming soon">Teams</button>
+            <button class="rk-tab" type="button" disabled title="Coming soon">Tournaments</button>
+            <span class="rk-tools-label">TOOLS</span>
+            <button class="rk-tab" type="button" disabled title="Deferred: matchup simulation ships in a later phase">Simulate</button>
+            <button class="rk-tab" type="button" disabled title="Deferred: alternate-rules lab ships in a later phase">Lab</button>
+          </div>
+          <div class="rk-toolbar-right">
+            <input id="header-search" class="rk-search" type="search" placeholder="Search teams..." aria-label="Search teams" />
+            <button id="theme-toggle" class="rk-icon-btn" type="button" title="Toggle dark mode" aria-label="Toggle dark mode">☾</button>
+          </div>
+        </div>
 
-        <div id="rankings-view">
-          <table class="rankings-table">
-            <thead><tr>
-              <th>#</th><th>Team</th><th>Rating</th><th>W-L</th>
-              <th>SoS</th><th>Conf</th><th>Status</th>
-            </tr></thead>
-            <tbody id="rankings-body"></tbody>
-          </table>
+        <h1 class="rk-title">Rankings</h1>
+        <p class="rk-sub"><span id="rk-division"></span> <span class="rk-pill" id="rk-snapshot-pill">Snapshot</span></p>
+        <p class="rk-meta" id="rk-meta"></p>
+
+        <section class="rk-card" aria-label="Rankings filters">
+          <div class="rk-card-row">
+            <div class="rk-segmented" role="group" aria-label="Division">
+              <button class="rk-seg rk-seg-active" type="button">Boys</button>
+              <button class="rk-seg" type="button" disabled title="No girls snapshot published yet">Girls</button>
+            </div>
+            <select class="rk-select" disabled title="High-school scope only">
+              <option>High School</option>
+            </select>
+            <select class="rk-select" id="season-select" disabled title="Only one season published">
+              <option>2025-26</option>
+            </select>
+            <select class="rk-select" disabled title="Bid modeling is deferred — no bid window applies">
+              <option>Regular Season</option>
+            </select>
+            <button class="rk-help" type="button" title="Ratings are weighted averages of per-game ratings vs opponents, iterated to convergence. Blowouts auto-ignored. Effect = game rating minus team rating (explanatory, not causal).">?</button>
+          </div>
+          <div class="rk-card-row">
+            <input id="find-team" class="rk-input" type="search" placeholder="Find a team..." aria-label="Find a team" />
+            <select id="region-filter" class="rk-select" aria-label="Filter by region">
+              <option value="all">All regions</option>
+            </select>
+            <button id="hide-provisional" class="rk-toggle" type="button" aria-pressed="false">Hide provisional</button>
+          </div>
+        </section>
+
+        <div class="rk-viewtabs" role="tablist" aria-label="Rankings views">
+          <button id="tab-standings" class="rk-viewtab rk-viewtab-active" type="button" role="tab" aria-selected="true">Standings</button>
+          <button id="tab-connectivity" class="rk-viewtab" type="button" role="tab" aria-selected="false">Connectivity</button>
+        </div>
+
+        <div id="standings-view" role="tabpanel">
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr>
+                <th><button id="sort-rank" class="rk-sort" type="button"># <span id="sort-arrow">↑</span></button></th>
+                <th>Team</th><th>Status</th><th>Rating</th><th>Δ</th><th>Trend</th>
+                <th class="num">Record</th><th>Region</th><th>SoS</th><th>GP</th><th>Conf</th>
+              </tr></thead>
+              <tbody id="rankings-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="connectivity-view" role="tabpanel" class="hidden">
+          <div id="components-list"></div>
         </div>
 
         <div id="team-view" class="hidden">
-          <p><a href="#" id="back-link">&larr; Back to rankings</a></p>
+          <p><a href="#" id="back-link">&larr; Back to standings</a></p>
           <h2 id="team-name"></h2>
           <div id="team-summary" class="team-summary"></div>
-          <table class="rankings-table">
-            <thead><tr>
-              <th>Opponent</th><th>Result</th><th>Game rating</th><th>Effect</th>
-              <th>Weights (S/D/X)</th><th>Status</th>
-            </tr></thead>
-            <tbody id="team-games-body"></tbody>
-          </table>
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr>
+                <th>Opponent</th><th>Result</th><th>Game rating</th><th>Effect</th>
+                <th>Weights (S/D/X)</th><th>Status</th>
+              </tr></thead>
+              <tbody id="team-games-body"></tbody>
+            </table>
+          </div>
         </div>
       </main>
     </div>

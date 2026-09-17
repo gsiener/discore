@@ -29,6 +29,7 @@ export interface SnapshotGame {
 export interface SnapshotTeam {
   id: string;
   name: string;
+  region: string | null;
   rank: number | null;
   qualified: boolean;
   qualificationReason: string;
@@ -78,6 +79,7 @@ export function buildSnapshot(
   const teamIds = dataset.teams.map((t) => t.id);
   const ratings = runRatings(normalized, rules, teamIds);
   const names = new Map(dataset.teams.map((t) => [t.id, t.displayName]));
+  const regions = new Map(dataset.teams.map((t) => [t.id, t.region ?? null]));
   const varsity = new Map(dataset.teams.map((t) => [t.id, t.varsity ?? true]));
   const eligibility = computeEligibility(teamIds, normalized, rules, (id) => varsity.get(id) ?? true);
   const sos = strengthOfSchedule(ratings);
@@ -151,6 +153,7 @@ export function buildSnapshot(
       return {
         id,
         name: names.get(id) ?? id,
+        region: regions.get(id) ?? null,
         rank: rankOf.get(id) ?? null,
         qualified: elig.qualified,
         qualificationReason: elig.reason,

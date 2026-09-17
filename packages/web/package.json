@@ -8,14 +8,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=scorebot",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@scorebot/shared": "*",
-    "@scorebot/rankings": "*"
+    "@scorebot/rankings": "*",
+    "@scorebot/shared": "*"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

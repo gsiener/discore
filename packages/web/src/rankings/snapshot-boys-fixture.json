@@ -18,6 +18,7 @@
     {
       "id": "albany",
       "name": "Albany Cougars",
+      "region": "Northeast",
       "rank": 1,
       "qualified": true,
       "qualificationReason": "qualified",
@@ -163,6 +164,7 @@
     {
       "id": "eastside",
       "name": "Eastside Prep",
+      "region": "Northeast",
       "rank": 2,
       "qualified": false,
       "qualificationReason": "fewer than 5 games",
@@ -236,6 +238,7 @@
     {
       "id": "lynx",
       "name": "Lincoln Lynx",
+      "region": "Midwest",
       "rank": 3,
       "qualified": false,
       "qualificationReason": "fewer than 5 games",
@@ -327,6 +330,7 @@
     {
       "id": "hale",
       "name": "Nathan Hale",
+      "region": "West",
       "rank": 4,
       "qualified": false,
       "qualificationReason": "fewer than 5 games",
@@ -418,6 +422,7 @@
     {
       "id": "cleveland",
       "name": "Cleveland Varsity",
+      "region": "Midwest",
       "rank": 5,
       "qualified": true,
       "qualificationReason": "qualified",
@@ -527,6 +532,7 @@
     {
       "id": "leaguers",
       "name": "League Only FC",
+      "region": "South",
       "rank": 6,
       "qualified": false,
       "qualificationReason": "league-only",
@@ -636,6 +642,7 @@
     {
       "id": "albany-jv",
       "name": "Albany JV",
+      "region": "Northeast",
       "rank": null,
       "qualified": false,
       "qualificationReason": "jv",
