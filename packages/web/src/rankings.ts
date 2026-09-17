@@ -39,7 +39,6 @@ let divisionEmpty = false;
 
 interface State {
   query: string;
-  region: string;
   hideProvisional: boolean;
   sortDir: 'asc' | 'desc';
   view: 'standings' | 'connectivity' | 'team';
@@ -48,7 +47,6 @@ interface State {
 
 const state: State = {
   query: '',
-  region: 'all',
   hideProvisional: false,
   sortDir: 'asc',
   view: 'standings',
@@ -80,7 +78,7 @@ function fmtDate(iso: string): string {
 
 function currentRows(): RankRow[] {
   return sortTeams(
-    filterTeams(rows, { query: state.query, region: state.region, hideProvisional: state.hideProvisional }),
+    filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional }),
     state.sortDir,
   );
 }
@@ -102,20 +100,6 @@ function renderMeta(): void {
   );
 }
 
-function renderRegionOptions(): void {
-  const sel = document.getElementById('region-filter') as HTMLSelectElement;
-  sel.innerHTML = '<option value="all">All regions</option>';
-  const regions = [...new Set(rows.map((r) => r.region).filter((x): x is string => !!x))].sort();
-  for (const r of regions) {
-    const opt = document.createElement('option');
-    opt.value = r;
-    opt.textContent = r;
-    sel.appendChild(opt);
-  }
-  sel.value = 'all';
-  state.region = 'all';
-}
-
 function renderDivisionSegment(): void {
   document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((btn) => {
     btn.classList.toggle('rk-seg-active', btn.dataset.division === division);
@@ -130,7 +114,6 @@ async function setDivision(next: Division): Promise<void> {
   divisionEmpty = !loaded.real && next !== 'boys';
   rebuildIndex();
   state.query = '';
-  state.region = 'all';
   state.view = 'standings';
   (document.getElementById('header-search') as HTMLInputElement).value = '';
   (document.getElementById('find-team') as HTMLInputElement).value = '';
@@ -139,7 +122,6 @@ async function setDivision(next: Division): Promise<void> {
   window.history.replaceState({}, '', url.toString());
   renderDivisionSegment();
   renderMeta();
-  renderRegionOptions();
   setView('standings');
   renderTable();
 }
@@ -170,7 +152,7 @@ function renderTable(): void {
   if (divisionEmpty) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.setAttribute('colspan', '11');
+    td.setAttribute('colspan', '10');
     td.textContent = 'No published snapshot for this division yet.';
     tr.appendChild(td);
     body.appendChild(tr);
@@ -211,9 +193,6 @@ function renderTable(): void {
     recordTd.className = 'num';
     recordTd.innerHTML = `<span class="rk-record">${t.wins}–${t.losses}</span>`;
 
-    const regionTd = document.createElement('td');
-    regionTd.innerHTML = t.region ? `<span class="rk-region">${t.region}</span>` : '—';
-
     const sosTd = document.createElement('td');
     sosTd.innerHTML = `<span class="rk-sos-badge" title="Mean opponent rating, percentile ${t.sosPercentile}">${Math.round(t.sos)}</span>`;
 
@@ -223,7 +202,7 @@ function renderTable(): void {
     const confTd = document.createElement('td');
     confTd.innerHTML = `<span class="rk-conf ${confClass(t)}">${t.confidence === 'med' ? 'Med' : t.confidence === 'high' ? 'High' : 'Low'}</span>`;
 
-    tr.append(rankTd, teamTd, statusTd, ratingTd, deltaTd, trendTd, recordTd, regionTd, sosTd, gpTd, confTd);
+    tr.append(rankTd, teamTd, statusTd, ratingTd, deltaTd, trendTd, recordTd, sosTd, gpTd, confTd);
     tr.addEventListener('click', () => showTeam(t.id));
     body.appendChild(tr);
   }
@@ -332,10 +311,6 @@ function applyTheme(dark: boolean): void {
 });
 (document.getElementById('find-team') as HTMLInputElement).addEventListener('input', (e) => {
   syncQuery((e.target as HTMLInputElement).value, 'find');
-});
-(document.getElementById('region-filter') as HTMLSelectElement).addEventListener('change', (e) => {
-  state.region = (e.target as HTMLSelectElement).value;
-  renderTable();
 });
 document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   state.hideProvisional = !state.hideProvisional;

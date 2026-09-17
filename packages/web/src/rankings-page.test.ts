@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 const SKELETON = `
 <input id="header-search" /><button id="theme-toggle"></button>
 <span id="rk-division"></span><p id="rk-meta"></p>
-<input id="find-team" /><select id="region-filter"><option value="all">All regions</option></select>
+<input id="find-team" />
 <button id="hide-provisional"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
@@ -24,6 +24,10 @@ describe('rankings page wiring', () => {
     await vi.waitFor(() => expect(rowCount()).toBe(7));
 
     expect(rowCount()).toBe(7);
+    // No regions in HS data: no region filter, no Region column.
+    expect(document.getElementById('region-filter')).toBeNull();
+    // 10 columns: #, Team, Status, Rating, Δ, Trend, Record, SoS, GP, Conf.
+    expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(10);
 
     const find = document.getElementById('find-team') as HTMLInputElement;
     find.value = 'lynx';

@@ -47,22 +47,10 @@
               <button class="rk-seg rk-seg-active" type="button" data-division="boys">Boys</button>
               <button class="rk-seg" type="button" data-division="girls">Girls</button>
             </div>
-            <select class="rk-select" disabled title="High-school scope only">
-              <option>High School</option>
-            </select>
             <select class="rk-select" id="season-select" disabled title="Only one season published">
               <option>2025-26</option>
             </select>
-            <select class="rk-select" disabled title="Bid modeling is deferred — no bid window applies">
-              <option>Regular Season</option>
-            </select>
-            <button class="rk-help" type="button" title="Ratings are weighted averages of per-game ratings vs opponents, iterated to convergence. Blowouts auto-ignored. Effect = game rating minus team rating (explanatory, not causal).">?</button>
-          </div>
-          <div class="rk-card-row">
             <input id="find-team" class="rk-input" type="search" placeholder="Find a team..." aria-label="Find a team" />
-            <select id="region-filter" class="rk-select" aria-label="Filter by region">
-              <option value="all">All regions</option>
-            </select>
             <button id="hide-provisional" class="rk-toggle" type="button" aria-pressed="false">Hide provisional</button>
           </div>
         </section>
@@ -78,7 +66,7 @@
               <thead><tr>
                 <th><button id="sort-rank" class="rk-sort" type="button"># <span id="sort-arrow">↑</span></button></th>
                 <th>Team</th><th>Status</th><th>Rating</th><th>Δ</th><th>Trend</th>
-                <th class="num">Record</th><th>Region</th><th>SoS</th><th>GP</th><th>Conf</th>
+                <th class="num">Record</th><th>SoS</th><th>GP</th><th>Conf</th>
               </tr></thead>
               <tbody id="rankings-body"></tbody>
             </table>

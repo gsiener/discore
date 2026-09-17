@@ -174,12 +174,6 @@ a.rk-tab {
   padding: 6px 0;
 }
 
-.rk-card-row + .rk-card-row {
-  border-top: 1px solid var(--rk-border);
-  margin-top: 8px;
-  padding-top: 14px;
-}
-
 .rk-segmented {
   display: flex;
   background: var(--rk-track);
@@ -243,17 +237,6 @@ a.rk-tab {
   background: var(--rk-text);
   color: var(--rk-bg);
   border-color: var(--rk-text);
-}
-
-.rk-help {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--rk-border);
-  background: var(--rk-input-bg);
-  color: var(--rk-muted);
-  cursor: help;
-  font-size: 14px;
 }
 
 /* ---- view tabs ---- */
@@ -421,15 +404,6 @@ a.rk-tab {
 
 .rk-record {
   font-variant-numeric: tabular-nums;
-}
-
-.rk-region {
-  border: 1px dashed var(--rk-border);
-  border-radius: 999px;
-  padding: 4px 14px;
-  font-size: 14px;
-  color: var(--rk-muted);
-  white-space: nowrap;
 }
 
 .rk-conf {
