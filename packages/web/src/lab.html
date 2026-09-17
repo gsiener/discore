@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab - Discore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./rankings-style.css" />
+    <link rel="stylesheet" href="./simulate-style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <nav class="nav">
+        <h1>Discore</h1>
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">Live Games</a>
+          <a href="/games.html" class="nav-link">All Games</a>
+          <a href="/stats.html" class="nav-link">Advanced Stats</a>
+          <a href="/rankings.html" class="nav-link">Rankings</a>
+          <a href="/simulate.html" class="nav-link">Simulate</a>
+        </div>
+      </nav>
+
+      <main id="main-content" class="rk-main">
+        <h1 class="rk-title">Lab</h1>
+        <p class="rk-sub">Experimental rating rules <span class="rk-pill">Never affects published rankings</span></p>
+
+        <section class="rk-card" aria-label="Top-K alternate rule">
+          <h2 class="sim-heading">Top-K games</h2>
+          <p class="algo-note">Golf-handicap style: rate each team on its best K game ratings only, applied once on top of converged standard ratings (never inside the iteration — it has no fixed point there).</p>
+          <div class="rk-card-row">
+            <label for="topk-k">Keep best</label>
+            <input id="topk-k" class="rk-input sim-score" type="number" min="1" value="3" />
+            <span>games per team</span>
+            <button id="topk-run" class="rk-toggle" type="button">Run</button>
+          </div>
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr><th>Team</th><th class="num">Standard</th><th class="num">Top-K</th><th class="num">Kept</th></tr></thead>
+              <tbody id="topk-results"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="rk-card" aria-label="Configurable blowout filter">
+          <h2 class="sim-heading">Blowout filter</h2>
+          <p class="algo-note">Generalized rule <code>(gap, margin, one-sided)</code> applied inside the iteration. Gap 0 + any margin + one-sided gives “wins can never hurt you”.</p>
+          <div class="rk-card-row">
+            <label for="bl-gap">Rating gap over</label>
+            <input id="bl-gap" class="rk-input sim-score" type="number" min="0" value="600" />
+            <select id="bl-margin" class="rk-select" aria-label="Margin rule">
+              <option value="standard">score &gt; 2×loser+1</option>
+              <option value="any">any margin</option>
+            </select>
+            <label><input id="bl-onesided" type="checkbox" /> one-sided (winner only)</label>
+            <button id="bl-run" class="rk-toggle" type="button">Run</button>
+          </div>
+          <div id="bl-summary" class="sim-result"></div>
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr><th>Team</th><th class="num">Rating</th><th class="num">Games used</th></tr></thead>
+              <tbody id="bl-results"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./lab.ts"></script>
+  </body>
+</html>

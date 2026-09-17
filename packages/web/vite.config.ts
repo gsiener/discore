@@ -14,6 +14,8 @@ export default defineConfig({
         games: resolve(__dirname, 'src/games.html'),
         stats: resolve(__dirname, 'src/stats.html'),
         rankings: resolve(__dirname, 'src/rankings.html'),
+        simulate: resolve(__dirname, 'src/simulate.html'),
+        lab: resolve(__dirname, 'src/lab.html'),
       },
     },
   },

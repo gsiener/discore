@@ -18,4 +18,7 @@ const snap = buildSnapshot(dataset, HS_2025_V1, { generatedAt: '2026-01-01T00:00
 const outDir = join(here, '..', '..', 'web', 'src', 'rankings');
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, 'snapshot-boys-fixture.json'), JSON.stringify(snap, null, 2) + '\n');
+const simDir = join(here, '..', '..', 'web', 'src', 'simulate');
+mkdirSync(simDir, { recursive: true });
+writeFileSync(join(simDir, 'small-season.json'), JSON.stringify(dataset, null, 2) + '\n');
 console.log(`wrote fixture snapshot: ${snap.teams.length} teams, ${snap.meta.totalGames} games`);

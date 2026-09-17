@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulate - Discore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./rankings-style.css" />
+    <link rel="stylesheet" href="./simulate-style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <nav class="nav">
+        <h1>Discore</h1>
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">Live Games</a>
+          <a href="/games.html" class="nav-link">All Games</a>
+          <a href="/stats.html" class="nav-link">Advanced Stats</a>
+          <a href="/rankings.html" class="nav-link">Rankings</a>
+                  <a href="/lab.html" class="nav-link">Lab</a>
+        </div>
+      </nav>
+
+      <main id="main-content" class="rk-main">
+        <h1 class="rk-title">Simulate</h1>
+        <p class="rk-sub">High School Boys · 2025-26 <span class="rk-pill">Demo data</span></p>
+
+        <section class="rk-card" aria-label="Matchup preview">
+          <h2 class="sim-heading">Matchup</h2>
+          <div class="rk-card-row">
+            <select id="matchup-a" class="rk-select" aria-label="Team A"></select>
+            <span class="sim-vs">vs</span>
+            <select id="matchup-b" class="rk-select" aria-label="Team B"></select>
+            <select id="cap-select" class="rk-select" aria-label="Game target">
+              <option value="15">to 15</option>
+              <option value="13">to 13</option>
+            </select>
+          </div>
+          <div id="matchup-result" class="sim-result"></div>
+          <p class="algo-note">Win probabilities are heuristic (logistic scale 200, aligned to the rating curve — not fitted to results).</p>
+        </section>
+
+        <section class="rk-card" aria-label="What-if scenario">
+          <h2 class="sim-heading">What-if</h2>
+          <div class="rk-card-row">
+            <select id="hypo-winner" class="rk-select" aria-label="Hypothetical winner"></select>
+            <span>beat</span>
+            <select id="hypo-loser" class="rk-select" aria-label="Hypothetical loser"></select>
+            <input id="hypo-w" class="rk-input sim-score" type="number" min="0" value="13" aria-label="Winner score" />
+            <span>–</span>
+            <input id="hypo-l" class="rk-input sim-score" type="number" min="0" value="11" aria-label="Loser score" />
+            <button id="hypo-add" class="rk-toggle" type="button">Add result</button>
+            <button id="scenario-reset" class="rk-toggle" type="button">Reset</button>
+          </div>
+          <span id="scenario-error" class="sim-error"></span>
+          <ul id="hypo-list" class="sim-list"></ul>
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr>
+                <th>Team</th><th class="num">Base</th><th class="num">Scenario</th>
+                <th class="num">Δ</th><th class="num">Base #</th><th class="num">Scen #</th>
+              </tr></thead>
+              <tbody id="scenario-results"></tbody>
+            </table>
+          </div>
+          <p class="algo-note" id="scenario-note"></p>
+        </section>
+
+        <section class="rk-card" aria-label="Tournament simulation">
+          <h2 class="sim-heading">Tournament</h2>
+          <p class="algo-note">Top six serpentine-seeded into two pools of three. Round-robin standings recompute live; cross-pool order ranks all pool winners by rating, then runners-up. Edit any score to re-simulate.</p>
+          <div class="sim-pools">
+            <div class="sim-pool">
+              <h3>Pool A</h3>
+              <table class="rk-table"><tbody id="pool-a-games"></tbody></table>
+              <table class="rk-table">
+                <thead><tr><th>#</th><th>Team</th><th class="num">W-L</th><th class="num">+/−</th></tr></thead>
+                <tbody id="pool-a-standings"></tbody>
+              </table>
+            </div>
+            <div class="sim-pool">
+              <h3>Pool B</h3>
+              <table class="rk-table"><tbody id="pool-b-games"></tbody></table>
+              <table class="rk-table">
+                <thead><tr><th>#</th><th>Team</th><th class="num">W-L</th><th class="num">+/−</th></tr></thead>
+                <tbody id="pool-b-standings"></tbody>
+              </table>
+            </div>
+          </div>
+          <h3>Overall order</h3>
+          <ol id="cross-pool"></ol>
+          <h3>Knockout</h3>
+          <div id="ko-sf1" class="sim-ko"></div>
+          <div id="ko-sf2" class="sim-ko"></div>
+          <div id="ko-final" class="sim-ko"></div>
+          <div id="champion" class="sim-champion"></div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./simulate.ts"></script>
+  </body>
+</html>

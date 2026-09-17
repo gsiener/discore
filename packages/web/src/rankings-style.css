@@ -79,6 +79,10 @@ html.dark .nav {
   font-weight: 600;
 }
 
+a.rk-tab {
+  text-decoration: none;
+}
+
 .rk-tab:disabled {
   cursor: default;
   opacity: 0.75;

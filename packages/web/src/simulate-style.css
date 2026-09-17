@@ -1,0 +1,77 @@
+.sim-heading {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.sim-vs {
+  color: var(--rk-muted);
+  font-weight: 600;
+}
+
+.sim-score {
+  min-width: 0;
+  width: 76px;
+}
+
+.sim-result {
+  font-size: 16px;
+  padding: 10px 0 2px;
+}
+
+.sim-result strong {
+  font-size: 18px;
+}
+
+.sim-error {
+  color: var(--rk-red);
+  font-size: 14px;
+}
+
+.sim-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sim-list li {
+  border: 1px solid var(--rk-border);
+  border-radius: 999px;
+  padding: 4px 8px 4px 14px;
+  font-size: 14px;
+}
+
+.sim-list button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--rk-muted);
+  font-size: 14px;
+  padding: 0 4px;
+}
+
+.sim-pools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 760px) {
+  .sim-pools {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-pool h3,
+.sim-ko {
+  margin: 12px 0 6px;
+}
+
+.sim-champion {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 12px;
+}
