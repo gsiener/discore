@@ -1,0 +1,37 @@
+{
+  "season": "2025-26",
+  "division": "boys",
+  "teams": [
+    { "id": "albany", "displayName": "Albany Cougars", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "lynx", "displayName": "Lincoln Lynx", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "hale", "displayName": "Nathan Hale", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "eastside", "displayName": "Eastside Prep", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "cleveland", "displayName": "Cleveland Varsity", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "leaguers", "displayName": "League Only FC", "season": "2025-26", "division": "boys", "varsity": true },
+    { "id": "albany-jv", "displayName": "Albany JV", "season": "2025-26", "division": "boys", "varsity": false }
+  ],
+  "events": {
+    "seattle": { "id": "seattle", "name": "HS Bx Seattle Invite", "sourceUrl": "https://example.com/seattle" },
+    "fall-league": { "id": "fall-league", "name": "Fall League", "league": true }
+  },
+  "games": [
+    { "id": "g01", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "hale", "scoreA": 13, "scoreB": 4, "status": "final", "date": "2025-10-04", "eventId": "seattle" },
+    { "id": "g02", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "lynx", "scoreA": 13, "scoreB": 3, "status": "final", "date": "2025-10-04", "eventId": "seattle" },
+    { "id": "g03", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "eastside", "scoreA": 10, "scoreB": 7, "status": "final", "date": "2025-10-04", "eventId": "seattle" },
+    { "id": "g04", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "cleveland", "scoreA": 9, "scoreB": 8, "status": "final", "date": "2025-10-04", "eventId": "seattle" },
+    { "id": "g05", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "lynx", "scoreA": 13, "scoreB": 11, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g06", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "hale", "scoreA": 13, "scoreB": 0, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g07", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "cleveland", "scoreA": 13, "scoreB": 1, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g08", "season": "2025-26", "division": "boys", "teamAId": "lynx", "teamBId": "hale", "scoreA": 13, "scoreB": 12, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g09", "season": "2025-26", "division": "boys", "teamAId": "lynx", "teamBId": "eastside", "scoreA": 11, "scoreB": 11, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g10", "season": "2025-26", "division": "boys", "teamAId": "eastside", "teamBId": "cleveland", "scoreA": 13, "scoreB": 9, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g11", "season": "2025-26", "division": "boys", "teamAId": "hale", "teamBId": "cleveland", "scoreA": 12, "scoreB": 10, "status": "final", "date": "2025-10-05", "eventId": "seattle" },
+    { "id": "g12", "season": "2025-26", "division": "boys", "teamAId": "albany", "teamBId": "eastside", "scoreA": null, "scoreB": null, "status": "forfeit", "date": "2025-10-06", "eventId": "seattle" },
+    { "id": "g13", "season": "2025-26", "division": "boys", "teamAId": "leaguers", "teamBId": "albany-jv", "scoreA": 13, "scoreB": 10, "status": "final", "date": "2025-10-04", "eventId": "fall-league" },
+    { "id": "g14", "season": "2025-26", "division": "boys", "teamAId": "leaguers", "teamBId": "albany-jv", "scoreA": 11, "scoreB": 9, "status": "final", "date": "2025-10-05", "eventId": "fall-league" },
+    { "id": "g15", "season": "2025-26", "division": "boys", "teamAId": "leaguers", "teamBId": "albany-jv", "scoreA": 13, "scoreB": 8, "status": "final", "date": "2025-10-06", "eventId": "fall-league" },
+    { "id": "g16", "season": "2025-26", "division": "boys", "teamAId": "leaguers", "teamBId": "albany-jv", "scoreA": 12, "scoreB": 10, "status": "final", "date": "2025-10-07", "eventId": "fall-league" },
+    { "id": "g17", "season": "2025-26", "division": "boys", "teamAId": "leaguers", "teamBId": "albany-jv", "scoreA": 13, "scoreB": 11, "status": "final", "date": "2025-10-08", "eventId": "fall-league" },
+    { "id": "g18", "season": "2025-26", "division": "boys", "teamAId": "cleveland", "teamBId": "albany-jv", "scoreA": 13, "scoreB": 5, "status": "final", "date": "2025-10-08", "eventId": "seattle" }
+  ]
+}

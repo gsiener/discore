@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rankings - Discore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./rankings-style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <nav class="nav">
+        <h1>Discore</h1>
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">Live Games</a>
+          <a href="/games.html" class="nav-link">All Games</a>
+          <a href="/stats.html" class="nav-link">Advanced Stats</a>
+        </div>
+      </nav>
+
+      <main id="main-content">
+        <div id="rankings-meta" class="rankings-meta"></div>
+        <p class="algo-note">
+          Unofficial HS adaptation (<span id="ruleset-version"></span>). Ratings are weighted
+          averages of per-game ratings vs opponents, iterated to convergence; blowouts auto-ignored.
+          Effect = game rating minus team rating (explanatory, not causal).
+        </p>
+
+        <div id="rankings-view">
+          <table class="rankings-table">
+            <thead><tr>
+              <th>#</th><th>Team</th><th>Rating</th><th>W-L</th>
+              <th>SoS</th><th>Conf</th><th>Status</th>
+            </tr></thead>
+            <tbody id="rankings-body"></tbody>
+          </table>
+        </div>
+
+        <div id="team-view" class="hidden">
+          <p><a href="#" id="back-link">&larr; Back to rankings</a></p>
+          <h2 id="team-name"></h2>
+          <div id="team-summary" class="team-summary"></div>
+          <table class="rankings-table">
+            <thead><tr>
+              <th>Opponent</th><th>Result</th><th>Game rating</th><th>Effect</th>
+              <th>Weights (S/D/X)</th><th>Status</th>
+            </tr></thead>
+            <tbody id="team-games-body"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="./rankings.ts"></script>
+  </body>
+</html>

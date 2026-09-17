@@ -1,0 +1,45 @@
+.rankings-meta {
+  background: var(--card-bg, #f8f9fa);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.algo-note {
+  font-size: 13px;
+  color: #636e72;
+  margin-bottom: 16px;
+}
+
+.rankings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.rankings-table th,
+.rankings-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e9ecef;
+  text-align: left;
+}
+
+.rankings-table tbody tr[data-team]:hover {
+  background: #f1f3f5;
+  cursor: pointer;
+}
+
+.rankings-table tr.ignored td {
+  color: #adb5bd;
+  text-decoration: line-through;
+}
+
+.team-summary {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
