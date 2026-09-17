@@ -28,6 +28,11 @@ jobs:
           cd packages/shared
           npm run build
 
+      - name: Build rankings package
+        run: |
+          cd packages/rankings
+          npm run build
+
       - name: Run tests
         run: npm test
 
