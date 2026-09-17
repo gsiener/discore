@@ -8,10 +8,10 @@ describe('isPublicPath', () => {
     expect(isPublicPath('/rankings/boys.html')).toBe(true);
   });
 
-  it('exposes the new app rankings pages', () => {
-    expect(isPublicPath('/rankings.html')).toBe(true);
-    expect(isPublicPath('/simulate.html')).toBe(true);
-    expect(isPublicPath('/lab.html')).toBe(true);
+  it('exposes the new app rankings pages, including extensionless forms', () => {
+    for (const p of ['/standings', '/standings.html', '/simulate', '/simulate.html', '/lab', '/lab.html']) {
+      expect(isPublicPath(p)).toBe(true);
+    }
   });
 
   it('exposes the static assets those pages need', () => {

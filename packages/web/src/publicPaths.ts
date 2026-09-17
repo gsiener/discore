@@ -5,10 +5,16 @@
  * shared stylesheets, favicon). Everything else stays behind auth.
  */
 
+// Note: Cloudflare Pages strips .html (rankings.html -> 308 -> /rankings),
+// so extensionless forms must be exempt too. /rankings itself is the legacy
+// Drive-generated index, which is why the app page lives at /standings.
 const EXACT_PUBLIC = new Set([
   '/rankings',
-  '/rankings.html',
+  '/standings',
+  '/standings.html',
+  '/simulate',
   '/simulate.html',
+  '/lab',
   '/lab.html',
   '/style.css',
   '/rankings-style.css',

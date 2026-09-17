@@ -13,7 +13,7 @@ export default defineConfig({
         main: resolve(__dirname, 'src/index.html'),
         games: resolve(__dirname, 'src/games.html'),
         stats: resolve(__dirname, 'src/stats.html'),
-        rankings: resolve(__dirname, 'src/rankings.html'),
+        standings: resolve(__dirname, 'src/standings.html'),
         simulate: resolve(__dirname, 'src/simulate.html'),
         lab: resolve(__dirname, 'src/lab.html'),
       },
