@@ -1,6 +1,8 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 const SKELETON = `
+<div class="rk-segmented"><button class="rk-seg" data-division="boys"></button><button class="rk-seg" data-division="girls"></button></div>
+<p><span id="lab-division"></span><span id="lab-pill"></span></p>
 <input id="topk-k" value="3" /><button id="topk-run"></button>
 <table><tbody id="topk-results"></tbody></table>
 <input id="bl-gap" value="600" />
@@ -13,6 +15,9 @@ const SKELETON = `
 beforeAll(async () => {
   document.body.innerHTML = SKELETON;
   await import('./lab.js');
+  await vi.waitFor(() => {
+    expect(document.querySelectorAll('#topk-results tr').length).toBeGreaterThan(0);
+  });
 });
 
 describe('lab page wiring', () => {

@@ -24,7 +24,11 @@
 
       <main id="main-content" class="rk-main">
         <h1 class="rk-title">Simulate</h1>
-        <p class="rk-sub">High School Boys · 2025-26 <span class="rk-pill">Demo data</span></p>
+        <p class="rk-sub"><span id="sim-division">High School Boys · 2025-26</span> <span class="rk-pill" id="sim-pill">Demo data</span></p>
+        <div class="rk-segmented" role="group" aria-label="Division" style="margin-bottom: 16px">
+          <button class="rk-seg rk-seg-active" type="button" data-division="boys">Boys</button>
+          <button class="rk-seg" type="button" data-division="girls">Girls</button>
+        </div>
 
         <section class="rk-card" aria-label="Matchup preview">
           <h2 class="sim-heading">Matchup</h2>

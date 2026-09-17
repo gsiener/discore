@@ -13,11 +13,71 @@ import {
   topKPostHoc,
 } from '@scorebot/rankings';
 import fixtureDataset from './simulate/small-season.json';
+import fixtureSnapshot from './rankings/snapshot-boys-fixture.json';
+import type { CanonicalDataset, RatingsResult, Snapshot } from '@scorebot/rankings';
+import {
+  divisionFromSearch,
+  loadDivision,
+  type Division,
+} from './snapshotLoader.js';
 
-const { dataset } = parseCanonicalDataset(fixtureDataset);
-const { games: baseGames } = datasetToNormalized(dataset, HS_2025_V1);
-const names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
-const base = runRatings(baseGames, HS_2025_V1);
+const fixture = {
+  snapshot: fixtureSnapshot as unknown as Snapshot,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dataset: fixtureDataset as any as CanonicalDataset,
+};
+
+let dataset: CanonicalDataset = fixture.dataset;
+let baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+let names = new Map<string, string>();
+let base: RatingsResult = runRatings(baseGames, HS_2025_V1);
+let realData = false;
+let division: Division = 'boys';
+
+function rebuildData(): void {
+  const parsed = parseCanonicalDataset(dataset);
+  dataset = parsed.dataset;
+  baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+  names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
+  base = runRatings(baseGames, HS_2025_V1);
+}
+
+function renderSubtitle(): void {
+  const label = division === 'boys' ? 'High School Boys' : 'High School Girls';
+  document.getElementById('lab-division')!.textContent = `${label} · ${dataset.season}`;
+  document.getElementById('lab-pill')!.textContent = realData ? 'Final' : 'Demo data';
+}
+
+function renderDivisionSegment(): void {
+  document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((btn) => {
+    btn.classList.toggle('rk-seg-active', btn.dataset.division === division);
+  });
+}
+
+async function initLab(next: Division): Promise<void> {
+  division = next;
+  const loaded = await loadDivision(next, fetch, fixture);
+  dataset = loaded.dataset;
+  realData = loaded.real;
+  rebuildData();
+  const url = new URL(window.location.href);
+  url.searchParams.set('division', next);
+  window.history.replaceState({}, '', url.toString());
+  renderDivisionSegment();
+  renderSubtitle();
+  runTopK();
+  runBlowout();
+}
+
+document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.division === 'boys' || btn.dataset.division === 'girls') {
+      void initLab(btn.dataset.division);
+    }
+  });
+});
+
+void initLab(divisionFromSearch(window.location.search));
 
 function runTopK(): void {
   const k = Math.max(1, parseInt((document.getElementById('topk-k') as HTMLInputElement).value, 10) || 1);
@@ -65,6 +125,3 @@ function runBlowout(): void {
 
 document.getElementById('topk-run')!.addEventListener('click', runTopK);
 document.getElementById('bl-run')!.addEventListener('click', runBlowout);
-
-runTopK();
-runBlowout();

@@ -50,6 +50,15 @@ Run as a SEPARATE Bash call (do NOT chain with Step 1 using &&):
 cd "$HOME/src/discore/packages/web" && npm run deploy 2>&1
 ```
 
+`npm run deploy` runs `predeploy` first, which regenerates the published
+snapshots (`snapshot-boys.json`, `snapshot-girls.json`, `dataset-boys.json`,
+`dataset-girls.json` in `packages/web/public/rankings/`) from the Drive
+exports via `npm run snapshots --workspace=@scorebot/rankings`. The app
+standings/simulate/lab pages load these at runtime with a fixture fallback,
+so the deploy fails closed with a clear error if the Drive files are missing.
+The legacy `/rankings/boys` and `/rankings/girls` URLs redirect (302) to the
+new `/standings` UI; graph/sources pages stay live underneath.
+
 ### Step 3 — Verify the live site
 
 Verify both divisions. Use a cache-busting query string — Cloudflare's edge can briefly serve stale content right after deploy:

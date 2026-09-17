@@ -1,6 +1,8 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 const SKELETON = `
+<div class="rk-segmented"><button class="rk-seg" data-division="boys"></button><button class="rk-seg" data-division="girls"></button></div>
+<p><span id="sim-division"></span><span id="sim-pill"></span></p>
 <select id="matchup-a"></select><select id="matchup-b"></select>
 <select id="cap-select"><option value="15">15</option></select>
 <div id="matchup-result"></div>
@@ -23,13 +25,16 @@ function opt(sel: HTMLSelectElement, value: string): void {
 beforeAll(async () => {
   document.body.innerHTML = SKELETON;
   await import('./simulate.js');
+  // Page boots asynchronously (runtime snapshot load with fixture fallback).
+  await vi.waitFor(() => {
+    expect((document.getElementById('matchup-a') as HTMLSelectElement).options.length).toBeGreaterThan(2);
+  });
 });
 
 describe('simulate page wiring', () => {
   it('previews matchups', () => {
     const a = document.getElementById('matchup-a') as HTMLSelectElement;
     const b = document.getElementById('matchup-b') as HTMLSelectElement;
-    expect(a.options.length).toBeGreaterThan(2);
     opt(a, 'albany');
     opt(b, 'lynx');
     const preview = document.getElementById('matchup-result')!.textContent ?? '';
@@ -60,8 +65,6 @@ describe('simulate page wiring', () => {
     expect(document.querySelectorAll('#cross-pool li').length).toBe(6);
     expect((document.getElementById('champion')!.textContent ?? '').length).toBeGreaterThan(0);
 
-    // Flip a Pool A game to a heavy upset and confirm the standings leader changes
-    const before = document.querySelector('#pool-a-standings tr')!.textContent;
     const firstGame = document.querySelector('#pool-a-games tr')!;
     const inputs = firstGame.querySelectorAll('input');
     const aName = (firstGame.querySelector('.tourney-team-a') as HTMLElement).textContent;
@@ -70,6 +73,5 @@ describe('simulate page wiring', () => {
     inputs[1].dispatchEvent(new Event('input', { bubbles: true }));
     const after = document.querySelector('#pool-a-standings tr')!.textContent;
     expect(after).not.toContain(aName);
-    void before;
   });
 });

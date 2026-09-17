@@ -15,24 +15,52 @@ import {
   type PoolGameResult,
   type PoolTeam,
 } from '@scorebot/rankings';
-import type { Snapshot } from '@scorebot/rankings';
+import type { CanonicalDataset, Snapshot } from '@scorebot/rankings';
 import fixtureSnapshot from './rankings/snapshot-boys-fixture.json';
 import fixtureDataset from './simulate/small-season.json';
+import {
+  divisionFromSearch,
+  loadDivision,
+  type Division,
+  type LoadedData,
+} from './snapshotLoader.js';
 
-const snapshot = fixtureSnapshot as unknown as Snapshot;
-const { dataset } = parseCanonicalDataset(fixtureDataset);
-const { games: baseGames } = datasetToNormalized(dataset, HS_2025_V1);
-const teamIds = dataset.teams.map((t) => t.id);
-const names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
-const ratings = new Map(
-  (snapshot as Snapshot).teams.map((t) => [t.id, t.rating] as const),
-);
+const fixture = {
+  snapshot: fixtureSnapshot as unknown as Snapshot,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dataset: fixtureDataset as any as CanonicalDataset,
+};
 
-const orderedIds = [...teamIds].sort((a, b) => (ratings.get(b) ?? 0) - (ratings.get(a) ?? 0));
+let snapshot: Snapshot = fixture.snapshot;
+let dataset: CanonicalDataset = fixture.dataset;
+let baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+let teamIds: string[] = [];
+let names = new Map<string, string>();
+let ratings = new Map<string, number>();
+let orderedIds: string[] = [];
+let rankedIds: string[] = [];
+let poolASeed: string[] = [];
+let poolBSeed: string[] = [];
 let hypotheticals: HypotheticalGame[] = [];
 let hypoN = 0;
+let realData = false;
+let division: Division = 'boys';
+
+function rebuildData(): void {
+  const parsed = parseCanonicalDataset(dataset);
+  dataset = parsed.dataset;
+  baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+  teamIds = dataset.teams.map((t) => t.id);
+  names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
+  ratings = new Map(snapshot.teams.map((t) => [t.id, t.rating] as const));
+  orderedIds = [...teamIds].sort((a, b) => (ratings.get(b) ?? 0) - (ratings.get(a) ?? 0));
+  rankedIds = snapshot.teams.filter((t) => t.rank != null).slice(0, 6).map((t) => t.id);
+  poolASeed = [rankedIds[0], rankedIds[3], rankedIds[4]].filter(Boolean);
+  poolBSeed = [rankedIds[1], rankedIds[2], rankedIds[5]].filter(Boolean);
+}
 
 function fillSelect(sel: HTMLSelectElement): void {
+  sel.innerHTML = '';
   for (const id of orderedIds) {
     const opt = document.createElement('option');
     opt.value = id;
@@ -113,14 +141,10 @@ function renderScenario(): void {
   }
 }
 
-// ---- wiring ----
-for (const id of ['matchup-a', 'matchup-b', 'hypo-winner', 'hypo-loser']) {
-  fillSelect(document.getElementById(id) as HTMLSelectElement);
+// ---- wiring (bound once; initSimulate rebuilds data-bound state) ----
+for (const id of ['matchup-a', 'matchup-b', 'cap-select']) {
+  document.getElementById(id)!.addEventListener('change', renderMatchup);
 }
-(document.getElementById('matchup-a') as HTMLSelectElement).value = 'albany';
-(document.getElementById('matchup-b') as HTMLSelectElement).value = 'lynx';
-(document.getElementById('hypo-winner') as HTMLSelectElement).value = 'albany';
-(document.getElementById('hypo-loser') as HTMLSelectElement).value = 'lynx';
 
 for (const id of ['matchup-a', 'matchup-b', 'cap-select']) {
   document.getElementById(id)!.addEventListener('change', renderMatchup);
@@ -149,13 +173,65 @@ document.getElementById('scenario-reset')!.addEventListener('click', () => {
   renderScenario();
 });
 
-renderMatchup();
-renderScenario();
+function renderDivisionSegment(): void {
+  document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((btn) => {
+    btn.classList.toggle('rk-seg-active', btn.dataset.division === division);
+  });
+}
+
+function renderSubtitle(): void {
+  const m = snapshot.meta;
+  const divLabel = m.division === 'boys' ? 'High School Boys' : m.division === 'girls' ? 'High School Girls' : m.division;
+  document.getElementById('sim-division')!.textContent = `${divLabel} · ${m.season}`;
+  document.getElementById('sim-pill')!.textContent = realData ? 'Final' : 'Demo data';
+}
+
+async function initSimulate(next: Division): Promise<void> {
+  division = next;
+  const loaded: LoadedData = await loadDivision(next, fetch, fixture);
+  snapshot = loaded.snapshot;
+  dataset = loaded.dataset;
+  realData = loaded.real;
+  rebuildData();
+  hypotheticals = [];
+  poolScores.clear();
+  koScores.clear();
+  lastKoKey = '';
+  lastFinalKey = '';
+  for (const id of ['matchup-a', 'matchup-b', 'hypo-winner', 'hypo-loser']) {
+    fillSelect(document.getElementById(id) as HTMLSelectElement);
+  }
+  const setDefault = (id: string, i: number) => {
+    (document.getElementById(id) as HTMLSelectElement).value = orderedIds[i] ?? '';
+  };
+  setDefault('matchup-a', 0);
+  setDefault('matchup-b', 1);
+  setDefault('hypo-winner', 0);
+  setDefault('hypo-loser', 1);
+  const url = new URL(window.location.href);
+  url.searchParams.set('division', next);
+  window.history.replaceState({}, '', url.toString());
+  renderDivisionSegment();
+  renderSubtitle();
+  renderMatchup();
+  renderScenario();
+  seedPoolScores(poolASeed);
+  seedPoolScores(poolBSeed);
+  renderPoolGames();
+  recomputeTournament();
+}
+
+document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.division === 'boys' || btn.dataset.division === 'girls') {
+      void initSimulate(btn.dataset.division);
+    }
+  });
+});
+
+void initSimulate(divisionFromSearch(window.location.search));
 
 // ---- tournament simulation: serpentine pools + knockout ----
-const rankedIds = snapshot.teams.filter((t) => t.rank != null).slice(0, 6).map((t) => t.id);
-const poolASeed: string[] = [rankedIds[0], rankedIds[3], rankedIds[4]].filter(Boolean);
-const poolBSeed: string[] = [rankedIds[1], rankedIds[2], rankedIds[5]].filter(Boolean);
 
 function poolTeams(ids: string[]): PoolTeam[] {
   return ids.map((id) => ({
@@ -333,8 +409,3 @@ function recomputeTournament(): void {
   }
   recomputeFinal();
 }
-
-seedPoolScores(poolASeed);
-seedPoolScores(poolBSeed);
-renderPoolGames();
-recomputeTournament();

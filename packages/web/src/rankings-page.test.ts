@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const SKELETON = `
 <input id="header-search" /><button id="theme-toggle"></button>
@@ -20,6 +20,8 @@ describe('rankings page wiring', () => {
   it('renders, filters, toggles provisional, and opens team detail', async () => {
     document.body.innerHTML = SKELETON;
     await import('./rankings.js');
+    // Page boots asynchronously (runtime snapshot load with fixture fallback).
+    await vi.waitFor(() => expect(rowCount()).toBe(7));
 
     expect(rowCount()).toBe(7);
 

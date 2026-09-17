@@ -22,7 +22,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "scale-check": "tsx scripts/scale-check.ts",
-    "fixture-snapshot": "tsx scripts/make-fixture-snapshot.ts"
+    "fixture-snapshot": "tsx scripts/make-fixture-snapshot.ts",
+    "snapshots": "tsx scripts/make-snapshots.ts"
   },
   "keywords": [],
   "author": "",

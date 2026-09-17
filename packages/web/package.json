@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=scorebot",
     "test:watch": "vitest",
-    "test": "vitest run"
+    "test": "vitest run",
+    "predeploy": "npm run snapshots --workspace=@scorebot/rankings"
   },
   "keywords": [],
   "author": "",
