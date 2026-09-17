@@ -3,11 +3,14 @@
  * rendered from a published @scorebot/rankings snapshot.
  */
 import type { Snapshot, SnapshotTeam } from '@scorebot/rankings';
+import type { CanonicalDataset } from '@scorebot/rankings';
 import {
+  buildTournamentSummaries,
   filterTeams,
   regionAbbrev,
   regionSeed,
   sortTeams,
+  sortTeamsAlpha,
   sparkColor,
   sparkPoints,
   statusLabel,
@@ -31,17 +34,21 @@ const fixture = {
 };
 
 let snapshot: Snapshot = fixture.snapshot;
+let dataset: CanonicalDataset = fixture.dataset;
 let realData = false;
 let division: Division = 'boys';
 // True when the requested division has no published snapshot AND the fixture
 // is not that division (fixture is boys) — render an honest empty state.
 let divisionEmpty = false;
 
+type ListView = 'standings' | 'connectivity' | 'teams' | 'tournaments';
+
 interface State {
   query: string;
   hideProvisional: boolean;
   sortDir: 'asc' | 'desc';
-  view: 'standings' | 'connectivity' | 'team';
+  view: ListView | 'team';
+  returnView: ListView;
   teamId: string | null;
 }
 
@@ -50,6 +57,7 @@ const state: State = {
   hideProvisional: false,
   sortDir: 'asc',
   view: 'standings',
+  returnView: 'standings',
   teamId: null,
 };
 
@@ -110,6 +118,7 @@ async function setDivision(next: Division): Promise<void> {
   division = next;
   const loaded: LoadedData = await loadDivision(next, fetch, fixture);
   snapshot = loaded.snapshot;
+  dataset = loaded.dataset;
   realData = loaded.real;
   divisionEmpty = !loaded.real && next !== 'boys';
   rebuildIndex();
@@ -244,15 +253,70 @@ function renderConnectivity(): void {
 
 function setView(view: State['view']): void {
   state.view = view;
-  document.getElementById('standings-view')!.classList.toggle('hidden', view !== 'standings');
-  document.getElementById('connectivity-view')!.classList.toggle('hidden', view !== 'connectivity');
-  document.getElementById('team-view')!.classList.toggle('hidden', view !== 'team');
+  if (view !== 'team') state.returnView = view;
+  for (const v of ['standings', 'connectivity', 'teams', 'tournaments', 'team'] as const) {
+    document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
+  }
   const tabs = document.getElementById('tab-standings')!;
   const tabc = document.getElementById('tab-connectivity')!;
   tabs.classList.toggle('rk-viewtab-active', view === 'standings');
   tabc.classList.toggle('rk-viewtab-active', view === 'connectivity');
   tabs.setAttribute('aria-selected', String(view === 'standings'));
   tabc.setAttribute('aria-selected', String(view === 'connectivity'));
+  document.getElementById('standings-viewtabs')!.classList.toggle(
+    'hidden',
+    view !== 'standings' && view !== 'connectivity',
+  );
+  const tbRankings = document.getElementById('tb-rankings')!;
+  const tbTeams = document.getElementById('tb-teams')!;
+  const tbTournaments = document.getElementById('tb-tournaments')!;
+  const activeList = view === 'team' ? state.returnView : view;
+  tbRankings.classList.toggle('rk-tab-active', activeList === 'standings' || activeList === 'connectivity');
+  tbTeams.classList.toggle('rk-tab-active', activeList === 'teams');
+  tbTournaments.classList.toggle('rk-tab-active', activeList === 'tournaments');
+}
+
+function renderTeams(): void {
+  const body = document.getElementById('teams-body')!;
+  body.innerHTML = '';
+  const list = sortTeamsAlpha(
+    filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional }),
+  );
+  for (const r of list) {
+    const t = byId.get(r.id)!;
+    const tr = document.createElement('tr');
+    tr.dataset.team = t.id;
+    const label = statusLabel(r);
+    tr.innerHTML =
+      `<td><span class="rk-teamcell"><span class="rk-avatar">${t.name.charAt(0)}</span>` +
+      `<span class="rk-teamname">${t.name}</span></span></td>` +
+      `<td><span class="rk-status${label === 'Ranked' ? '' : ' rk-status-prov'}">${label}</span></td>` +
+      `<td class="num">${Math.round(t.rating)}</td>` +
+      `<td class="num"><span class="rk-record">${t.wins}–${t.losses}</span></td>` +
+      `<td class="num">${Math.round(t.sos)}</td>` +
+      `<td><span class="rk-conf ${confClass(t)}">${t.confidence === 'med' ? 'Med' : t.confidence === 'high' ? 'High' : 'Low'}</span></td>`;
+    tr.addEventListener('click', () => showTeam(t.id));
+    body.appendChild(tr);
+  }
+}
+
+function renderTournaments(): void {
+  const body = document.getElementById('tournaments-body')!;
+  body.innerHTML = '';
+  for (const e of buildTournamentSummaries(dataset)) {
+    const tr = document.createElement('tr');
+    const dates = e.from === e.to ? fmtDate(e.from) : `${fmtDate(e.from)} – ${fmtDate(e.to)}`;
+    tr.innerHTML =
+      `<td><span class="rk-teamname">${e.name}</span></td>` +
+      `<td>${e.league ? 'League' : 'Tournament'}</td>` +
+      `<td class="num">${e.games}</td>` +
+      `<td class="num">${e.teams}</td>` +
+      `<td>${dates}</td>` +
+      (e.url
+        ? `<td><a href="${e.url}" target="_blank" rel="noopener noreferrer">Source</a></td>`
+        : `<td>—</td>`);
+    body.appendChild(tr);
+  }
 }
 
 function showTeam(id: string): void {
@@ -286,13 +350,20 @@ function showTeam(id: string): void {
   }
 }
 
+function renderCurrentList(): void {
+  if (state.view === 'team') setView(state.returnView);
+  if (state.view === 'teams') renderTeams();
+  else if (state.view === 'tournaments') renderTournaments();
+  else if (state.view === 'connectivity') renderConnectivity();
+  else renderTable();
+}
+
 function syncQuery(value: string, source: 'header' | 'find'): void {
   state.query = value;
   (document.getElementById('header-search') as HTMLInputElement).value = value;
   (document.getElementById('find-team') as HTMLInputElement).value = value;
   void source;
-  if (state.view !== 'standings') setView('standings');
-  renderTable();
+  renderCurrentList();
 }
 
 function applyTheme(dark: boolean): void {
@@ -328,7 +399,20 @@ document.getElementById('tab-connectivity')!.addEventListener('click', () => {
 });
 document.getElementById('back-link')!.addEventListener('click', (e) => {
   e.preventDefault();
-  setView('standings');
+  setView(state.returnView);
+  if (state.returnView === 'teams') renderTeams();
+  if (state.returnView === 'tournaments') renderTournaments();
+  if (state.returnView === 'connectivity') renderConnectivity();
+  if (state.returnView === 'standings') renderTable();
+});
+document.getElementById('tb-rankings')!.addEventListener('click', () => setView('standings'));
+document.getElementById('tb-teams')!.addEventListener('click', () => {
+  setView('teams');
+  renderTeams();
+});
+document.getElementById('tb-tournaments')!.addEventListener('click', () => {
+  setView('tournaments');
+  renderTournaments();
 });
 document.getElementById('theme-toggle')!.addEventListener('click', () => {
   applyTheme(!document.documentElement.classList.contains('dark'));

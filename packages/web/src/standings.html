@@ -24,9 +24,9 @@
       <main id="main-content" class="rk-main">
         <div class="rk-toolbar">
           <div class="rk-tabs" role="navigation" aria-label="Rankings tools">
-            <button class="rk-tab rk-tab-active" type="button">Rankings</button>
-            <button class="rk-tab" type="button" disabled title="Coming soon">Teams</button>
-            <button class="rk-tab" type="button" disabled title="Coming soon">Tournaments</button>
+            <button class="rk-tab rk-tab-active" type="button" id="tb-rankings">Rankings</button>
+            <button class="rk-tab" type="button" id="tb-teams">Teams</button>
+            <button class="rk-tab" type="button" id="tb-tournaments">Tournaments</button>
             <span class="rk-tools-label">TOOLS</span>
             <a class="rk-tab" href="/simulate.html">Simulate</a>
             <a class="rk-tab" href="/lab.html">Lab</a>
@@ -55,7 +55,7 @@
           </div>
         </section>
 
-        <div class="rk-viewtabs" role="tablist" aria-label="Rankings views">
+        <div class="rk-viewtabs" role="tablist" aria-label="Rankings views" id="standings-viewtabs">
           <button id="tab-standings" class="rk-viewtab rk-viewtab-active" type="button" role="tab" aria-selected="true">Standings</button>
           <button id="tab-connectivity" class="rk-viewtab" type="button" role="tab" aria-selected="false">Connectivity</button>
         </div>
@@ -75,6 +75,28 @@
 
         <div id="connectivity-view" role="tabpanel" class="hidden">
           <div id="components-list"></div>
+        </div>
+
+        <div id="teams-view" class="hidden">
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr>
+                <th>Team</th><th>Status</th><th class="num">Rating</th><th class="num">W-L</th><th class="num">SoS</th><th>Conf</th>
+              </tr></thead>
+              <tbody id="teams-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tournaments-view" class="hidden">
+          <div class="rk-table-wrap">
+            <table class="rk-table">
+              <thead><tr>
+                <th>Tournament</th><th>Type</th><th class="num">Games</th><th class="num">Teams</th><th>Dates</th><th>Source</th>
+              </tr></thead>
+              <tbody id="tournaments-body"></tbody>
+            </table>
+          </div>
         </div>
 
         <div id="team-view" class="hidden">

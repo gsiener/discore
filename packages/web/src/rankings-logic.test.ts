@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildTournamentSummaries,
   filterTeams,
   regionAbbrev,
   regionSeed,
   sortTeams,
+  sortTeamsAlpha,
   sparkColor,
   sparkPoints,
   statusLabel,
   type RankRow,
 } from './rankings-logic.js';
+import type { CanonicalDataset } from '@scorebot/rankings';
 
 const rows: RankRow[] = [
   { id: 'a', name: 'Albany Cougars', rank: 1, rating: 2100, qualified: true, region: 'Northeast', gamesPlayed: 8 },
@@ -60,6 +63,58 @@ describe('regionSeed', () => {
     expect(regionSeed(rows, 'a')).toBe(1);
     expect(regionSeed(rows, 'd')).toBe(2);
     expect(regionSeed(rows, 'b')).toBe(1);
+  });
+});
+
+describe('sortTeamsAlpha', () => {
+  it('sorts case-insensitively by name', () => {
+    const shuffled = [rows[2], rows[0], rows[3], rows[1]];
+    expect(sortTeamsAlpha(shuffled).map((r) => r.id)).toEqual(['a', 'd', 'c', 'b']);
+  });
+});
+
+describe('buildTournamentSummaries', () => {
+  const dataset: CanonicalDataset = {
+    season: '2025-26',
+    division: 'boys',
+    teams: [
+      { id: 'a', displayName: 'Alpha', season: '2025-26', division: 'boys' },
+      { id: 'b', displayName: 'Beta', season: '2025-26', division: 'boys' },
+      { id: 'c', displayName: 'Gamma', season: '2025-26', division: 'boys' },
+    ],
+    events: {
+      e1: { id: 'e1', name: 'Seattle Invite', league: false, sourceUrl: 'https://example.com/s' },
+      e2: { id: 'e2', name: 'Fall League', league: true },
+    },
+    games: [
+      { id: 'g1', season: '2025-26', division: 'boys', teamAId: 'a', teamBId: 'b', scoreA: 13, scoreB: 11, status: 'final', date: '2025-10-04', eventId: 'e1' },
+      { id: 'g2', season: '2025-26', division: 'boys', teamAId: 'b', teamBId: 'c', scoreA: 13, scoreB: 12, status: 'final', date: '2025-10-05', eventId: 'e1' },
+      { id: 'g3', season: '2025-26', division: 'boys', teamAId: 'a', teamBId: 'c', scoreA: 10, scoreB: 8, status: 'final', date: '2025-10-06', eventId: 'e2' },
+    ],
+  };
+
+  it('summarizes games, teams, dates, and league flags per event', () => {
+    const out = buildTournamentSummaries(dataset);
+    expect(out).toHaveLength(2);
+    const seattle = out.find((e) => e.id === 'e1')!;
+    expect(seattle.games).toBe(2);
+    expect(seattle.teams).toBe(3);
+    expect(seattle.from).toBe('2025-10-04');
+    expect(seattle.to).toBe('2025-10-05');
+    expect(seattle.league).toBe(false);
+    expect(seattle.url).toBe('https://example.com/s');
+    const league = out.find((e) => e.id === 'e2')!;
+    expect(league.league).toBe(true);
+    expect(league.games).toBe(1);
+  });
+
+  it('orders by game count descending', () => {
+    expect(buildTournamentSummaries(dataset)[0].id).toBe('e1');
+  });
+
+  it('ignores games without an event', () => {
+    const d = { ...dataset, games: [...dataset.games, { ...dataset.games[0], id: 'gx', eventId: null }] };
+    expect(buildTournamentSummaries(d)).toHaveLength(2);
   });
 });
 

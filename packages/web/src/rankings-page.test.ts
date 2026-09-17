@@ -7,8 +7,12 @@ const SKELETON = `
 <button id="hide-provisional"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
+<div class="rk-tabs"><button id="tb-rankings"></button><button id="tb-teams"></button><button id="tb-tournaments"></button></div>
+<div id="standings-viewtabs"></div>
 <div id="standings-view"><table><tbody id="rankings-body"></tbody></table></div>
 <div id="connectivity-view"><div id="components-list"></div></div>
+<div id="teams-view"><table><tbody id="teams-body"></tbody></table></div>
+<div id="tournaments-view"><table><tbody id="tournaments-body"></tbody></table></div>
 <div id="team-view"><a id="back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
 <table><tbody id="team-games-body"></tbody></table></div>`;
 
@@ -46,5 +50,26 @@ describe('rankings page wiring', () => {
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
+  });
+
+  it('switches to Teams and Tournaments tabs', async () => {
+    await vi.waitFor(() => expect(rowCount()).toBe(7));
+
+    (document.getElementById('tb-teams') as HTMLButtonElement).click();
+    expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
+    const teamRows = document.querySelectorAll('#teams-body tr');
+    expect(teamRows.length).toBe(7);
+    expect(teamRows[0].textContent).toMatch(/Albany Cougars/);
+
+    (teamRows[1] as HTMLElement).click();
+    expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
+    (document.getElementById('back-link') as HTMLElement).click();
+    expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
+
+    (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
+    expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);
+    const eventRows = document.querySelectorAll('#tournaments-body tr');
+    expect(eventRows.length).toBe(2);
+    expect(eventRows[0].textContent).toMatch(/Seattle Invite/);
   });
 });

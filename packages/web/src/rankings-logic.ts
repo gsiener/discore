@@ -1,7 +1,8 @@
 /**
  * Pure view logic for the rankings page (filtering, sorting, badges,
- * sparklines). Kept framework-free and DOM-free for unit testing.
+ * sparklines, tournament summaries). Framework-free and DOM-free for testing.
  */
+import type { CanonicalDataset } from '@scorebot/rankings';
 
 export interface RankRow {
   id: string;
@@ -33,6 +34,52 @@ export function sortTeams(rows: RankRow[], dir: 'asc' | 'desc'): RankRow[] {
   const key = (r: RankRow) => (r.rank == null ? Number.MAX_SAFE_INTEGER : r.rank);
   const sorted = [...rows].sort((a, b) => key(a) - key(b));
   return dir === 'asc' ? sorted : sorted.reverse();
+}
+
+/** Alphabetical directory order, case-insensitive. */
+export function sortTeamsAlpha(rows: RankRow[]): RankRow[] {
+  return [...rows].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+}
+
+export interface TournamentSummary {
+  id: string;
+  name: string;
+  league: boolean;
+  url: string | null;
+  games: number;
+  teams: number;
+  from: string;
+  to: string;
+}
+
+/** Per-event rollup over final games; games without an event are skipped. */
+export function buildTournamentSummaries(dataset: CanonicalDataset): TournamentSummary[] {
+  const acc = new Map<string, { games: number; teams: Set<string>; from: string; to: string }>();
+  for (const g of dataset.games) {
+    if (!g.eventId || g.status !== 'final') continue;
+    let e = acc.get(g.eventId);
+    if (!e) {
+      e = { games: 0, teams: new Set(), from: g.date, to: g.date };
+      acc.set(g.eventId, e);
+    }
+    e.games++;
+    e.teams.add(g.teamAId);
+    e.teams.add(g.teamBId);
+    if (g.date < e.from) e.from = g.date;
+    if (g.date > e.to) e.to = g.date;
+  }
+  return [...acc.entries()]
+    .map(([id, e]) => ({
+      id,
+      name: dataset.events[id]?.name ?? id,
+      league: dataset.events[id]?.league ?? false,
+      url: dataset.events[id]?.sourceUrl ?? null,
+      games: e.games,
+      teams: e.teams.size,
+      from: e.from,
+      to: e.to,
+    }))
+    .sort((a, b) => b.games - a.games || a.name.localeCompare(b.name));
 }
 
 /** 'Southwest' -> 'SW', 'North Central' -> 'NC', 'Midwest' -> 'MW'. */
