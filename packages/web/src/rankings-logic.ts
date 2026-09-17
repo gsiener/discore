@@ -38,7 +38,7 @@ export function sortTeams(rows: RankRow[], dir: 'asc' | 'desc'): RankRow[] {
 
 /** Alphabetical directory order, case-insensitive. */
 export function sortTeamsAlpha(rows: RankRow[]): RankRow[] {
-  return [...rows].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  return [...rows].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
 }
 
 export interface TournamentSummary {
@@ -69,16 +69,19 @@ export function buildTournamentSummaries(dataset: CanonicalDataset): TournamentS
     if (g.date > e.to) e.to = g.date;
   }
   return [...acc.entries()]
-    .map(([id, e]) => ({
-      id,
-      name: dataset.events[id]?.name ?? id,
-      league: dataset.events[id]?.league ?? false,
-      url: dataset.events[id]?.sourceUrl ?? null,
-      games: e.games,
-      teams: e.teams.size,
-      from: e.from,
-      to: e.to,
-    }))
+    .map(([id, e]) => {
+      const ev = dataset.events[id];
+      return {
+        id,
+        name: ev?.name ?? id,
+        league: ev?.league ?? false,
+        url: ev?.sourceUrl ?? null,
+        games: e.games,
+        teams: e.teams.size,
+        from: e.from,
+        to: e.to,
+      };
+    })
     .sort((a, b) => b.games - a.games || a.name.localeCompare(b.name));
 }
 
