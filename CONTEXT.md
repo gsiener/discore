@@ -49,3 +49,14 @@ The lineup fielded when we start a point on offense.
 
 **D-line**:
 The lineup fielded when we start a point on defense.
+
+### Identity
+
+**Player Identity**:
+The mapping from chat nicknames to roster players: aliases ("Dock" is "Noah"), descriptors that are never names — of throws ("hammer", "diving") or of defensive plays ("foot", "hand") — and words that are never names ("Correction", "Champions").
+_Avoid_: username, handle
+
+### Summaries
+
+**Game Summary**:
+The side-by-side account of a game (or set of games): our Hold, Break, and Forced Turn numbers against the opponent's, whose numbers are derived by symmetry from our lines.

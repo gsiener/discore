@@ -3,7 +3,8 @@
  * Extracts player names and parses goal events from message text
  */
 
-import { Game } from '@scorebot/shared';
+import { Game, normalizePlayerName, parseDefensivePlayNote, PLAY_DESCRIPTORS } from '@scorebot/shared';
+import type { DefensivePlayCredit } from '@scorebot/shared';
 
 export class PlayerNameParser {
   // Throw/play descriptors that are not player names
@@ -25,12 +26,6 @@ export class PlayerNameParser {
     'i'
   );
 
-  // Player name aliases (formal name -> preferred name)
-  static readonly NAME_ALIASES: Record<string, string> = {
-    'Thaddeus': 'Nate',
-    'Dock': 'Noah',
-  };
-
   // Common words that aren't player names (hoisted to avoid per-call Set creation)
   static readonly COMMON_WORDS = new Set([
     'Goal', 'Score', 'Point', 'Block', 'Steal', 'Timeout', 'Halftime',
@@ -40,6 +35,7 @@ export class PlayerNameParser {
     'Final', 'Good', 'Win', 'Lost', 'First', 'Second', 'Half',
     'Columbia', 'Westfield', 'Montclair', 'Beacon',
     ...PlayerNameParser.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
+    ...PLAY_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
     'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
     'Soft', 'Cap', 'Correction', 'Playing',
     'Stuy', 'Wiss', 'Lex',
@@ -71,7 +67,7 @@ export class PlayerNameParser {
 
     for (const word of words) {
       if (!PlayerNameParser.COMMON_WORDS.has(word) && !teamWords.has(word) && word.length > 2) {
-        names.push(PlayerNameParser.NAME_ALIASES[word] || word);
+        names.push(normalizePlayerName(word));
       }
     }
 
@@ -86,8 +82,7 @@ export class PlayerNameParser {
     const match = message.match(PlayerNameParser.ASSIST_PATTERN);
 
     if (match && !PlayerNameParser.DESCRIPTOR_CHECK.test(match[1])) {
-      const aliases = PlayerNameParser.NAME_ALIASES;
-      return { assister: aliases[match[1]] || match[1], scorer: aliases[match[2]] || match[2] };
+      return { assister: normalizePlayerName(match[1]), scorer: normalizePlayerName(match[2]) };
     }
 
     // Pattern: just a name (scorer only)
@@ -100,5 +95,13 @@ export class PlayerNameParser {
     }
 
     return { scorer: null, assister: null };
+  }
+
+  /**
+   * Attribute a defensive note to a player via the shared player-identity
+   * seam ("Ellis block" -> Ellis + block). Null when nobody can be credited.
+   */
+  parseDefensivePlay(message: string): DefensivePlayCredit | null {
+    return parseDefensivePlayNote(message);
   }
 }

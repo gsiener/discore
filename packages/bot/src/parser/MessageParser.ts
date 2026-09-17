@@ -3,7 +3,7 @@
  * Recognizes game events from casual chat messages
  */
 
-import { EventType, TeamSide, parseScore } from '@scorebot/shared';
+import { EventType, TeamSide, parseScore, Game } from '@scorebot/shared';
 
 export interface ParsedMessage {
   type: EventType | null;
@@ -14,15 +14,24 @@ export interface ParsedMessage {
   startingOnOffense?: boolean; // For game start events
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export class MessageParser {
   /**
-   * Parse a message and determine if it represents a game event
+   * Parse a message and determine if it represents a game event.
+   *
+   * Pass the Game when the caller has one (the live game for this chat):
+   * opponent detection then reads team names from data instead of a
+   * hardcoded school list. Without it, the legacy list keeps old messages
+   * parsing (tests, bare client use).
    */
-  parse(message: string): ParsedMessage {
+  parse(message: string, game?: Game): ParsedMessage {
     const normalized = message.toLowerCase().trim();
 
     // Try parsing in order of specificity
-    const parsers = [
+    const parsers: Array<(normalized: string, original: string, game?: Game) => ParsedMessage> = [
       this.parseGameStart.bind(this),
       this.parseGameEnd.bind(this),
       this.parseHalftime.bind(this),
@@ -33,7 +42,7 @@ export class MessageParser {
     ];
 
     for (const parser of parsers) {
-      const result = parser(normalized, message);
+      const result = parser(normalized, message, game);
       if (result.type && result.confidence > 0.6) {
         return result;
       }
@@ -190,7 +199,19 @@ export class MessageParser {
   /**
    * Check if message indicates a goal
    */
-  private parseGoal(normalized: string, original: string): ParsedMessage {
+  /**
+   * Patterns matching "<opponent> on the board / score". With a Game, the
+   * names come from the actual opponent; otherwise a legacy hardcoded list.
+   */
+  private opponentScorePatterns(game?: Game): RegExp[] {
+    const words = game
+      ? game.teams.them.name.split(/[^A-Za-z]+/).filter(word => word.length > 2)
+      : ['Columbia', 'Westfield', 'Montclair', 'Beacon'];
+    const alternation = words.map(escapeRegExp).join('|');
+    return [new RegExp(`\\b(${alternation})\\b.*\\b(on the board|score)`, 'i')];
+  }
+
+  private parseGoal(normalized: string, original: string, game?: Game): ParsedMessage {
     // Check for defensive plays that lead to goals
     let defensivePlay: 'block' | 'steal' | undefined;
 
@@ -215,9 +236,7 @@ export class MessageParser {
     }
 
     // Check if opponent team name is mentioned
-    const opponentPatterns = [
-      /(columbia|westfield|montclair|beacon)\b.*\b(on the board|score)/i,
-    ];
+    const opponentPatterns = this.opponentScorePatterns(game);
 
     for (const pattern of opponentPatterns) {
       if (pattern.test(normalized)) {

@@ -87,9 +87,9 @@ export function getGameDuration(game: Game): number | null {
  *   - dLineFailedConversions: D-line points where we forced at least one turn
  *     (logged Tech block/steal) but still gave up the goal.
  *
- * Detection of a "forced turn within this point" relies on note events whose
- * message starts with a capitalized player name followed by "block" or "steal",
- * or on goal events carrying a `defensivePlay` field.
+ * Detection of a "forced turn within this point" relies on note events matching
+ * the shared player-identity seam (isForcedTurnNote), or on goal events
+ * carrying a `defensivePlay` field.
  */
 export function calculateLineStats(game: Game): LineStats | null {
   // Can't calculate without knowing starting possession — inferred results

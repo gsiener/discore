@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildPointLedger, isTechDefensivePlayNote } from './pointLedger.js';
+import { buildPointLedger } from './pointLedger.js';
+import { isForcedTurnNote } from './playerIdentity.js';
 import { calculateLineStats } from './utils.js';
 import { Game, GameEvent, EventType, TeamSide, GameStatus } from './types.js';
 

@@ -22,6 +22,7 @@
  */
 
 import { Game, GameEvent, Score, TeamSide, EventType } from './types.js';
+import { isForcedTurnNote } from './playerIdentity.js';
 
 export interface Point {
   /** 1-based; every goal ends exactly one point. */
@@ -44,14 +45,6 @@ export interface Point {
 
 export interface PointLedger {
   points: Point[];
-}
-
-/** Match note messages like "Mason block", "Theo steal", "Mason foot block". */
-const TECH_DEFENSIVE_NOTE_PATTERN = /^[A-Z][a-z]+\b.*\b(?:block|steal)\b/;
-
-export function isTechDefensivePlayNote(message: string | undefined): boolean {
-  if (!message) return false;
-  return TECH_DEFENSIVE_NOTE_PATTERN.test(message);
 }
 
 export function buildPointLedger(game: Game): PointLedger {
@@ -79,7 +72,7 @@ export function buildPointLedger(game: Game): PointLedger {
       continue;
     }
 
-    if (event.type === EventType.NOTE && isTechDefensivePlayNote(event.message)) {
+    if (event.type === EventType.NOTE && isForcedTurnNote(event.message)) {
       forcedTurnThisPoint = true;
       continue;
     }

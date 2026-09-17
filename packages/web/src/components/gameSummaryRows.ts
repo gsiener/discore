@@ -3,23 +3,7 @@
  * BREAKS, BREAK CONVERSION (both teams), plus a Tech-only FORCED TURNS row.
  */
 
-export interface SummaryStats {
-  us: {
-    holds: number;
-    oPoints: number;
-    breaks: number;
-    dPoints: number;
-    dirtyHolds: number; // holds where we turned it over but got it back
-    forcedTurns: number; // breaks + failed conversions (logged)
-  };
-  them: {
-    holds: number;
-    oPoints: number;
-    breaks: number;
-    dPoints: number;
-  };
-  gameCount: number;
-}
+import type { SummaryStats } from '@scorebot/shared';
 
 export function renderGameSummaryRows(container: HTMLElement, stats: SummaryStats): void {
   container.innerHTML = '';

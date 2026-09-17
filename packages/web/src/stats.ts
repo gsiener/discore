@@ -10,8 +10,8 @@ import {
   TeamTrends,
   PlayerChemistry,
 } from '@scorebot/shared';
+import { toSummaryStats } from '@scorebot/shared';
 import { renderGameSummaryRows } from './components/gameSummaryRows.js';
-import { toSummaryStats } from './components/efficiencyStats.js';
 import {
   fetchGames,
   fetchGameStats,

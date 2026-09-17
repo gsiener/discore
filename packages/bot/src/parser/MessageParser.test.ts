@@ -1,12 +1,52 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { MessageParser } from './MessageParser.js';
-import { EventType, TeamSide } from '@scorebot/shared';
+import { EventType, TeamSide, Game, GameStatus, generateId } from '@scorebot/shared';
 
 describe('MessageParser', () => {
   let parser: MessageParser;
 
+  const createMockGame = (opponentName: string): Game => ({
+    id: generateId('game'),
+    status: GameStatus.FIRST_HALF,
+    teams: {
+      us: { name: 'Tech', side: TeamSide.US },
+      them: { name: opponentName, side: TeamSide.THEM },
+    },
+    score: { us: 0, them: 0 },
+    events: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+
   beforeEach(() => {
     parser = new MessageParser();
+  });
+
+  describe('parse with game context', () => {
+    it('should detect a non-hardcoded opponent scoring when the game is passed', () => {
+      const game = createMockGame('Bard');
+      const result = parser.parse('Bard on the board 5-1', game);
+      expect(result.type).toBe(EventType.GOAL);
+      expect(result.team).toBe(TeamSide.THEM);
+    });
+
+    it('should not detect that opponent without the game (legacy list only)', () => {
+      const result = parser.parse('Bard on the board 5-1');
+      expect(result.type).not.toBe(EventType.GOAL);
+    });
+
+    it('should still detect hardcoded opponents without the game', () => {
+      const result = parser.parse('Columbia on the board. 5-1');
+      expect(result.type).toBe(EventType.GOAL);
+      expect(result.team).toBe(TeamSide.THEM);
+    });
+
+    it('should match multi-word opponent names from the game', () => {
+      const game = createMockGame("St. John's Prep");
+      const result = parser.parse('Prep score 5-1', game);
+      expect(result.type).toBe(EventType.GOAL);
+      expect(result.team).toBe(TeamSide.THEM);
+    });
   });
 
   describe('parseGameStart', () => {

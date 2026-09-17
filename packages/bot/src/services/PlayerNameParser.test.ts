@@ -95,6 +95,12 @@ describe('PlayerNameParser', () => {
       expect(names).toEqual([]);
     });
 
+    it('should extract only Marley from "Foot block Marley!" since Foot is a descriptor', () => {
+      const game = createMockGame();
+      const names = parser.extractPlayerNames('Foot block Marley!', game);
+      expect(names).toEqual(['Marley']);
+    });
+
     it('should extract only Ellis from "Ellis block" since Block is excluded', () => {
       const game = createMockGame();
       const names = parser.extractPlayerNames('Ellis block', game);

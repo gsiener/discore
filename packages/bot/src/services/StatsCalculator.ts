@@ -23,7 +23,7 @@ import {
   PlayerChemistry,
   AggregateLineStats,
 } from '@scorebot/shared';
-import { calculateLineStats, buildPointLedger } from '@scorebot/shared';
+import { calculateLineStats, buildPointLedger, deriveForcedTurns, deriveCleanHolds } from '@scorebot/shared';
 import { PlayerNameParser } from './PlayerNameParser.js';
 
 export class StatsCalculator {
@@ -107,22 +107,13 @@ export class StatsCalculator {
           stats.touches++;
         });
       } else if (event.type === EventType.NOTE && event.message) {
-        // Credit blocks and steals directly from note events
-        const msg = event.message.toLowerCase();
-        if (msg.includes('block')) {
-          const match = event.message.match(/^([A-Z][a-z]+)\s+(?:diving\s+)?block/);
-          if (match) {
-            const name = PlayerNameParser.NAME_ALIASES[match[1]] || match[1];
-            const stats = this.getOrCreatePlayerStats(playerMap, name);
-            stats.blocks++;
-          }
-        } else if (msg.includes('steal')) {
-          const match = event.message.match(/^([A-Z][a-z]+)\s+steal/);
-          if (match) {
-            const name = PlayerNameParser.NAME_ALIASES[match[1]] || match[1];
-            const stats = this.getOrCreatePlayerStats(playerMap, name);
-            stats.steals++;
-          }
+        // Credit blocks and steals directly from note events, via the
+        // shared player-identity seam (same aliases the goal parser uses).
+        const credit = this.nameParser.parseDefensivePlay(event.message);
+        if (credit) {
+          const stats = this.getOrCreatePlayerStats(playerMap, credit.name);
+          if (credit.play === 'block') stats.blocks++;
+          else stats.steals++;
         }
         // Also track touches
         players.forEach(name => {
@@ -517,8 +508,10 @@ export class StatsCalculator {
       dLineFailedConversions += stats.dLineFailedConversions;
     }
 
-    const forcedTurns = dLineBreaks + dLineFailedConversions;
-    const cleanHolds = oLineHolds - oLineDirtyHolds;
+    // Forced Turn / clean-hold math lives once, in the shared Game Summary seam.
+    const counts = { oLinePoints, oLineHolds, oLineDirtyHolds, dLinePoints, dLineBreaks, dLineFailedConversions };
+    const forcedTurns = deriveForcedTurns(counts);
+    const cleanHolds = deriveCleanHolds(counts);
 
     return {
       gamesIncluded,

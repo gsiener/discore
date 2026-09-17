@@ -9,9 +9,9 @@
  *   - their D-line points = our O-line points
  */
 
-import type { Game, LineStats } from '@scorebot/shared';
-import { calculateLineStats } from '@scorebot/shared';
-import { renderGameSummaryRows, type SummaryStats } from './gameSummaryRows.js';
+import type { Game } from '@scorebot/shared';
+import { calculateLineStats, toSummaryStats } from '@scorebot/shared';
+import { renderGameSummaryRows } from './gameSummaryRows.js';
 
 export function renderEfficiencyStats(game: Game): void {
   const container = document.getElementById('efficiency-stats-container');
@@ -39,36 +39,4 @@ function setText(id: string, value: string) {
   if (el) el.textContent = value;
 }
 
-/**
- * Accepts any LineStats-shaped object (per-game LineStats or the season-aggregate
- * AggregateLineStats) — only the raw point/hold/break counts are read.
- */
-type LineStatCounts = Pick<
-  LineStats,
-  'oLinePoints' | 'oLineHolds' | 'oLineDirtyHolds' | 'dLinePoints' | 'dLineBreaks' | 'dLineFailedConversions'
->;
 
-export function toSummaryStats(line: LineStatCounts, gameCount: number): SummaryStats {
-  const themHolds = line.dLinePoints - line.dLineBreaks;
-  const themOPoints = line.dLinePoints;
-  const themBreaks = line.oLinePoints - line.oLineHolds;
-  const themDPoints = line.oLinePoints;
-  const forcedTurns = line.dLineBreaks + line.dLineFailedConversions;
-  return {
-    us: {
-      holds: line.oLineHolds,
-      oPoints: line.oLinePoints,
-      breaks: line.dLineBreaks,
-      dPoints: line.dLinePoints,
-      dirtyHolds: line.oLineDirtyHolds,
-      forcedTurns,
-    },
-    them: {
-      holds: themHolds,
-      oPoints: themOPoints,
-      breaks: themBreaks,
-      dPoints: themDPoints,
-    },
-    gameCount,
-  };
-}
