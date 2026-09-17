@@ -1,8 +1,9 @@
 /**
  * Site-wide HTTP Basic Auth for the Discore web app.
  *
- * Runs on every request to score.kcuda.org. Exempts /rankings/* so HS
- * rankings stay publicly linkable. Reads the shared password from the
+ * Runs on every request to score.kcuda.org. Exempts the public rankings
+ * experience (see publicPaths.ts) so HS rankings stay publicly linkable.
+ * Reads the shared password from the
  * SITE_PASSWORD environment variable; configure it via the CF Pages
  * dashboard (Settings → Environment variables) or:
  *
@@ -18,10 +19,12 @@ interface Env {
 
 const USERNAME = 'tech';
 
+import { isPublicPath } from '../src/publicPaths.js';
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { pathname } = new URL(context.request.url);
 
-  if (pathname === '/rankings' || pathname.startsWith('/rankings/')) {
+  if (isPublicPath(pathname)) {
     return context.next();
   }
 
