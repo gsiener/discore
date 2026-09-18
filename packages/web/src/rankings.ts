@@ -357,11 +357,13 @@ function showTeam(id: string): void {
     `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
   const body = document.getElementById('team-games-body')!;
   body.innerHTML = '';
-  for (const g of t.games) {
+  const games = [...t.games].sort((a, b) => b.date.localeCompare(a.date) || a.gameId.localeCompare(b.gameId));
+  for (const g of games) {
     const tr = document.createElement('tr');
     if (g.ignored) tr.classList.add('ignored');
     const cells = [
       g.opponentName,
+      fmtDate(g.date),
       `${g.result} ${g.scoreFor}-${g.scoreAgainst}`,
       g.gameRating.toFixed(1),
       (g.effect >= 0 ? '+' : '') + g.effect.toFixed(1),

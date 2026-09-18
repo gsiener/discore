@@ -50,6 +50,12 @@ describe('rankings page wiring', () => {
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
+    // Albany's games span Oct 4–5: newest first, with dates visible.
+    const gameRows = [...document.querySelectorAll('#team-games-body tr')];
+    const dates = gameRows.map((r) => (r.children[1] as HTMLElement).textContent);
+    expect(dates[0]).toContain('Oct 5');
+    expect(dates[dates.length - 1]).toContain('Oct 4');
+    expect([...dates].sort().reverse()).toEqual(dates);
   });
 
   it('switches to Teams and Tournaments tabs', async () => {
