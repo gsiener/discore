@@ -515,6 +515,91 @@ a.rk-tab {
   border-color: transparent;
 }
 
+/* Stacked tournament sections mirror the reference team-results page. */
+.rk-results-title {
+  margin: 12px 0 18px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.rk-tournament-list {
+  display: grid;
+  gap: 14px;
+}
+
+.rk-tournament-section {
+  overflow: hidden;
+  border: 1px solid var(--rk-border);
+  border-radius: 12px;
+  background: var(--rk-bg);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.rk-tournament-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 17px 20px 15px;
+}
+
+.rk-tournament-header h3 {
+  margin: 0 0 5px;
+  color: var(--rk-text);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.rk-tournament-counts,
+.rk-tournament-date {
+  color: var(--rk-muted);
+  font-size: 14px;
+}
+
+.rk-tournament-facts {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: max-content;
+}
+
+.rk-tournament-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--rk-border);
+  padding: 10px 20px;
+  background: var(--rk-track);
+  color: var(--rk-muted);
+  font-size: 13px;
+}
+
+.rk-tournament-footer a {
+  color: var(--rk-purple-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rk-tournament-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .rk-tournament-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rk-tournament-facts {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+}
+
 .team-summary {
   margin-bottom: 12px;
   font-size: 15px;

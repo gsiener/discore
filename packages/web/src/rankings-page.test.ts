@@ -97,11 +97,12 @@ describe('rankings page wiring', () => {
     (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
     expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);
     expect(window.location.search).toContain('view=tournaments');
-    const eventRows = document.querySelectorAll('#tournaments-body tr');
-    expect(eventRows.length).toBe(2);
-    expect(eventRows[0].textContent).toMatch(/Seattle Invite/);
-    expect(eventRows[0].querySelector('.rk-event-name')).not.toBeNull();
-    expect(eventRows[0].querySelector('.rk-event-type')).not.toBeNull();
+    const eventSections = document.querySelectorAll('#tournaments-body .rk-tournament-section');
+    expect(eventSections.length).toBe(2);
+    expect(eventSections[0].textContent).toMatch(/Seattle Invite/);
+    expect(eventSections[0].querySelector('.rk-tournament-header')).not.toBeNull();
+    expect(eventSections[0].querySelector('.rk-tournament-counts')?.textContent).toMatch(/12 games/);
+    expect(eventSections[0].querySelector('.rk-tournament-date')).not.toBeNull();
 
     (document.getElementById('tb-teams') as HTMLButtonElement).click();
     expect(window.location.search).toContain('view=teams');
@@ -117,6 +118,6 @@ describe('rankings page wiring', () => {
     await vi.waitFor(() =>
       expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false),
     );
-    expect(document.querySelectorAll('#tournaments-body tr').length).toBe(2);
+    expect(document.querySelectorAll('#tournaments-body .rk-tournament-section').length).toBe(2);
   });
 });

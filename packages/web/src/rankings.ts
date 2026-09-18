@@ -349,18 +349,22 @@ function renderTournaments(): void {
   const body = document.getElementById('tournaments-body')!;
   body.innerHTML = '';
   for (const e of tournamentSummaries) {
-    const tr = document.createElement('tr');
+    const section = document.createElement('section');
+    section.className = 'rk-tournament-section';
     const dates = e.from === e.to ? fmtDate(e.from) : `${fmtDate(e.from)} – ${fmtDate(e.to)}`;
-    tr.innerHTML =
-      `<td><span class="rk-event-name">${e.name}</span></td>` +
-      `<td><span class="rk-event-type${e.league ? ' rk-event-league' : ''}">${e.league ? 'League' : 'Tournament'}</span></td>` +
-      `<td class="num">${e.games}</td>` +
-      `<td class="num">${e.teams}</td>` +
-      `<td><span class="rk-event-meta">${dates}</span></td>` +
+    section.innerHTML =
+      `<div class="rk-tournament-header">` +
+      `<div><h3>${e.name}</h3><span class="rk-tournament-counts">${e.games} games · ${e.teams} teams</span></div>` +
+      `<div class="rk-tournament-facts"><span class="rk-tournament-date">${dates}</span>` +
+      `<span class="rk-event-type${e.league ? ' rk-event-league' : ''}">${e.league ? 'League' : 'Tournament'}</span></div>` +
+      `</div>` +
+      `<div class="rk-tournament-footer">` +
+      `<span>${e.league ? 'League results' : 'Tournament results'}</span>` +
       (e.url
-        ? `<td><a href="${e.url}" target="_blank" rel="noopener noreferrer">Source</a></td>`
-        : `<td>—</td>`);
-    body.appendChild(tr);
+        ? `<a href="${e.url}" target="_blank" rel="noopener noreferrer">View source ↗</a>`
+        : `<span class="rk-event-meta">No source link</span>`) +
+      `</div>`;
+    body.appendChild(section);
   }
 }
 
