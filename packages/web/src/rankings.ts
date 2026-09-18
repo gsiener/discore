@@ -307,6 +307,7 @@ function setView(view: State['view']): void {
   for (const v of [...listViews, 'team'] as const) {
     document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
   }
+  document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
   const active = VIEW_TABS[view === 'team' ? state.returnView : view];
   for (const v of listViews) {
     const { tab, subtab } = VIEW_TABS[v];

@@ -49,6 +49,7 @@ describe('rankings page wiring', () => {
     const first = document.querySelector('#rankings-body tr') as HTMLElement;
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(true);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
     // Permalink reflects the open team.
     expect(window.location.search).toContain('team=albany');
@@ -67,6 +68,7 @@ describe('rankings page wiring', () => {
     // Back to the list clears the team slug.
     (document.getElementById('back-link') as HTMLElement).click();
     expect(window.location.search).not.toContain('team=');
+    expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(false);
   });
 
   it('deep-links to a team from the URL', async () => {
@@ -77,6 +79,7 @@ describe('rankings page wiring', () => {
     await vi.waitFor(() =>
       expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false),
     );
+    expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(true);
     expect((document.getElementById('team-name') as HTMLElement).textContent).toBe('Lincoln Lynx');
   });
 
