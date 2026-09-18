@@ -276,7 +276,26 @@ a.rk-tab {
   border-collapse: collapse;
   font-size: 15px;
   min-width: 900px;
+  table-layout: fixed;
 }
+
+/* Fixed column widths so filtering rows never reflows the layout. */
+.rk-table-standings .col-rank { width: 44px; }
+.rk-table-standings .col-status { width: 112px; }
+.rk-table-standings .col-rating { width: 112px; }
+.rk-table-standings .col-delta { width: 56px; }
+.rk-table-standings .col-trend { width: 84px; }
+.rk-table-standings .col-record { width: 82px; }
+.rk-table-standings .col-sos { width: 70px; }
+.rk-table-standings .col-gp { width: 56px; }
+.rk-table-standings .col-conf { width: 92px; }
+.rk-table-teams .col-status { width: 112px; }
+.rk-table-teams .col-rating { width: 90px; }
+.rk-table-teams .col-record { width: 82px; }
+.rk-table-teams .col-sos { width: 70px; }
+.rk-table-teams .col-conf { width: 92px; }
+
+
 
 .rk-table th {
   text-align: left;
@@ -319,6 +338,7 @@ a.rk-tab {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .rk-avatar {
@@ -338,6 +358,10 @@ a.rk-tab {
 .rk-teamname {
   font-weight: 600;
   color: var(--rk-text);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .rk-table tbody tr[data-team] {

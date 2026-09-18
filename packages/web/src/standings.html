@@ -62,7 +62,12 @@
 
         <div id="standings-view" role="tabpanel">
           <div class="rk-table-wrap">
-            <table class="rk-table">
+            <table class="rk-table rk-table-standings">
+              <colgroup>
+                <col class="col-rank" /><col class="col-team" /><col class="col-status" />
+                <col class="col-rating" /><col class="col-delta" /><col class="col-trend" />
+                <col class="col-record" /><col class="col-sos" /><col class="col-gp" /><col class="col-conf" />
+              </colgroup>
               <thead><tr>
                 <th><button id="sort-rank" class="rk-sort" type="button"># <span id="sort-arrow">↑</span></button></th>
                 <th>Team</th><th>Status</th><th>Rating</th><th>Δ</th><th>Trend</th>
@@ -79,7 +84,11 @@
 
         <div id="teams-view" class="hidden">
           <div class="rk-table-wrap">
-            <table class="rk-table">
+            <table class="rk-table rk-table-teams">
+              <colgroup>
+                <col class="col-team" /><col class="col-status" /><col class="col-rating" />
+                <col class="col-record" /><col class="col-sos" /><col class="col-conf" />
+              </colgroup>
               <thead><tr>
                 <th>Team</th><th>Status</th><th class="num">Rating</th><th class="num">W-L</th><th class="num">SoS</th><th>Conf</th>
               </tr></thead>
