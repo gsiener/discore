@@ -11,7 +11,8 @@ import {
   statusLabel,
   type RankRow,
 } from './rankings-logic.js';
-import type { CanonicalDataset } from '@scorebot/rankings';
+import type { CanonicalDataset, SnapshotGame } from '@scorebot/rankings';
+import { groupTeamGames } from './rankings-logic.js';
 
 const rows: RankRow[] = [
   { id: 'a', name: 'Albany Cougars', rank: 1, rating: 2100, qualified: true, region: 'Northeast', gamesPlayed: 8 },
@@ -115,6 +116,37 @@ describe('buildTournamentSummaries', () => {
   it('ignores games without an event', () => {
     const d = { ...dataset, games: [...dataset.games, { ...dataset.games[0], id: 'gx', eventId: null }] };
     expect(buildTournamentSummaries(d)).toHaveLength(2);
+  });
+});
+
+describe('groupTeamGames', () => {
+  const g = (id: string, event: string | null, date: string, result: 'W' | 'L'): SnapshotGame => ({
+    gameId: id, opponentId: 'x', opponentName: 'X', result, scoreFor: 13, scoreAgainst: 11,
+    date, eventName: event, gameRating: 1500, effect: 0, scoreWeight: 1, dateWeight: 1,
+    seriesMultiplier: 1, weight: 1, ignored: false, ignoreReason: null,
+  });
+
+  it('groups by event, newest event first, per-event records', () => {
+    const games = [
+      g('g1', 'Seattle Invite', '2025-10-04', 'W'),
+      g('g2', 'Fall League', '2025-10-06', 'L'),
+      g('g3', 'Seattle Invite', '2025-10-05', 'L'),
+      g('g4', null, '2025-10-07', 'W'),
+    ];
+    const groups = groupTeamGames(games);
+    expect(groups.map((x) => x.name)).toEqual(['Fall League', 'Seattle Invite', 'Other games']);
+    expect(groups[1]).toMatchObject({ wins: 1, losses: 1 });
+    expect(groups[2].games.map((x) => x.gameId)).toEqual(['g4']);
+  });
+
+  it('orders games newest-first within each group', () => {
+    const groups = groupTeamGames([
+      g('g1', 'E', '2025-10-04', 'W'),
+      g('g2', 'E', '2025-10-06', 'W'),
+    ]);
+    expect(groups[0].games.map((x) => x.gameId)).toEqual(['g2', 'g1']);
+    expect(groups[0].from).toBe('2025-10-04');
+    expect(groups[0].to).toBe('2025-10-06');
   });
 });
 

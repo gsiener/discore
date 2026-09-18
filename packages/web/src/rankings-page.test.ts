@@ -50,12 +50,33 @@ describe('rankings page wiring', () => {
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
-    // Albany's games span Oct 4–5: newest first, with dates visible.
-    const gameRows = [...document.querySelectorAll('#team-games-body tr')];
-    const dates = gameRows.map((r) => (r.children[1] as HTMLElement).textContent);
+    // Permalink reflects the open team.
+    expect(window.location.search).toContain('team=albany');
+    // Albany's games group under one Seattle Invite header, newest first.
+    const teamRows = [...document.querySelectorAll('#team-games-body tr')];
+    const header = teamRows[0].children[0] as HTMLElement;
+    expect(header.getAttribute('colspan')).toBe('7');
+    expect(header.textContent).toMatch(/Seattle Invite/);
+    expect(header.textContent).toMatch(/7–0/);
+    const dates = teamRows.slice(1).map((r) => (r.children[1] as HTMLElement).textContent);
+    expect(dates).toHaveLength(7);
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
     expect([...dates].sort().reverse()).toEqual(dates);
+    // Back to the list clears the team slug.
+    (document.getElementById('back-link') as HTMLElement).click();
+    expect(window.location.search).not.toContain('team=');
+  });
+
+  it('deep-links to a team from the URL', async () => {
+    vi.resetModules();
+    document.body.innerHTML = SKELETON;
+    window.history.replaceState({}, '', '/standings.html?division=boys&team=lynx');
+    await import('./rankings.js');
+    await vi.waitFor(() =>
+      expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false),
+    );
+    expect((document.getElementById('team-name') as HTMLElement).textContent).toBe('Lincoln Lynx');
   });
 
   it('switches to Teams and Tournaments tabs', async () => {

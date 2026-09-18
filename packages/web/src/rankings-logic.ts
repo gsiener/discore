@@ -2,7 +2,7 @@
  * Pure view logic for the rankings page (filtering, sorting, badges,
  * sparklines, tournament summaries). Framework-free and DOM-free for testing.
  */
-import type { CanonicalDataset } from '@scorebot/rankings';
+import type { CanonicalDataset, SnapshotGame } from '@scorebot/rankings';
 
 export interface RankRow {
   id: string;
@@ -38,7 +38,49 @@ export function sortTeams(rows: RankRow[], dir: 'asc' | 'desc'): RankRow[] {
 
 /** Alphabetical directory order, case-insensitive. */
 export function sortTeamsAlpha(rows: RankRow[]): RankRow[] {
-  return [...rows].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+  return [...rows].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+}
+
+export interface TeamGameGroup {
+  key: string;
+  name: string;
+  from: string;
+  to: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  games: SnapshotGame[];
+}
+
+/**
+ * Group one team's games by tournament (like the reference results tab):
+ * newest event first, games newest-first within each group, per-group
+ * records. Games without an event land in a trailing "Other games" group.
+ */
+export function groupTeamGames(games: SnapshotGame[]): TeamGameGroup[] {
+  const acc = new Map<string, TeamGameGroup>();
+  for (const g of games) {
+    const key = g.eventName ?? '';
+    let grp = acc.get(key);
+    if (!grp) {
+      grp = { key, name: g.eventName ?? 'Other games', from: g.date, to: g.date, wins: 0, losses: 0, ties: 0, games: [] };
+      acc.set(key, grp);
+    }
+    grp.games.push(g);
+    if (g.result === 'W') grp.wins++;
+    else if (g.result === 'L') grp.losses++;
+    else grp.ties++;
+    if (g.date < grp.from) grp.from = g.date;
+    if (g.date > grp.to) grp.to = g.date;
+  }
+  for (const grp of acc.values()) {
+    grp.games.sort((a, b) => b.date.localeCompare(a.date) || a.gameId.localeCompare(b.gameId));
+  }
+  return [...acc.values()].sort((a, b) => {
+    if (a.key === '') return 1;
+    if (b.key === '') return -1;
+    return b.to.localeCompare(a.to) || a.name.localeCompare(b.name);
+  });
 }
 
 export interface TournamentSummary {

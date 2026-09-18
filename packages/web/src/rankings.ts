@@ -2,10 +2,11 @@
  * Rankings page: standings table, connectivity view, and team detail
  * rendered from a published @scorebot/rankings snapshot.
  */
-import type { CanonicalDataset, Snapshot, SnapshotTeam } from '@scorebot/rankings';
+import type { CanonicalDataset, Snapshot, SnapshotGame, SnapshotTeam } from '@scorebot/rankings';
 import {
   buildTournamentSummaries,
   filterTeams,
+  groupTeamGames,
   regionAbbrev,
   regionSeed,
   sortTeams,
@@ -116,6 +117,18 @@ function renderDivisionSegment(): void {
   });
 }
 
+/** Keep the URL a permalink of the current view (division + open team). */
+function writeUrl(): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('division', division);
+  if (state.view === 'team' && state.teamId) {
+    url.searchParams.set('team', state.teamId);
+  } else {
+    url.searchParams.delete('team');
+  }
+  window.history.replaceState({}, '', url.toString());
+}
+
 async function setDivision(next: Division): Promise<void> {
   division = next;
   const loaded: LoadedData = await loadDivision(next, fetch, fixture);
@@ -126,11 +139,9 @@ async function setDivision(next: Division): Promise<void> {
   divisionEmpty = !loaded.real && next !== 'boys';
   rebuildIndex();
   state.query = '';
+  state.teamId = null;
   (document.getElementById('header-search') as HTMLInputElement).value = '';
   (document.getElementById('find-team') as HTMLInputElement).value = '';
-  const url = new URL(window.location.href);
-  url.searchParams.set('division', next);
-  window.history.replaceState({}, '', url.toString());
   renderDivisionSegment();
   renderMeta();
   showList('standings');
@@ -305,6 +316,7 @@ function setView(view: State['view']): void {
 /** Switch to a list view and render it. */
 function showList(view: ListView): void {
   setView(view);
+  writeUrl();
   RENDERERS[view]();
 }
 
@@ -346,36 +358,42 @@ function renderTournaments(): void {
   }
 }
 
+function gameRowHtml(g: SnapshotGame): string {
+  const cls = g.ignored ? ' class="ignored"' : '';
+  const cells = [
+    g.opponentName,
+    fmtDate(g.date),
+    `${g.result} ${g.scoreFor}-${g.scoreAgainst}`,
+    g.gameRating.toFixed(1),
+    (g.effect >= 0 ? '+' : '') + g.effect.toFixed(1),
+    `${g.scoreWeight.toFixed(2)}/${g.dateWeight.toFixed(2)}/${g.seriesMultiplier.toFixed(1)}`,
+    g.ignored ? `ignored (${g.ignoreReason})` : 'counted',
+  ];
+  return `<tr${cls}>${cells.map((c) => `<td>${c}</td>`).join('')}</tr>`;
+}
+
 function showTeam(id: string): void {
   const t = byId.get(id);
   if (!t) return;
   state.teamId = id;
   setView('team');
+  writeUrl();
   document.getElementById('team-name')!.textContent = t.name;
   document.getElementById('team-summary')!.textContent =
     `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} (counted) · ` +
     `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
   const body = document.getElementById('team-games-body')!;
   body.innerHTML = '';
-  const games = [...t.games].sort((a, b) => b.date.localeCompare(a.date) || a.gameId.localeCompare(b.gameId));
-  for (const g of games) {
-    const tr = document.createElement('tr');
-    if (g.ignored) tr.classList.add('ignored');
-    const cells = [
-      g.opponentName,
-      fmtDate(g.date),
-      `${g.result} ${g.scoreFor}-${g.scoreAgainst}`,
-      g.gameRating.toFixed(1),
-      (g.effect >= 0 ? '+' : '') + g.effect.toFixed(1),
-      `${g.scoreWeight.toFixed(2)}/${g.dateWeight.toFixed(2)}/${g.seriesMultiplier.toFixed(1)}`,
-      g.ignored ? `ignored (${g.ignoreReason})` : 'counted',
-    ];
-    for (const c of cells) {
-      const td = document.createElement('td');
-      td.textContent = String(c);
-      tr.appendChild(td);
+  for (const grp of groupTeamGames(t.games)) {
+    const record = grp.ties > 0 ? `${grp.wins}–${grp.losses}–${grp.ties}` : `${grp.wins}–${grp.losses}`;
+    const dates = grp.from === grp.to ? fmtDate(grp.from) : `${fmtDate(grp.from)} – ${fmtDate(grp.to)}`;
+    body.insertAdjacentHTML(
+      'beforeend',
+      `<tr><td colspan="7"><strong>${grp.name}</strong> · ${record} · ${dates}</td></tr>`,
+    );
+    for (const g of grp.games) {
+      body.insertAdjacentHTML('beforeend', gameRowHtml(g));
     }
-    body.appendChild(tr);
   }
 }
 
@@ -444,4 +462,8 @@ document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((
 });
 
 applyTheme(initialDark);
-void setDivision(divisionFromSearch(window.location.search));
+// Capture before setDivision rewrites the URL: deep-link to ?team= once loaded.
+const deepLinkTeam = new URLSearchParams(window.location.search).get('team');
+void setDivision(divisionFromSearch(window.location.search)).then(() => {
+  if (deepLinkTeam && byId.has(deepLinkTeam)) showTeam(deepLinkTeam);
+});
