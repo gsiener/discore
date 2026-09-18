@@ -54,6 +54,7 @@ describe('rankings page wiring', () => {
     expect(window.location.search).toContain('team=albany');
     // Albany's games group under one Seattle Invite header, newest first.
     const teamRows = [...document.querySelectorAll('#team-games-body tr')];
+    expect(teamRows[0].className).toContain('rk-event-group');
     const header = teamRows[0].children[0] as HTMLElement;
     expect(header.getAttribute('colspan')).toBe('7');
     expect(header.textContent).toMatch(/Seattle Invite/);
@@ -95,8 +96,27 @@ describe('rankings page wiring', () => {
 
     (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
     expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);
+    expect(window.location.search).toContain('view=tournaments');
     const eventRows = document.querySelectorAll('#tournaments-body tr');
     expect(eventRows.length).toBe(2);
     expect(eventRows[0].textContent).toMatch(/Seattle Invite/);
+    expect(eventRows[0].querySelector('.rk-event-name')).not.toBeNull();
+    expect(eventRows[0].querySelector('.rk-event-type')).not.toBeNull();
+
+    (document.getElementById('tb-teams') as HTMLButtonElement).click();
+    expect(window.location.search).toContain('view=teams');
+    (document.getElementById('tb-rankings') as HTMLButtonElement).click();
+    expect(window.location.search).not.toContain('view=');
+  });
+
+  it('deep-links to list views from the URL', async () => {
+    vi.resetModules();
+    document.body.innerHTML = SKELETON;
+    window.history.replaceState({}, '', '/standings.html?division=boys&view=tournaments');
+    await import('./rankings.js');
+    await vi.waitFor(() =>
+      expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false),
+    );
+    expect(document.querySelectorAll('#tournaments-body tr').length).toBe(2);
   });
 });

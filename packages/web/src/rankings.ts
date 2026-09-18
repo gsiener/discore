@@ -117,14 +117,20 @@ function renderDivisionSegment(): void {
   });
 }
 
-/** Keep the URL a permalink of the current view (division + open team). */
+/** Keep the URL a permalink of the current view (division + view + open team). */
 function writeUrl(): void {
   const url = new URL(window.location.href);
   url.searchParams.set('division', division);
   if (state.view === 'team' && state.teamId) {
     url.searchParams.set('team', state.teamId);
+    url.searchParams.delete('view');
   } else {
     url.searchParams.delete('team');
+    if (state.view === 'standings') {
+      url.searchParams.delete('view');
+    } else {
+      url.searchParams.set('view', state.view);
+    }
   }
   window.history.replaceState({}, '', url.toString());
 }
@@ -346,11 +352,11 @@ function renderTournaments(): void {
     const tr = document.createElement('tr');
     const dates = e.from === e.to ? fmtDate(e.from) : `${fmtDate(e.from)} – ${fmtDate(e.to)}`;
     tr.innerHTML =
-      `<td><span class="rk-teamname">${e.name}</span></td>` +
-      `<td>${e.league ? 'League' : 'Tournament'}</td>` +
+      `<td><span class="rk-event-name">${e.name}</span></td>` +
+      `<td><span class="rk-event-type${e.league ? ' rk-event-league' : ''}">${e.league ? 'League' : 'Tournament'}</span></td>` +
       `<td class="num">${e.games}</td>` +
       `<td class="num">${e.teams}</td>` +
-      `<td>${dates}</td>` +
+      `<td><span class="rk-event-meta">${dates}</span></td>` +
       (e.url
         ? `<td><a href="${e.url}" target="_blank" rel="noopener noreferrer">Source</a></td>`
         : `<td>—</td>`);
@@ -389,7 +395,8 @@ function showTeam(id: string): void {
     const dates = grp.from === grp.to ? fmtDate(grp.from) : `${fmtDate(grp.from)} – ${fmtDate(grp.to)}`;
     body.insertAdjacentHTML(
       'beforeend',
-      `<tr><td colspan="7"><strong>${grp.name}</strong> · ${record} · ${dates}</td></tr>`,
+      `<tr class="rk-event-group"><td colspan="7"><strong>${grp.name}</strong>` +
+        `<span class="rk-event-meta"> · ${record} · ${dates}</span></td></tr>`,
     );
     for (const g of grp.games) {
       body.insertAdjacentHTML('beforeend', gameRowHtml(g));
@@ -462,8 +469,18 @@ document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((
 });
 
 applyTheme(initialDark);
-// Capture before setDivision rewrites the URL: deep-link to ?team= once loaded.
+// Capture before setDivision rewrites the URL: deep-link to ?view= and
+// ?team= once data is loaded.
+const deepLinkView = new URLSearchParams(window.location.search).get('view');
 const deepLinkTeam = new URLSearchParams(window.location.search).get('team');
 void setDivision(divisionFromSearch(window.location.search)).then(() => {
-  if (deepLinkTeam && byId.has(deepLinkTeam)) showTeam(deepLinkTeam);
+  if (deepLinkTeam && byId.has(deepLinkTeam)) {
+    showTeam(deepLinkTeam);
+  } else if (
+    deepLinkView === 'teams' ||
+    deepLinkView === 'tournaments' ||
+    deepLinkView === 'connectivity'
+  ) {
+    showList(deepLinkView);
+  }
 });

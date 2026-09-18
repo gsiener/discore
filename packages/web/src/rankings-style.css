@@ -479,6 +479,42 @@ a.rk-tab {
   color: var(--rk-muted);
 }
 
+/* Tournament group headers (team detail) and tournament directory rows. */
+.rk-event-group td {
+  background: var(--rk-track);
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.rk-event-group strong {
+  font-size: 15px;
+}
+
+.rk-event-meta {
+  color: var(--rk-muted);
+}
+
+.rk-event-name {
+  font-weight: 600;
+  color: var(--rk-text);
+}
+
+.rk-event-type {
+  border: 1px dashed var(--rk-border);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 14px;
+  color: var(--rk-muted);
+  white-space: nowrap;
+}
+
+.rk-event-league {
+  border-style: solid;
+  background: var(--rk-purple-bg);
+  color: var(--rk-purple-text);
+  border-color: transparent;
+}
+
 .team-summary {
   margin-bottom: 12px;
   font-size: 15px;
