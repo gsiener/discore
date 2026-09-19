@@ -4,6 +4,7 @@ const SKELETON = `
 <input id="header-search" />
 <button id="theme-toggle"></button>
 <p id="rk-meta"></p>
+<select id="season-select"></select>
 <button id="hide-provisional"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
@@ -121,6 +122,18 @@ describe('rankings page wiring', () => {
     expect(window.location.search).toContain('view=teams');
     (document.getElementById('tb-rankings') as HTMLButtonElement).click();
     expect(window.location.search).not.toContain('view=');
+  });
+
+  it('lists both seasons and switches season via the selector', async () => {
+    await vi.waitFor(() => expect(rowCount()).toBe(2));
+
+    const select = document.getElementById('season-select') as HTMLSelectElement;
+    expect([...select.options].map((o) => o.value)).toEqual(['2025-26', '2026-27']);
+    expect(select.value).toBe('2026-27');
+
+    select.value = '2025-26';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await vi.waitFor(() => expect(window.location.search).toContain('season=2025-26'));
   });
 
   it('deep-links to list views from the URL', async () => {

@@ -8,6 +8,10 @@ import type { CanonicalDataset, Snapshot } from '@scorebot/rankings';
 
 export type Division = 'boys' | 'girls';
 
+export const SEASONS = ['2025-26', '2026-27'] as const;
+export type Season = (typeof SEASONS)[number];
+export const DEFAULT_SEASON: Season = '2026-27';
+
 export interface FixturePair {
   snapshot: Snapshot;
   dataset: CanonicalDataset;
@@ -25,6 +29,11 @@ export function divisionFromSearch(search: string): Division {
   return new URLSearchParams(search).get('division') === 'girls' ? 'girls' : 'boys';
 }
 
+export function seasonFromSearch(search: string): Season {
+  const s = new URLSearchParams(search).get('season');
+  return (SEASONS as readonly string[]).includes(s ?? '') ? (s as Season) : DEFAULT_SEASON;
+}
+
 function validSnapshot(x: unknown): x is Snapshot {
   const s = x as Partial<Snapshot>;
   return !!s && typeof s === 'object' && typeof s.meta?.rulesetVersion === 'string' && Array.isArray(s.teams);
@@ -34,11 +43,12 @@ export async function loadDivision(
   division: Division,
   fetchFn: (url: string) => Promise<Response> = fetch,
   fixture: FixturePair,
+  season: Season = DEFAULT_SEASON,
 ): Promise<LoadedData> {
   try {
     const [snapRes, dataRes] = await Promise.all([
-      fetchFn(`/rankings/snapshot-${division}.json`),
-      fetchFn(`/rankings/dataset-${division}.json`),
+      fetchFn(`/rankings/${season}/snapshot-${division}.json`),
+      fetchFn(`/rankings/${season}/dataset-${division}.json`),
     ]);
     if (!snapRes.ok || !dataRes.ok) throw new Error(`snapshot files missing for ${division}`);
     const snapshot: unknown = await snapRes.json();

@@ -18,12 +18,24 @@ Graham uses two Macs with different usernames (`grahamsiener` and `gsiener`). Al
 
 ### Step 1 — Copy files from Google Drive
 
-The rankings layout is now per-division (boys + girls) with a redirect at root, plus a shared `sources.html` page reachable from the in-page nav pill. Copy all 8 files in one call:
+Rankings data is per-season. The 2025-26 exports stay frozen in
+`packages/web/public/rankings/2025-26/`; new pulls go into the current
+season folder (`packages/web/public/rankings/2026-27/`). Drive source:
+`$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/2026-27/`
+(mirror the Drive folder layout per season). Copy the division exports:
 
 ```bash
-cd "$HOME/src/discore" && mkdir -p packages/web/public/rankings && cp \
-  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/data_boys.json" \
-  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/data_girls.json" \
+cd "$HOME/src/discore" && mkdir -p packages/web/public/rankings/2026-27 && cp \
+  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/2026-27/data_boys.json" \
+  "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/2026-27/data_girls.json" \
+  packages/web/public/rankings/2026-27/
+```
+
+The legacy Drive-generated pages (current-season HTML) still ship flat at the
+`rankings/` root — copy them as before:
+
+```bash
+cd "$HOME/src/discore" && cp \
   "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/index.html" \
   "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/boys.html" \
   "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/girls.html" \
@@ -31,6 +43,14 @@ cd "$HOME/src/discore" && mkdir -p packages/web/public/rankings && cp \
   "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/graph_girls.html" \
   "$HOME/Library/CloudStorage/GoogleDrive-graham@kcuda.org/My Drive/Coaches/roster/rankings/sources.html" \
   packages/web/public/rankings/
+```
+
+One-time migration (already done 2026-09-19, skip if `2025-26/` exists): move the
+legacy flat files into the frozen 2025-26 folder and sweep stale outputs:
+
+```bash
+cd "$HOME/src/discore/packages/web/public/rankings" && mkdir -p 2025-26 \
+  && mv data_boys.json data_girls.json 2025-26/ 2>/dev/null; rm -f snapshot-*.json dataset-*.json
 ```
 
 Then sweep any leftover stale filenames from prior layouts so they don't ship:
@@ -51,11 +71,11 @@ cd "$HOME/src/discore/packages/web" && npm run deploy 2>&1
 ```
 
 `npm run deploy` runs `predeploy` first, which regenerates the published
-snapshots (`snapshot-boys.json`, `snapshot-girls.json`, `dataset-boys.json`,
-`dataset-girls.json` in `packages/web/public/rankings/`) from the Drive
-exports via `npm run snapshots --workspace=@scorebot/rankings`. The app
-standings/simulate/lab pages load these at runtime with a fixture fallback,
-so the deploy fails closed with a clear error if the Drive files are missing.
+snapshots (`packages/web/public/rankings/<season>/snapshot-{boys,girls}.json`
+and `dataset-{boys,girls}.json`) from the per-season Drive exports via
+`npm run snapshots --workspace=@scorebot/rankings`. Seasons without a Drive
+pull are skipped; the deploy fails closed only if no season builds. The app
+standings/simulate/lab pages load these at runtime with a fixture fallback.
 The legacy `/rankings/boys` and `/rankings/girls` URLs redirect (302) to the
 new `/standings` UI; graph/sources pages stay live underneath.
 

@@ -3,14 +3,15 @@
  * experimental and never feed back into published rankings.
  */
 import {
-  HS_2025_V1,
   alwaysTrue,
   datasetToNormalized,
   parseCanonicalDataset,
+  rulesetForSeason,
   runRatings,
   runWithBlowoutConfig,
   standardMargin,
   topKPostHoc,
+  type Ruleset,
 } from '@scorebot/rankings';
 import fixtureDataset from './simulate/small-season.json';
 import fixtureSnapshot from './rankings/snapshot-boys-fixture.json';
@@ -18,7 +19,9 @@ import type { CanonicalDataset, RatingsResult, Snapshot } from '@scorebot/rankin
 import {
   divisionFromSearch,
   loadDivision,
+  seasonFromSearch,
   type Division,
+  type Season,
 } from './snapshotLoader.js';
 
 const fixture = {
@@ -28,18 +31,20 @@ const fixture = {
 };
 
 let dataset: CanonicalDataset = fixture.dataset;
-let baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+let season: Season = seasonFromSearch(window.location.search);
+let rules: Ruleset = rulesetForSeason(season);
+let baseGames = datasetToNormalized(dataset, rules).games;
 let names = new Map<string, string>();
-let base: RatingsResult = runRatings(baseGames, HS_2025_V1);
+let base: RatingsResult = runRatings(baseGames, rules);
 let realData = false;
 let division: Division = 'boys';
 
 function rebuildData(): void {
   const parsed = parseCanonicalDataset(dataset);
   dataset = parsed.dataset;
-  baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+  baseGames = datasetToNormalized(dataset, rules).games;
   names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
-  base = runRatings(baseGames, HS_2025_V1);
+  base = runRatings(baseGames, rules);
 }
 
 function renderSubtitle(): void {
@@ -56,11 +61,12 @@ function renderDivisionSegment(): void {
 
 async function initLab(next: Division): Promise<void> {
   division = next;
-  const loaded = await loadDivision(next, fetch, fixture);
+  const loaded = await loadDivision(next, fetch, fixture, season);
   dataset = loaded.dataset;
   realData = loaded.real;
   rebuildData();
   const url = new URL(window.location.href);
+  url.searchParams.set('season', season);
   url.searchParams.set('division', next);
   window.history.replaceState({}, '', url.toString());
   renderDivisionSegment();
@@ -103,7 +109,7 @@ function runBlowout(): void {
   const gap = Math.max(0, parseInt((document.getElementById('bl-gap') as HTMLInputElement).value, 10) || 0);
   const margin = (document.getElementById('bl-margin') as HTMLSelectElement).value === 'any' ? alwaysTrue : standardMargin;
   const oneSided = (document.getElementById('bl-onesided') as HTMLInputElement).checked;
-  const res = runWithBlowoutConfig(baseGames, HS_2025_V1, { gap, marginFn: margin, oneSided });
+  const res = runWithBlowoutConfig(baseGames, rules, { gap, marginFn: margin, oneSided });
   document.getElementById('bl-summary')!.textContent =
     `${res.ignoredGameIds.size} games ignored (gap ${gap}, ${oneSided ? 'one-sided' : 'two-sided'}) · ` +
     `converged=${res.converged} in ${res.iterations} iterations`;

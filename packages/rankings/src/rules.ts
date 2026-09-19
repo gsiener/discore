@@ -95,6 +95,18 @@ export const HS_2025_V1: Ruleset = {
   label: 'unofficial HS adaptation',
 };
 
+export const HS_2026_V1: Ruleset = {
+  ...HS_2025_V1,
+  version: 'HS_2026_V1',
+  season: '2026-27',
+  calendar: HS_DEFAULT_CALENDAR(2026),
+};
+
+/** Season string -> ruleset. Unknown seasons resolve to the latest HS policy. */
+export function rulesetForSeason(season: string): Ruleset {
+  return season === '2025-26' ? HS_2025_V1 : HS_2026_V1;
+}
+
 export const CLUB_2025: Ruleset = {
   version: 'CLUB_2025',
   season: '2025',

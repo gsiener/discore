@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { divisionFromSearch, loadDivision } from './snapshotLoader.js';
+import { DEFAULT_SEASON, divisionFromSearch, loadDivision, seasonFromSearch } from './snapshotLoader.js';
 
 const snap = { meta: { rulesetVersion: 'HS_2025_V1' }, teams: [{ id: 'a' }] };
 const data = { season: '2025-26', division: 'boys', teams: [], games: [], events: {} };
@@ -22,6 +22,16 @@ describe('divisionFromSearch', () => {
   });
 });
 
+describe('seasonFromSearch', () => {
+  it('reads ?season=, defaults to the current season', () => {
+    expect(DEFAULT_SEASON).toBe('2026-27');
+    expect(seasonFromSearch('?season=2025-26')).toBe('2025-26');
+    expect(seasonFromSearch('?season=2026-27')).toBe('2026-27');
+    expect(seasonFromSearch('')).toBe('2026-27');
+    expect(seasonFromSearch('?season=other')).toBe('2026-27');
+  });
+});
+
 describe('loadDivision', () => {
   it('loads real snapshot + dataset when both fetch', async () => {
     const fetchFn = vi.fn(async (url: string) =>
@@ -31,6 +41,16 @@ describe('loadDivision', () => {
     expect(loaded.real).toBe(true);
     expect(loaded.snapshot).toEqual(snap);
     expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('fetches season-prefixed snapshot paths', async () => {
+    const fetchFn = vi.fn(async (url: string) =>
+      url.includes('snapshot-') ? ok(snap) : ok(data),
+    );
+    const loaded = await loadDivision('boys', fetchFn, fixture as never, '2025-26');
+    expect(loaded.real).toBe(true);
+    expect(fetchFn).toHaveBeenCalledWith('/rankings/2025-26/snapshot-boys.json');
+    expect(fetchFn).toHaveBeenCalledWith('/rankings/2025-26/dataset-boys.json');
   });
 
   it('falls back to fixture when snapshot is missing', async () => {

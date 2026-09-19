@@ -23,10 +23,13 @@ import {
 import fixtureSnapshot from './rankings/snapshot-boys-fixture.json';
 import fixtureDataset from './simulate/small-season.json';
 import {
+  SEASONS,
   divisionFromSearch,
   loadDivision,
+  seasonFromSearch,
   type Division,
   type LoadedData,
+  type Season,
 } from './snapshotLoader.js';
 
 const fixture = {
@@ -40,6 +43,7 @@ let dataset: CanonicalDataset = fixture.dataset;
 let tournamentSummaries: TournamentSummary[] = buildTournamentSummaries(dataset);
 let realData = false;
 let division: Division = 'boys';
+let season: Season = seasonFromSearch(window.location.search);
 // True when the requested division has no published snapshot AND the fixture
 // is not that division (fixture is boys) — render an honest empty state.
 let divisionEmpty = false;
@@ -115,9 +119,10 @@ function renderDivisionSegment(): void {
   });
 }
 
-/** Keep the URL a permalink of the current view (division + view + open team). */
+/** Keep the URL a permalink of the current view (season + division + view + open team). */
 function writeUrl(): void {
   const url = new URL(window.location.href);
+  url.searchParams.set('season', season);
   url.searchParams.set('division', division);
   if (state.view === 'team' && state.teamId) {
     url.searchParams.set('team', state.teamId);
@@ -135,7 +140,7 @@ function writeUrl(): void {
 
 async function setDivision(next: Division): Promise<void> {
   division = next;
-  const loaded: LoadedData = await loadDivision(next, fetch, fixture);
+  const loaded: LoadedData = await loadDivision(next, fetch, fixture, season);
   snapshot = loaded.snapshot;
   dataset = loaded.dataset;
   tournamentSummaries = buildTournamentSummaries(dataset);
@@ -146,8 +151,28 @@ async function setDivision(next: Division): Promise<void> {
   state.teamId = null;
   (document.getElementById('header-search') as HTMLInputElement).value = '';
   renderDivisionSegment();
+  renderSeasonSelect();
   renderMeta();
   showList('standings');
+}
+
+/** Switch season, then reload the current division under it. */
+function setSeason(next: Season): Promise<void> {
+  season = next;
+  return setDivision(division);
+}
+
+function renderSeasonSelect(): void {
+  const select = document.getElementById('season-select') as HTMLSelectElement | null;
+  if (!select) return;
+  select.innerHTML = '';
+  for (const s of SEASONS) {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    if (s === season) opt.selected = true;
+    select.appendChild(opt);
+  }
 }
 
 function sparkSvg(t: SnapshotTeam): string {
@@ -479,6 +504,12 @@ document.querySelectorAll<HTMLButtonElement>('.rk-seg[data-division]').forEach((
       void setDivision(btn.dataset.division);
     }
   });
+});
+document.getElementById('season-select')?.addEventListener('change', (e) => {
+  const value = (e.target as HTMLSelectElement).value;
+  if ((SEASONS as readonly string[]).includes(value)) {
+    void setSeason(value as Season);
+  }
 });
 
 applyTheme(initialDark);

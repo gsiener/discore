@@ -3,17 +3,18 @@
  * Runs the @scorebot/rankings engine client-side on the fixture dataset.
  */
 import {
-  HS_2025_V1,
   computePoolStandings,
   datasetToNormalized,
   orderAcrossPools,
   parseCanonicalDataset,
   prefillScore,
   previewMatchup,
+  rulesetForSeason,
   runScenario,
   type HypotheticalGame,
   type PoolGameResult,
   type PoolTeam,
+  type Ruleset,
 } from '@scorebot/rankings';
 import type { CanonicalDataset, Snapshot } from '@scorebot/rankings';
 import fixtureSnapshot from './rankings/snapshot-boys-fixture.json';
@@ -21,8 +22,10 @@ import fixtureDataset from './simulate/small-season.json';
 import {
   divisionFromSearch,
   loadDivision,
+  seasonFromSearch,
   type Division,
   type LoadedData,
+  type Season,
 } from './snapshotLoader.js';
 
 const fixture = {
@@ -33,7 +36,9 @@ const fixture = {
 
 let snapshot: Snapshot = fixture.snapshot;
 let dataset: CanonicalDataset = fixture.dataset;
-let baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+let season: Season = seasonFromSearch(window.location.search);
+let rules: Ruleset = rulesetForSeason(season);
+let baseGames = datasetToNormalized(dataset, rules).games;
 let teamIds: string[] = [];
 let names = new Map<string, string>();
 let ratings = new Map<string, number>();
@@ -49,7 +54,7 @@ let division: Division = 'boys';
 function rebuildData(): void {
   const parsed = parseCanonicalDataset(dataset);
   dataset = parsed.dataset;
-  baseGames = datasetToNormalized(dataset, HS_2025_V1).games;
+  baseGames = datasetToNormalized(dataset, rules).games;
   teamIds = dataset.teams.map((t) => t.id);
   names = new Map(dataset.teams.map((t) => [t.id, t.displayName] as const));
   ratings = new Map(snapshot.teams.map((t) => [t.id, t.rating] as const));
@@ -113,7 +118,7 @@ function renderScenario(): void {
   });
 
   try {
-    const r = runScenario(baseGames, hypotheticals, HS_2025_V1, teamIds);
+    const r = runScenario(baseGames, hypotheticals, rules, teamIds);
     for (const d of r.deltas) {
       const tr = document.createElement('tr');
       const cells = [
@@ -188,7 +193,7 @@ function renderSubtitle(): void {
 
 async function initSimulate(next: Division): Promise<void> {
   division = next;
-  const loaded: LoadedData = await loadDivision(next, fetch, fixture);
+  const loaded: LoadedData = await loadDivision(next, fetch, fixture, season);
   snapshot = loaded.snapshot;
   dataset = loaded.dataset;
   realData = loaded.real;
@@ -209,6 +214,7 @@ async function initSimulate(next: Division): Promise<void> {
   setDefault('hypo-winner', 0);
   setDefault('hypo-loser', 1);
   const url = new URL(window.location.href);
+  url.searchParams.set('season', season);
   url.searchParams.set('division', next);
   window.history.replaceState({}, '', url.toString());
   renderDivisionSegment();
