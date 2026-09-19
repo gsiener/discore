@@ -15,6 +15,7 @@ import {
   sparkPoints,
   statusLabel,
   type RankRow,
+  type TeamGameGroup,
   type TournamentSummary,
 } from './rankings-logic.js';
 // Published snapshots load at runtime; the fixture stands in when they are
@@ -369,7 +370,18 @@ function renderTournaments(): void {
   }
 }
 
-function gameRowHtml(g: SnapshotGame): string {
+function eventGroupHeader(grp: TeamGameGroup): string {
+  const record =
+    grp.ties > 0 ? `${grp.wins}–${grp.losses}–${grp.ties}` : `${grp.wins}–${grp.losses}`;
+  const dates =
+    grp.from === grp.to ? fmtDate(grp.from) : `${fmtDate(grp.from)} – ${fmtDate(grp.to)}`;
+  return (
+    `<tr class="rk-event-group"><td colspan="7"><strong>${grp.name}</strong>` +
+    `<span class="rk-event-meta"> · ${record} · ${dates}</span></td></tr>`
+  );
+}
+
+function tournamentSection(g: SnapshotGame): string {
   const cls = g.ignored ? ' class="ignored"' : '';
   const cells = [
     g.opponentName,
@@ -383,6 +395,15 @@ function gameRowHtml(g: SnapshotGame): string {
   return `<tr${cls}>${cells.map((c) => `<td>${c}</td>`).join('')}</tr>`;
 }
 
+function renderTeamGamesBody(games: SnapshotGame[]): void {
+  const body = document.getElementById('team-games-body')!;
+  body.innerHTML = '';
+  for (const grp of groupTeamGames(games)) {
+    body.insertAdjacentHTML('beforeend', eventGroupHeader(grp));
+    for (const g of grp.games) body.insertAdjacentHTML('beforeend', tournamentSection(g));
+  }
+}
+
 function showTeam(id: string): void {
   const t = byId.get(id);
   if (!t) return;
@@ -390,23 +411,13 @@ function showTeam(id: string): void {
   setView('team');
   writeUrl();
   document.getElementById('team-name')!.textContent = t.name;
-  document.getElementById('team-summary')!.textContent =
-    `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} (counted) · ` +
+  document.getElementById('team-summary')!.textContent = teamSummary(t);
+  renderTeamGamesBody(t.games);
+}
+
+function teamSummary(t: SnapshotTeam): string {
+  return `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} (counted) · ` +
     `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
-  const body = document.getElementById('team-games-body')!;
-  body.innerHTML = '';
-  for (const grp of groupTeamGames(t.games)) {
-    const record = grp.ties > 0 ? `${grp.wins}–${grp.losses}–${grp.ties}` : `${grp.wins}–${grp.losses}`;
-    const dates = grp.from === grp.to ? fmtDate(grp.from) : `${fmtDate(grp.from)} – ${fmtDate(grp.to)}`;
-    body.insertAdjacentHTML(
-      'beforeend',
-      `<tr class="rk-event-group"><td colspan="7"><strong>${grp.name}</strong>` +
-        `<span class="rk-event-meta"> · ${record} · ${dates}</span></td></tr>`,
-    );
-    for (const g of grp.games) {
-      body.insertAdjacentHTML('beforeend', gameRowHtml(g));
-    }
-  }
 }
 
 function syncQuery(value: string, source: 'header' | 'find'): void {
