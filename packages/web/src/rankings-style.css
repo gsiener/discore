@@ -1,54 +1,26 @@
 .rk-main {
-  --rk-bg: #ffffff;
-  --rk-text: #111827;
-  --rk-muted: #6b7280;
-  --rk-border: #e5e7eb;
-  --rk-track: #f3f4f6;
-  --rk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --rk-purple: #7c3aed;
-  --rk-purple-bg: #ede9fe;
-  --rk-purple-text: #6d28d9;
-  --rk-tab-active-bg: #f5f3ff;
-  --rk-red: #d9481f;
-  --rk-green-text: #15803d;
-  --rk-green-bg: #f0fdf4;
-  --rk-amber-text: #b45309;
-  --rk-amber-bg: #fffbeb;
-  --rk-input-bg: #ffffff;
-  --rk-search-border: #d1d5db;
+  --rk-bg: var(--color-surface);
+  --rk-text: var(--color-text);
+  --rk-muted: var(--color-text-secondary);
+  --rk-border: var(--color-border);
+  --rk-track: var(--color-surface-muted);
+  --rk-card-shadow: var(--shadow-sm);
+  --rk-purple: var(--color-primary);
+  --rk-purple-bg: var(--color-primary-subtle);
+  --rk-purple-text: var(--color-primary-hover);
+  --rk-tab-active-bg: var(--color-primary-subtle);
+  --rk-red: var(--color-danger);
+  --rk-green-text: var(--color-success);
+  --rk-green-bg: var(--color-success-subtle);
+  --rk-amber-text: var(--color-warning);
+  --rk-amber-bg: var(--color-warning-subtle);
+  --rk-input-bg: var(--color-surface);
+  --rk-search-border: var(--color-border);
   max-width: 1100px;
   margin: 0 auto;
   padding: 16px 20px 48px;
   background: var(--rk-bg);
   color: var(--rk-text);
-}
-
-html.dark .rk-main {
-  --rk-bg: #0f172a;
-  --rk-text: #f1f5f9;
-  --rk-muted: #94a3b8;
-  --rk-border: #334155;
-  --rk-track: #1e293b;
-  --rk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --rk-purple-bg: #2e1065;
-  --rk-purple-text: #ddd6fe;
-  --rk-tab-active-bg: #1e1b4b;
-  --rk-red: #ea580c;
-  --rk-green-text: #4ade80;
-  --rk-green-bg: #052e16;
-  --rk-amber-text: #fbbf24;
-  --rk-amber-bg: #451a03;
-  --rk-input-bg: #1e293b;
-  --rk-search-border: #475569;
-}
-
-html.dark body {
-  background: #0f172a;
-}
-
-html.dark .nav {
-  background: #111827;
-  border-color: #374151;
 }
 
 /* ---- unified header: brand + view tabs left, search + tools right ---- */
@@ -112,6 +84,11 @@ a.rk-tab {
   outline: 2px solid var(--rk-purple);
   outline-offset: 1px;
   border-color: var(--rk-purple);
+}
+
+.rk-search::placeholder {
+  color: var(--rk-muted);
+  opacity: 1;
 }
 
 .rk-icon-btn {
@@ -385,7 +362,7 @@ a.rk-tab {
 }
 
 .rk-status {
-  border: 1px solid #86efac;
+  border: 1px solid var(--color-success);
   color: var(--rk-green-text);
   background: var(--rk-green-bg);
   border-radius: 999px;
@@ -402,8 +379,8 @@ a.rk-tab {
 
 .rk-rating-badge,
 .rk-sos-badge {
-  background: var(--rk-red);
-  color: #fff;
+  background: var(--color-danger-solid);
+  color: oklch(99% 0 0);
   font-weight: 700;
   border-radius: 6px;
   padding: 5px 10px;
@@ -444,13 +421,13 @@ a.rk-tab {
 .rk-conf-high {
   background: var(--rk-green-bg);
   color: var(--rk-green-text);
-  border-color: #86efac;
+  border-color: var(--color-success);
 }
 
 .rk-conf-med {
   background: var(--rk-amber-bg);
   color: var(--rk-amber-text);
-  border-color: #fcd34d;
+  border-color: var(--color-warning);
 }
 
 .rk-conf-low {

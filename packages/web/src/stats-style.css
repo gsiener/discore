@@ -69,7 +69,7 @@
 .filter-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px oklch(48% 0.2 268 / 0.18);
 }
 
 .loading-view {
@@ -143,12 +143,12 @@
 }
 
 .stats-table td.positive {
-  color: #10b981;
+  color: var(--color-success);
   font-weight: 500;
 }
 
 .stats-table td.negative {
-  color: #ef4444;
+  color: var(--color-danger);
   font-weight: 500;
 }
 
@@ -244,15 +244,15 @@
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: white;
+  color: oklch(99% 0 0);
 }
 
 .result-badge.win {
-  background: #10b981;
+  background: var(--color-success-solid);
 }
 
 .result-badge.loss {
-  background: #ef4444;
+  background: var(--color-danger-solid);
 }
 
 .game-info {
@@ -294,26 +294,4 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* Dark mode support (if you add it later) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #1a1a1a;
-    --color-bg-elevated: #2a2a2a;
-    --color-text-primary: #f5f5f5;
-    --color-text-secondary: #a0a0a0;
-    --color-border: #3a3a3a;
-    --color-primary: #3b82f6;
-  }
-}
-
-/* Light mode (default) */
-:root {
-  --color-bg: #ffffff;
-  --color-bg-elevated: #f9fafb;
-  --color-text-primary: #1f2937;
-  --color-text-secondary: #6b7280;
-  --color-border: #e5e7eb;
-  --color-primary: #3b82f6;
 }

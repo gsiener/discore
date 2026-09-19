@@ -459,13 +459,16 @@ function syncQuery(value: string): void {
   if (list === 'standings' || list === 'teams') showList(list);
 }
 
-function applyTheme(dark: boolean): void {
+function applyTheme(dark: boolean, persist = true): void {
   document.documentElement.classList.toggle('dark', dark);
+  document.documentElement.classList.toggle('light', !dark);
   document.getElementById('theme-toggle')!.textContent = dark ? '☀' : '☾';
-  try {
-    localStorage.setItem('discore-rankings-theme', dark ? 'dark' : 'light');
-  } catch {
-    /* private mode: theme just won't persist */
+  if (persist) {
+    try {
+      localStorage.setItem('discore-rankings-theme', dark ? 'dark' : 'light');
+    } catch {
+      /* private mode: theme just won't persist */
+    }
   }
 }
 
@@ -497,9 +500,10 @@ document.getElementById('theme-toggle')!.addEventListener('click', () => {
   applyTheme(!document.documentElement.classList.contains('dark'));
 });
 
-let initialDark = false;
+let initialDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
 try {
-  initialDark = localStorage.getItem('discore-rankings-theme') === 'dark';
+  const savedTheme = localStorage.getItem('discore-rankings-theme');
+  if (savedTheme) initialDark = savedTheme === 'dark';
 } catch {
   /* ignore */
 }
@@ -517,7 +521,7 @@ document.getElementById('season-select')?.addEventListener('change', (e) => {
   }
 });
 
-applyTheme(initialDark);
+applyTheme(initialDark, false);
 // Capture before setDivision rewrites the URL: deep-link to ?view= and
 // ?team= once data is loaded.
 const deepLinkView = new URLSearchParams(window.location.search).get('view');

@@ -1,15 +1,80 @@
 :root {
-  --color-primary: #2563eb;
-  --color-secondary: #64748b;
-  --color-success: #16a34a;
-  --color-warning: #ea580c;
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #1e293b;
-  --color-text-secondary: #64748b;
+  color-scheme: light;
+  --color-primary: oklch(48% 0.2 268);
+  --color-primary-hover: oklch(42% 0.19 268);
+  --color-primary-subtle: oklch(94% 0.035 268);
+  --color-secondary: oklch(45% 0.025 268);
+  --color-success: oklch(43% 0.13 155);
+  --color-success-solid: oklch(40% 0.13 155);
+  --color-success-subtle: oklch(95% 0.045 155);
+  --color-warning: oklch(48% 0.15 50);
+  --color-warning-solid: oklch(43% 0.14 50);
+  --color-warning-subtle: oklch(95% 0.045 70);
+  --color-danger: oklch(47% 0.18 25);
+  --color-danger-solid: oklch(43% 0.17 25);
+  --color-danger-subtle: oklch(95% 0.035 25);
+  --color-background: oklch(97.5% 0.006 268);
+  --color-surface: oklch(100% 0 0);
+  --color-surface-muted: oklch(95.5% 0.01 268);
+  --color-border: oklch(87% 0.015 268);
+  --color-text: oklch(22% 0.025 268);
+  --color-text-secondary: oklch(43% 0.03 268);
+  --color-text-faint: oklch(61% 0.025 268);
+  --color-bg: var(--color-background);
+  --color-bg-elevated: var(--color-surface);
+  --color-text-primary: var(--color-text);
+  --shadow-sm: 0 1px 3px oklch(22% 0.025 268 / 0.1);
+  --shadow-md: 0 2px 8px oklch(22% 0.025 268 / 0.12);
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-primary: oklch(74% 0.14 268);
+  --color-primary-hover: oklch(80% 0.11 268);
+  --color-primary-subtle: oklch(27% 0.07 268);
+  --color-secondary: oklch(72% 0.025 268);
+  --color-success: oklch(75% 0.12 155);
+  --color-success-subtle: oklch(25% 0.055 155);
+  --color-warning: oklch(78% 0.13 70);
+  --color-warning-subtle: oklch(27% 0.06 70);
+  --color-danger: oklch(73% 0.14 25);
+  --color-danger-subtle: oklch(26% 0.065 25);
+  --color-background: oklch(15% 0.018 268);
+  --color-surface: oklch(19% 0.022 268);
+  --color-surface-muted: oklch(23% 0.025 268);
+  --color-border: oklch(31% 0.025 268);
+  --color-text: oklch(94% 0.012 268);
+  --color-text-secondary: oklch(75% 0.025 268);
+  --color-text-faint: oklch(64% 0.025 268);
+  --shadow-sm: none;
+  --shadow-md: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    color-scheme: dark;
+    --color-primary: oklch(74% 0.14 268);
+    --color-primary-hover: oklch(80% 0.11 268);
+    --color-primary-subtle: oklch(27% 0.07 268);
+    --color-secondary: oklch(72% 0.025 268);
+    --color-success: oklch(75% 0.12 155);
+    --color-success-subtle: oklch(25% 0.055 155);
+    --color-warning: oklch(78% 0.13 70);
+    --color-warning-subtle: oklch(27% 0.06 70);
+    --color-danger: oklch(73% 0.14 25);
+    --color-danger-subtle: oklch(26% 0.065 25);
+    --color-background: oklch(15% 0.018 268);
+    --color-surface: oklch(19% 0.022 268);
+    --color-surface-muted: oklch(23% 0.025 268);
+    --color-border: oklch(31% 0.025 268);
+    --color-text: oklch(94% 0.012 268);
+    --color-text-secondary: oklch(75% 0.025 268);
+    --color-text-faint: oklch(64% 0.025 268);
+    --shadow-sm: none;
+    --shadow-md: none;
+  }
 }
 
 * {
@@ -63,15 +128,15 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--color-primary);
-  background: var(--color-background);
+  color: var(--color-primary-hover);
+  background: var(--color-primary-subtle);
 }
 
 #game-selector {
   background: var(--color-surface);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 30px;
 }
 
@@ -89,6 +154,7 @@ body {
   border: 2px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-surface);
+  color: var(--color-text);
   cursor: pointer;
   transition: border-color 0.2s;
 }
@@ -100,7 +166,7 @@ body {
 #game-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px oklch(48% 0.2 268 / 0.18);
 }
 
 .game-meta {
@@ -134,7 +200,7 @@ body {
   background: var(--color-surface);
   padding: 24px 32px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
   gap: 32px;
 }
@@ -204,30 +270,30 @@ body {
 
 .status-badge.not-started {
   background: var(--color-secondary);
-  color: white;
+  color: var(--color-surface);
 }
 
 .status-badge.first-half,
 .status-badge.second-half {
-  background: var(--color-success);
-  color: white;
+  background: var(--color-success-solid);
+  color: oklch(99% 0 0);
 }
 
 .status-badge.halftime {
-  background: var(--color-warning);
-  color: white;
+  background: var(--color-warning-solid);
+  color: oklch(99% 0 0);
 }
 
 .status-badge.finished {
   background: var(--color-text);
-  color: white;
+  color: var(--color-surface);
 }
 
 .progression-table-container {
   background: var(--color-surface);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
   overflow-x: auto;
 }
@@ -276,7 +342,7 @@ body {
 }
 
 .progression-table td.point-col {
-  color: #d1d5db;
+  color: var(--color-text-faint);
   font-weight: 400;
 }
 
@@ -284,7 +350,7 @@ body {
   font-weight: 700;
   color: var(--color-text);
   font-size: 1.05rem;
-  border-left: 3px solid #d1d5db;
+  border-left: 3px solid var(--color-border);
 }
 
 .progression-table td.scoring-point {
@@ -300,7 +366,7 @@ body {
 
 .progression-table td.first-point,
 .progression-table th.first-point {
-  border-left: 3px solid #d1d5db;
+  border-left: 3px solid var(--color-border);
 }
 
 .progression-table td.before-halftime,
@@ -316,7 +382,7 @@ body {
 .game-summary {
   background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
   overflow: hidden;
   --gs-us-bg: #1e3a8a;
@@ -460,7 +526,7 @@ body {
   background: var(--color-surface);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
 }
 
@@ -532,7 +598,7 @@ body {
 
 .lineup-table .lineup-point-col {
   min-width: 32px;
-  color: #d1d5db;
+  color: var(--color-text-faint);
   font-size: 0.8rem;
 }
 
@@ -581,7 +647,7 @@ body {
   background: var(--color-surface);
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .timeline-container h3 {
@@ -604,7 +670,7 @@ body {
   gap: 0;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .timeline-event:last-child {
@@ -680,7 +746,7 @@ body {
   gap: 6px;
   min-width: 220px;
   padding: 12px 16px;
-  background: #f8f9fa;
+  background: var(--color-surface-muted);
   border-left: 1px solid var(--color-border);
   flex-shrink: 0;
 }
@@ -711,9 +777,9 @@ body {
 }
 
 .error-message {
-  background: #fef2f2;
-  border: 2px solid #fecaca;
-  color: #991b1b;
+  background: var(--color-danger-subtle);
+  border: 2px solid var(--color-danger);
+  color: var(--color-danger);
   padding: 20px;
   border-radius: 8px;
   text-align: center;
@@ -728,6 +794,16 @@ footer {
 }
 
 @media (max-width: 768px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+  }
+
   .game-header {
     flex-direction: column;
     padding: 20px;
@@ -764,27 +840,4 @@ footer {
   .progression-table td.team-col {
     min-width: 100px;
   }
-}
-
-/* ---- dark mode: shared page chrome (nav, body) ---- */
-html.dark body {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-html.dark .nav {
-  border-bottom-color: #334155;
-}
-
-html.dark .nav h1 {
-  color: #60a5fa;
-}
-
-html.dark .nav-link {
-  color: #94a3b8;
-}
-
-html.dark .nav-link:hover {
-  color: #f1f5f9;
-  background: #1e293b;
 }
