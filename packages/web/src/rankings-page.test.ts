@@ -124,6 +124,12 @@ describe('rankings page wiring', () => {
     expect(window.location.search).not.toContain('view=');
   });
 
+  it('labels the fixture fallback with the requested season', async () => {
+    await vi.waitFor(() => expect(rowCount()).toBe(2));
+    // No published 2026-27 snapshot in the test env: honest fallback label.
+    expect(document.getElementById('rk-meta')!.textContent).toMatch(/2026-27.*no published data yet/);
+  });
+
   it('lists both seasons and switches season via the selector', async () => {
     await vi.waitFor(() => expect(rowCount()).toBe(2));
 

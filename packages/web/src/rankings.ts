@@ -107,6 +107,11 @@ function renderMeta(): void {
   const strong = document.createElement('strong');
   strong.textContent = realData ? 'Final' : 'Snapshot';
   meta.appendChild(strong);
+  if (!realData) {
+    // Fixture fallback: label the requested season honestly, not the fixture's.
+    meta.append(` · ${divLabel} · ${season} · no published data yet`);
+    return;
+  }
   meta.append(
     ` · ${divLabel} · ${m.season} · ${snapshot.teams.length} teams · ${m.totalGames} games · ` +
     `final results through ${fmtDate(m.resultsThrough)} · updated ${fmtDate(m.generatedAt)}`,
