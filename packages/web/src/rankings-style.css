@@ -46,14 +46,24 @@ html.dark .nav {
   border-color: #374151;
 }
 
-/* ---- toolbar ---- */
-.rk-toolbar {
+/* ---- unified header: brand + view tabs left, search + tools right ---- */
+.rk-nav {
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.rk-nav-left {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.rk-nav-right {
+  display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 8px 0 16px;
 }
 
 .rk-tabs {
@@ -81,24 +91,6 @@ html.dark .nav {
 
 a.rk-tab {
   text-decoration: none;
-}
-
-.rk-tab:disabled {
-  cursor: default;
-  opacity: 0.75;
-}
-
-.rk-tools-label {
-  color: var(--rk-muted);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  margin: 0 8px 0 16px;
-}
-
-.rk-toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .rk-search {

@@ -10,35 +10,26 @@
   </head>
   <body>
     <div id="app">
-      <nav class="nav">
-        <h1>Discore</h1>
-        <div class="nav-links">
-          <a href="/index.html" class="nav-link">Live Games</a>
-          <a href="/games.html" class="nav-link">All Games</a>
-          <a href="/stats.html" class="nav-link">Advanced Stats</a>
-                  <a href="/simulate.html" class="nav-link">Simulate</a>
-          <a href="/lab.html" class="nav-link">Lab</a>
+      <nav class="nav rk-nav">
+        <div class="rk-nav-left">
+          <h1>Discore</h1>
+          <div class="rk-tabs" role="navigation" aria-label="Rankings views">
+            <button class="rk-tab rk-tab-active" type="button" id="tb-rankings">Rankings</button>
+            <button class="rk-tab" type="button" id="tb-teams">Teams</button>
+            <button class="rk-tab" type="button" id="tb-tournaments">Tournaments</button>
+          </div>
+        </div>
+        <div class="rk-nav-right">
+          <input id="header-search" class="rk-search" type="search" placeholder="Search teams..." aria-label="Search teams" />
+          <div class="nav-links">
+            <a href="/simulate.html" class="nav-link">Simulate</a>
+            <a href="/lab.html" class="nav-link">Lab</a>
+          </div>
+          <button id="theme-toggle" class="rk-icon-btn" type="button" title="Toggle dark mode" aria-label="Toggle dark mode">☾</button>
         </div>
       </nav>
 
       <main id="main-content" class="rk-main">
-        <div class="rk-toolbar">
-          <div class="rk-tabs" role="navigation" aria-label="Rankings tools">
-            <button class="rk-tab rk-tab-active" type="button" id="tb-rankings">Rankings</button>
-            <button class="rk-tab" type="button" id="tb-teams">Teams</button>
-            <button class="rk-tab" type="button" id="tb-tournaments">Tournaments</button>
-            <span class="rk-tools-label">TOOLS</span>
-            <a class="rk-tab" href="/simulate.html">Simulate</a>
-            <a class="rk-tab" href="/lab.html">Lab</a>
-          </div>
-          <div class="rk-toolbar-right">
-            <input id="header-search" class="rk-search" type="search" placeholder="Search teams..." aria-label="Search teams" />
-            <button id="theme-toggle" class="rk-icon-btn" type="button" title="Toggle dark mode" aria-label="Toggle dark mode">☾</button>
-          </div>
-        </div>
-
-        <h1 class="rk-title">Rankings</h1>
-        <p class="rk-sub"><span id="rk-division"></span> <span class="rk-pill" id="rk-snapshot-pill">Snapshot</span></p>
         <p class="rk-meta" id="rk-meta"></p>
 
         <section class="rk-card" aria-label="Rankings filters">
@@ -50,7 +41,6 @@
             <select class="rk-select" id="season-select" disabled title="Only one season published">
               <option>2025-26</option>
             </select>
-            <input id="find-team" class="rk-input" type="search" placeholder="Find a team..." aria-label="Find a team" />
             <button id="hide-provisional" class="rk-toggle" type="button" aria-pressed="false">Hide provisional</button>
           </div>
         </section>

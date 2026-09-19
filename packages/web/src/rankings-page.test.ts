@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 const SKELETON = `
-<input id="header-search" /><button id="theme-toggle"></button>
-<span id="rk-division"></span><p id="rk-meta"></p>
-<input id="find-team" />
+<input id="header-search" />
+<button id="theme-toggle"></button>
+<p id="rk-meta"></p>
 <button id="hide-provisional"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
@@ -33,7 +33,9 @@ describe('rankings page wiring', () => {
     // 10 columns: #, Team, Status, Rating, Δ, Trend, Record, SoS, GP, Conf.
     expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(10);
 
-    const find = document.getElementById('find-team') as HTMLInputElement;
+    // A single search input filters the list; no duplicate find box.
+    expect(document.getElementById('find-team')).toBeNull();
+    const find = document.getElementById('header-search') as HTMLInputElement;
     find.value = 'lynx';
     find.dispatchEvent(new Event('input', { bubbles: true }));
     expect(rowCount()).toBe(1);

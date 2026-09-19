@@ -98,17 +98,14 @@ function currentRows(): RankRow[] {
 function renderMeta(): void {
   const m = snapshot.meta;
   const divLabel = m.division === 'boys' ? 'High School Boys' : m.division === 'girls' ? 'High School Girls' : m.division;
-  document.getElementById('rk-division')!.textContent = `${divLabel} · ${m.season}`;
-  // Published snapshots reflect a finished season; the fixture is demo data.
-  const pill = document.getElementById('rk-snapshot-pill');
-  if (pill) pill.textContent = realData ? 'Final' : divisionEmpty ? 'No data' : 'Demo data';
   const meta = document.getElementById('rk-meta')!;
   meta.innerHTML = '';
   const strong = document.createElement('strong');
   strong.textContent = realData ? 'Final' : 'Snapshot';
   meta.appendChild(strong);
   meta.append(
-    ` · ${snapshot.teams.length} teams · ${m.totalGames} games · final results through ${fmtDate(m.resultsThrough)} · updated ${fmtDate(m.generatedAt)}`,
+    ` · ${divLabel} · ${m.season} · ${snapshot.teams.length} teams · ${m.totalGames} games · ` +
+    `final results through ${fmtDate(m.resultsThrough)} · updated ${fmtDate(m.generatedAt)}`,
   );
 }
 
@@ -148,7 +145,6 @@ async function setDivision(next: Division): Promise<void> {
   state.query = '';
   state.teamId = null;
   (document.getElementById('header-search') as HTMLInputElement).value = '';
-  (document.getElementById('find-team') as HTMLInputElement).value = '';
   renderDivisionSegment();
   renderMeta();
   showList('standings');
@@ -420,11 +416,9 @@ function teamSummary(t: SnapshotTeam): string {
     `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
 }
 
-function syncQuery(value: string, source: 'header' | 'find'): void {
+function syncQuery(value: string): void {
   state.query = value;
   (document.getElementById('header-search') as HTMLInputElement).value = value;
-  (document.getElementById('find-team') as HTMLInputElement).value = value;
-  void source;
   // Connectivity and tournaments ignore the query; only re-render filterable lists.
   const list = state.view === 'team' ? state.returnView : state.view;
   if (list === 'standings' || list === 'teams') showList(list);
@@ -442,10 +436,7 @@ function applyTheme(dark: boolean): void {
 
 // ---- wiring ----
 (document.getElementById('header-search') as HTMLInputElement).addEventListener('input', (e) => {
-  syncQuery((e.target as HTMLInputElement).value, 'header');
-});
-(document.getElementById('find-team') as HTMLInputElement).addEventListener('input', (e) => {
-  syncQuery((e.target as HTMLInputElement).value, 'find');
+  syncQuery((e.target as HTMLInputElement).value);
 });
 document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   state.hideProvisional = !state.hideProvisional;
