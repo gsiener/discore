@@ -1,9 +1,9 @@
 :root {
   color-scheme: light;
-  --color-primary: oklch(48% 0.2 268);
-  --color-primary-hover: oklch(42% 0.19 268);
-  --color-primary-subtle: oklch(94% 0.035 268);
-  --color-secondary: oklch(45% 0.025 268);
+  --color-primary: #3c6e71;
+  --color-primary-hover: #284b63;
+  --color-primary-subtle: #e8f0f0;
+  --color-secondary: #284b63;
   --color-success: oklch(43% 0.13 155);
   --color-success-solid: oklch(40% 0.13 155);
   --color-success-subtle: oklch(95% 0.045 155);
@@ -13,41 +13,41 @@
   --color-danger: oklch(47% 0.18 25);
   --color-danger-solid: oklch(43% 0.17 25);
   --color-danger-subtle: oklch(95% 0.035 25);
-  --color-background: oklch(97.5% 0.006 268);
-  --color-surface: oklch(100% 0 0);
-  --color-surface-muted: oklch(95.5% 0.01 268);
-  --color-border: oklch(87% 0.015 268);
-  --color-text: oklch(22% 0.025 268);
-  --color-text-secondary: oklch(43% 0.03 268);
-  --color-text-faint: oklch(61% 0.025 268);
+  --color-background: #f6f8f8;
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef2f2;
+  --color-border: #d9d9d9;
+  --color-text: #353535;
+  --color-text-secondary: #526568;
+  --color-text-faint: #7a898b;
   --color-bg: var(--color-background);
   --color-bg-elevated: var(--color-surface);
   --color-text-primary: var(--color-text);
-  --shadow-sm: 0 1px 3px oklch(22% 0.025 268 / 0.1);
-  --shadow-md: 0 2px 8px oklch(22% 0.025 268 / 0.12);
+  --shadow-sm: 0 1px 3px rgb(40 75 99 / 0.1);
+  --shadow-md: 0 2px 8px rgb(40 75 99 / 0.12);
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
 html.dark {
   color-scheme: dark;
-  --color-primary: oklch(74% 0.14 268);
-  --color-primary-hover: oklch(80% 0.11 268);
-  --color-primary-subtle: oklch(27% 0.07 268);
-  --color-secondary: oklch(72% 0.025 268);
+  --color-primary: #7fb3b5;
+  --color-primary-hover: #a4ced0;
+  --color-primary-subtle: #213638;
+  --color-secondary: #8fb0c5;
   --color-success: oklch(75% 0.12 155);
   --color-success-subtle: oklch(25% 0.055 155);
   --color-warning: oklch(78% 0.13 70);
   --color-warning-subtle: oklch(27% 0.06 70);
   --color-danger: oklch(73% 0.14 25);
   --color-danger-subtle: oklch(26% 0.065 25);
-  --color-background: oklch(15% 0.018 268);
-  --color-surface: oklch(19% 0.022 268);
-  --color-surface-muted: oklch(23% 0.025 268);
-  --color-border: oklch(31% 0.025 268);
-  --color-text: oklch(94% 0.012 268);
-  --color-text-secondary: oklch(75% 0.025 268);
-  --color-text-faint: oklch(64% 0.025 268);
+  --color-background: #101718;
+  --color-surface: #182123;
+  --color-surface-muted: #222f31;
+  --color-border: #3b4d4f;
+  --color-text: #f4f6f6;
+  --color-text-secondary: #b7c4c6;
+  --color-text-faint: #87999c;
   --shadow-sm: none;
   --shadow-md: none;
 }
@@ -55,23 +55,23 @@ html.dark {
 @media (prefers-color-scheme: dark) {
   html:not(.light) {
     color-scheme: dark;
-    --color-primary: oklch(74% 0.14 268);
-    --color-primary-hover: oklch(80% 0.11 268);
-    --color-primary-subtle: oklch(27% 0.07 268);
-    --color-secondary: oklch(72% 0.025 268);
+    --color-primary: #7fb3b5;
+    --color-primary-hover: #a4ced0;
+    --color-primary-subtle: #213638;
+    --color-secondary: #8fb0c5;
     --color-success: oklch(75% 0.12 155);
     --color-success-subtle: oklch(25% 0.055 155);
     --color-warning: oklch(78% 0.13 70);
     --color-warning-subtle: oklch(27% 0.06 70);
     --color-danger: oklch(73% 0.14 25);
     --color-danger-subtle: oklch(26% 0.065 25);
-    --color-background: oklch(15% 0.018 268);
-    --color-surface: oklch(19% 0.022 268);
-    --color-surface-muted: oklch(23% 0.025 268);
-    --color-border: oklch(31% 0.025 268);
-    --color-text: oklch(94% 0.012 268);
-    --color-text-secondary: oklch(75% 0.025 268);
-    --color-text-faint: oklch(64% 0.025 268);
+    --color-background: #101718;
+    --color-surface: #182123;
+    --color-surface-muted: #222f31;
+    --color-border: #3b4d4f;
+    --color-text: #f4f6f6;
+    --color-text-secondary: #b7c4c6;
+    --color-text-faint: #87999c;
     --shadow-sm: none;
     --shadow-md: none;
   }
@@ -166,7 +166,7 @@ body {
 #game-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px oklch(48% 0.2 268 / 0.18);
+  box-shadow: 0 0 0 3px rgb(60 110 113 / 0.24);
 }
 
 .game-meta {
@@ -385,14 +385,14 @@ body {
   box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
   overflow: hidden;
-  --gs-us-bg: #1e3a8a;
-  --gs-us-bg-2: #172554;
-  --gs-them-bg: #475569;
-  --gs-them-bg-2: #334155;
+  --gs-us-bg: #284b63;
+  --gs-us-bg-2: #1f3b4d;
+  --gs-them-bg: #3c6e71;
+  --gs-them-bg-2: #315a5c;
 }
 
 .game-summary .gs-title {
-  background: #1f2937;
+  background: #353535;
   color: #f9fafb;
   text-align: center;
   font-size: 0.85rem;

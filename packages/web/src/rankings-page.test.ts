@@ -14,7 +14,7 @@ const SKELETON = `
 <div id="connectivity-view"><div id="components-list"></div></div>
 <div id="teams-view"><table><tbody id="teams-body"></tbody></table></div>
 <div id="tournaments-view"><table><tbody id="tournaments-body"></tbody></table></div>
-<div id="team-view"><a id="back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
+<div id="team-view"><a id="back-link" class="rk-back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
 <table><tbody id="team-games-body"></tbody></table></div>`;
 
 function rowCount(): number {
@@ -34,6 +34,9 @@ describe('rankings page wiring', () => {
     expect(document.getElementById('region-filter')).toBeNull();
     // 10 columns: #, Team, Status, Rating, Δ, Trend, Record, SoS, GP, Conf.
     expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(10);
+    expect(
+      [...document.querySelectorAll('#rankings-body tr')].map((row) => Number(row.children[7].textContent)),
+    ).toEqual([33, 50]);
 
     // A single search input filters the list; no duplicate find box.
     expect(document.getElementById('find-team')).toBeNull();
@@ -60,6 +63,8 @@ describe('rankings page wiring', () => {
     const first = document.querySelector('#rankings-body tr') as HTMLElement;
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('tb-teams')!.classList.contains('rk-tab-active')).toBe(true);
+    expect(document.getElementById('back-link')!.classList.contains('rk-back-link')).toBe(true);
     expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(true);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
     // Permalink reflects the open team.
@@ -102,6 +107,7 @@ describe('rankings page wiring', () => {
     const teamRows = document.querySelectorAll('#teams-body tr');
     expect(teamRows.length).toBe(2);
     expect(teamRows[0].textContent).toMatch(/Albany Cougars/);
+    expect([...teamRows].map((row) => Number(row.children[4].textContent))).toEqual([33, 50]);
 
     (teamRows[1] as HTMLElement).click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);

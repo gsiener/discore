@@ -264,7 +264,7 @@ function renderTable(): void {
     recordTd.innerHTML = recordHtml(t);
 
     const sosTd = document.createElement('td');
-    sosTd.innerHTML = `<span class="rk-sos-badge" title="Mean opponent rating, percentile ${t.sosPercentile}">${Math.round(t.sos)}</span>`;
+    sosTd.innerHTML = `<span class="rk-sos-badge" title="Mean opponent rating ${Math.round(t.sos)}">${t.sosPercentile}</span>`;
 
     const gpTd = document.createElement('td');
     gpTd.textContent = String(t.gamesPlayed);
@@ -335,7 +335,7 @@ function setView(view: State['view']): void {
     document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
   }
   document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
-  const active = VIEW_TABS[view === 'team' ? state.returnView : view];
+  const active = VIEW_TABS[view === 'team' ? 'teams' : view];
   for (const v of listViews) {
     const { tab, subtab } = VIEW_TABS[v];
     document.getElementById(tab)!.classList.toggle('rk-tab-active', tab === active.tab);
@@ -366,7 +366,7 @@ function renderTeams(): void {
       `<td>${statusHtml(r)}</td>` +
       `<td class="num">${Math.round(t.rating)}</td>` +
       `<td class="num">${recordHtml(t)}</td>` +
-      `<td class="num">${Math.round(t.sos)}</td>` +
+      `<td class="num" title="Mean opponent rating ${Math.round(t.sos)}">${t.sosPercentile}</td>` +
       `<td>${confHtml(t)}</td>`;
     tr.addEventListener('click', () => showTeam(t.id));
     body.appendChild(tr);
@@ -443,7 +443,7 @@ function showTeam(id: string): void {
 
 function teamSummary(t: SnapshotTeam): string {
   return `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} (counted) · ` +
-    `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
+    `SoS ${t.sosPercentile}/100 · confidence ${t.confidence} · ${statusLabel(t)}`;
 }
 
 function renderProvisionalToggle(btn: HTMLButtonElement): void {

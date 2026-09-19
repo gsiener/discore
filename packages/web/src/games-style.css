@@ -1,14 +1,14 @@
 :root {
   color-scheme: light;
-  --color-bg: oklch(97.5% 0.006 268);
-  --color-surface: oklch(100% 0 0);
-  --color-card: oklch(95.5% 0.01 268);
-  --color-text: oklch(22% 0.025 268);
-  --color-text-secondary: oklch(43% 0.03 268);
-  --color-text-light: oklch(58% 0.025 268);
-  --color-border: oklch(87% 0.015 268);
-  --color-accent: oklch(48% 0.2 268);
-  --color-accent-subtle: oklch(94% 0.035 268);
+  --color-bg: #f6f8f8;
+  --color-surface: #ffffff;
+  --color-card: #eef2f2;
+  --color-text: #353535;
+  --color-text-secondary: #526568;
+  --color-text-light: #7a898b;
+  --color-border: #d9d9d9;
+  --color-accent: #3c6e71;
+  --color-accent-subtle: #e8f0f0;
   --color-won: oklch(43% 0.13 155);
   --color-won-solid: oklch(40% 0.13 155);
   --color-won-bg: oklch(95% 0.045 155);
@@ -19,7 +19,7 @@
   --color-draw-bg: oklch(93% 0.012 268);
   --color-live: var(--color-accent);
   --color-live-bg: var(--color-accent-subtle);
-  --shadow-row: 0 2px 8px oklch(22% 0.025 268 / 0.1);
+  --shadow-row: 0 2px 8px rgb(40 75 99 / 0.1);
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
     'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
@@ -27,15 +27,15 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --color-bg: oklch(15% 0.018 268);
-    --color-surface: oklch(20% 0.022 268);
-    --color-card: oklch(18% 0.02 268);
-    --color-text: oklch(94% 0.012 268);
-    --color-text-secondary: oklch(75% 0.025 268);
-    --color-text-light: oklch(66% 0.025 268);
-    --color-border: oklch(31% 0.025 268);
-    --color-accent: oklch(74% 0.14 268);
-    --color-accent-subtle: oklch(27% 0.07 268);
+    --color-bg: #101718;
+    --color-surface: #182123;
+    --color-card: #152022;
+    --color-text: #f4f6f6;
+    --color-text-secondary: #b7c4c6;
+    --color-text-light: #87999c;
+    --color-border: #3b4d4f;
+    --color-accent: #7fb3b5;
+    --color-accent-subtle: #213638;
     --color-won: oklch(75% 0.12 155);
     --color-won-bg: oklch(25% 0.055 155);
     --color-lost: oklch(73% 0.14 25);

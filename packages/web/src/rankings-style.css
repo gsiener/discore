@@ -136,6 +136,33 @@ a.rk-tab {
   font-weight: 700;
 }
 
+.rk-back-row {
+  margin: 10px 0 18px;
+}
+
+.rk-back-link {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rk-border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  background: var(--rk-track);
+  color: var(--rk-purple-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rk-back-link:hover {
+  border-color: var(--rk-purple);
+  color: var(--rk-purple);
+}
+
+.rk-back-link:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 2px;
+}
+
 /* ---- filter card ---- */
 .rk-card {
   border: 1px solid var(--rk-border);
