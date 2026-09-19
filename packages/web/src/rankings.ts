@@ -57,7 +57,7 @@ interface State {
 
 const state: State = {
   query: '',
-  hideProvisional: false,
+  hideProvisional: true,
   sortDir: 'asc',
   view: 'standings',
   returnView: 'standings',
@@ -416,6 +416,11 @@ function teamSummary(t: SnapshotTeam): string {
     `SoS ${t.sos.toFixed(0)} (p${t.sosPercentile}) · confidence ${t.confidence} · ${statusLabel(t)}`;
 }
 
+function renderProvisionalToggle(btn: HTMLButtonElement): void {
+  btn.setAttribute('aria-pressed', String(state.hideProvisional));
+  btn.textContent = state.hideProvisional ? 'Show provisional' : 'Hide provisional';
+}
+
 function syncQuery(value: string): void {
   state.query = value;
   (document.getElementById('header-search') as HTMLInputElement).value = value;
@@ -440,10 +445,11 @@ function applyTheme(dark: boolean): void {
 });
 document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   state.hideProvisional = !state.hideProvisional;
-  (e.currentTarget as HTMLButtonElement).setAttribute('aria-pressed', String(state.hideProvisional));
+  renderProvisionalToggle(e.currentTarget as HTMLButtonElement);
   const list = state.view === 'team' ? state.returnView : state.view;
   if (list === 'standings' || list === 'teams') showList(list);
 });
+renderProvisionalToggle(document.getElementById('hide-provisional') as HTMLButtonElement);
 document.getElementById('sort-rank')!.addEventListener('click', () => {
   state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
   renderTable();

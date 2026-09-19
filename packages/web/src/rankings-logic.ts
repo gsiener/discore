@@ -124,7 +124,13 @@ export function buildTournamentSummaries(dataset: CanonicalDataset): TournamentS
         to: e.to,
       };
     })
-    .sort((a, b) => b.games - a.games || a.name.localeCompare(b.name));
+    .sort(
+      (a, b) =>
+        b.to.localeCompare(a.to) ||
+        b.from.localeCompare(a.from) ||
+        b.games - a.games ||
+        a.name.localeCompare(b.name),
+    );
 }
 
 /** 'Southwest' -> 'SW', 'North Central' -> 'NC', 'Midwest' -> 'MW'. */

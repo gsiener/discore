@@ -109,8 +109,9 @@ describe('buildTournamentSummaries', () => {
     expect(league.games).toBe(1);
   });
 
-  it('orders by game count descending', () => {
-    expect(buildTournamentSummaries(dataset)[0].id).toBe('e1');
+  it('orders newest first by end date', () => {
+    const out = buildTournamentSummaries(dataset);
+    expect(out.map((e) => e.id)).toEqual(['e2', 'e1']);
   });
 
   it('ignores games without an event', () => {

@@ -15,6 +15,7 @@
   --rk-amber-text: #b45309;
   --rk-amber-bg: #fffbeb;
   --rk-input-bg: #ffffff;
+  --rk-search-border: #d1d5db;
   max-width: 1100px;
   margin: 0 auto;
   padding: 16px 20px 48px;
@@ -23,22 +24,26 @@
 }
 
 html.dark .rk-main {
-  --rk-bg: #111827;
-  --rk-text: #f9fafb;
-  --rk-muted: #9ca3af;
-  --rk-border: #374151;
-  --rk-track: #1f2937;
-  --rk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --rk-bg: #0f172a;
+  --rk-text: #f1f5f9;
+  --rk-muted: #94a3b8;
+  --rk-border: #334155;
+  --rk-track: #1e293b;
+  --rk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   --rk-purple-bg: #2e1065;
-  --rk-purple-text: #c4b5fd;
-  --rk-tab-active-bg: #2e1065;
+  --rk-purple-text: #ddd6fe;
+  --rk-tab-active-bg: #1e1b4b;
+  --rk-red: #ea580c;
+  --rk-green-text: #4ade80;
   --rk-green-bg: #052e16;
+  --rk-amber-text: #fbbf24;
   --rk-amber-bg: #451a03;
-  --rk-input-bg: #1f2937;
+  --rk-input-bg: #1e293b;
+  --rk-search-border: #475569;
 }
 
 html.dark body {
-  background: #111827;
+  background: #0f172a;
 }
 
 html.dark .nav {
@@ -94,13 +99,19 @@ a.rk-tab {
 }
 
 .rk-search {
-  border: 1px solid var(--rk-border);
+  border: 1.5px solid var(--rk-search-border);
   border-radius: 10px;
   padding: 9px 14px 9px 34px;
   font-size: 14px;
   width: 260px;
   background: var(--rk-input-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") 11px center no-repeat;
   color: var(--rk-text);
+}
+
+.rk-search:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 1px;
+  border-color: var(--rk-purple);
 }
 
 .rk-icon-btn {

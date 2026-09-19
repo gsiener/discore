@@ -25,9 +25,10 @@ describe('rankings page wiring', () => {
     document.body.innerHTML = SKELETON;
     await import('./rankings.js');
     // Page boots asynchronously (runtime snapshot load with fixture fallback).
-    await vi.waitFor(() => expect(rowCount()).toBe(7));
+    // Provisional teams are hidden by default, so only ranked teams render.
+    await vi.waitFor(() => expect(rowCount()).toBe(2));
 
-    expect(rowCount()).toBe(7);
+    expect(rowCount()).toBe(2);
     // No regions in HS data: no region filter, no Region column.
     expect(document.getElementById('region-filter')).toBeNull();
     // 10 columns: #, Team, Status, Rating, Δ, Trend, Record, SoS, GP, Conf.
@@ -36,18 +37,25 @@ describe('rankings page wiring', () => {
     // A single search input filters the list; no duplicate find box.
     expect(document.getElementById('find-team')).toBeNull();
     const find = document.getElementById('header-search') as HTMLInputElement;
-    find.value = 'lynx';
+    find.value = 'albany';
     find.dispatchEvent(new Event('input', { bubbles: true }));
     expect(rowCount()).toBe(1);
 
     find.value = '';
     find.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(rowCount()).toBe(2);
+
+    // Provisional teams are hidden by default; the toggle offers to show them.
+    const provisionalToggle = document.getElementById('hide-provisional') as HTMLButtonElement;
+    expect(provisionalToggle.getAttribute('aria-pressed')).toBe('true');
+    expect(provisionalToggle.textContent).toBe('Show provisional');
+
+    provisionalToggle.click();
     expect(rowCount()).toBe(7);
+    expect(provisionalToggle.textContent).toBe('Hide provisional');
 
-    (document.getElementById('hide-provisional') as HTMLButtonElement).click();
+    provisionalToggle.click();
     expect(rowCount()).toBeLessThan(7);
-
-    (document.getElementById('hide-provisional') as HTMLButtonElement).click();
     const first = document.querySelector('#rankings-body tr') as HTMLElement;
     first.click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
@@ -86,12 +94,12 @@ describe('rankings page wiring', () => {
   });
 
   it('switches to Teams and Tournaments tabs', async () => {
-    await vi.waitFor(() => expect(rowCount()).toBe(7));
+    await vi.waitFor(() => expect(rowCount()).toBe(2));
 
     (document.getElementById('tb-teams') as HTMLButtonElement).click();
     expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
     const teamRows = document.querySelectorAll('#teams-body tr');
-    expect(teamRows.length).toBe(7);
+    expect(teamRows.length).toBe(2);
     expect(teamRows[0].textContent).toMatch(/Albany Cougars/);
 
     (teamRows[1] as HTMLElement).click();
