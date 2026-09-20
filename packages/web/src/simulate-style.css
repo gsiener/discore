@@ -1,7 +1,14 @@
 .sim-heading {
   font-size: 20px;
   font-weight: 700;
-  margin: 0 0 4px;
+  margin: 0 0 0.5rem;
+}
+
+.algo-note {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--rk-muted);
+  margin: 0 0 0.75rem;
 }
 
 .sim-vs {
@@ -51,6 +58,19 @@
   color: var(--rk-muted);
   font-size: 14px;
   padding: 0 4px;
+  transition-property: color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.sim-list button:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.sim-list button:active {
+  scale: 0.96;
 }
 
 .sim-pools {

@@ -1,40 +1,13 @@
 /* Advanced Stats Page Styles */
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 1rem 2rem;
-  background: var(--color-bg-elevated);
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 2rem;
-}
-
-.nav a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s;
-}
-
-.nav a:hover {
-  color: var(--color-primary);
-}
-
-.nav h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  color: var(--color-text-primary);
-}
-
 .stats-filters {
   display: flex;
   gap: 2rem;
   padding: 1.5rem;
   background: var(--color-bg-elevated);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 2rem;
+  box-shadow: var(--shadow-border);
   flex-wrap: wrap;
 }
 
@@ -54,22 +27,24 @@
 .filter-group select {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--color-bg);
   color: var(--color-text-primary);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition-property: border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 }
 
 .filter-group select:hover {
   border-color: var(--color-primary);
 }
 
-.filter-group select:focus {
-  outline: none;
+.filter-group select:focus-visible {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgb(60 110 113 / 0.24);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .loading-view {
@@ -93,7 +68,7 @@
   width: 100%;
   border-collapse: collapse;
   background: var(--color-bg-elevated);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -118,7 +93,13 @@
 
 .stats-table tbody tr {
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.2s;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.stats-table tbody tr:nth-child(even) td {
+  background: var(--color-surface-muted);
 }
 
 .stats-table tbody tr:hover {
@@ -161,9 +142,17 @@
 
 .stat-card {
   background: var(--color-bg-elevated);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-border);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-border-hover);
 }
 
 .stat-card h3 {
@@ -231,7 +220,7 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: var(--color-bg-elevated);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
 }
 

@@ -56,8 +56,19 @@
   color: var(--rk-muted);
   font-size: 15px;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition-property: color, background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-tab:active {
+  scale: 0.96;
+}
+
+.rk-tab:active {
+  scale: 0.96;
 }
 
 .rk-tab-active {
@@ -91,6 +102,16 @@ a.rk-tab {
   opacity: 1;
 }
 
+.rk-tab:focus-visible,
+.rk-viewtab:focus-visible,
+.rk-seg:focus-visible,
+.rk-select:focus-visible,
+.rk-input:focus-visible,
+.rk-toggle:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 2px;
+}
+
 .rk-icon-btn {
   border: none;
   background: transparent;
@@ -98,6 +119,20 @@ a.rk-tab {
   cursor: pointer;
   color: var(--rk-text);
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rk-icon-btn:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 2px;
+}
+
+.rk-icon-btn:active {
+  scale: 0.96;
 }
 
 /* ---- headings ---- */
@@ -144,13 +179,16 @@ a.rk-tab {
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--rk-border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 7px 11px;
   background: var(--rk-track);
   color: var(--rk-purple-text);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
+  transition-property: color, border-color, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 }
 
 .rk-back-link:hover {
@@ -163,14 +201,24 @@ a.rk-tab {
   outline-offset: 2px;
 }
 
+.rk-back-link:active {
+  scale: 0.96;
+}
+
 /* ---- filter card ---- */
 .rk-card {
-  border: 1px solid var(--rk-border);
-  border-radius: 14px;
-  box-shadow: var(--rk-card-shadow);
-  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-border);
+  padding: 16px 20px;
   margin-bottom: 22px;
   background: var(--rk-bg);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-card:hover {
+  box-shadow: var(--shadow-border-hover);
 }
 
 .rk-card-row {
@@ -178,13 +226,13 @@ a.rk-tab {
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-  padding: 6px 0;
+  padding: 8px 0;
 }
 
 .rk-segmented {
   display: flex;
   background: var(--rk-track);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 4px;
   gap: 2px;
 }
@@ -192,18 +240,25 @@ a.rk-tab {
 .rk-seg {
   border: none;
   background: transparent;
-  padding: 8px 18px;
-  border-radius: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
   color: var(--rk-muted);
   cursor: pointer;
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-seg:active {
+  scale: 0.96;
 }
 
 .rk-seg-active {
   background: var(--rk-input-bg);
   color: var(--rk-text);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--color-text) 12%, transparent);
 }
 
 .rk-seg:disabled {
@@ -214,11 +269,16 @@ a.rk-tab {
 .rk-select,
 .rk-input {
   border: 1px solid var(--rk-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 14px;
   font-size: 15px;
   background: var(--rk-input-bg);
   color: var(--rk-text);
+}
+
+.rk-select:disabled {
+  color: var(--rk-text);
+  opacity: 1;
 }
 
 .rk-select:disabled {
@@ -232,12 +292,19 @@ a.rk-tab {
 
 .rk-toggle {
   border: 1px solid var(--rk-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 18px;
   font-size: 15px;
   background: var(--rk-input-bg);
   color: var(--rk-text);
   cursor: pointer;
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-toggle:active {
+  scale: 0.96;
 }
 
 .rk-toggle[aria-pressed="true"] {
@@ -250,7 +317,7 @@ a.rk-tab {
 .rk-viewtabs {
   display: inline-flex;
   background: var(--rk-track);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 4px;
   gap: 2px;
   margin-bottom: 8px;
@@ -259,18 +326,25 @@ a.rk-tab {
 .rk-viewtab {
   border: none;
   background: transparent;
-  padding: 8px 18px;
-  border-radius: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
   color: var(--rk-muted);
   cursor: pointer;
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-viewtab:active {
+  scale: 0.96;
 }
 
 .rk-viewtab-active {
   background: var(--rk-input-bg);
   color: var(--rk-text);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--color-text) 12%, transparent);
 }
 
 /* ---- table ---- */
@@ -321,6 +395,20 @@ a.rk-tab {
   white-space: nowrap;
 }
 
+.rk-table tbody tr:nth-child(even) td {
+  background: var(--rk-track);
+}
+
+.rk-table tbody tr[data-team] {
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-table tbody tr[data-team]:hover td {
+  background: var(--rk-purple-bg);
+}
+
 .rk-table th.num,
 .rk-table td.num {
   text-align: right;
@@ -333,6 +421,13 @@ a.rk-tab {
   font: inherit;
   cursor: pointer;
   padding: 0;
+  transition-property: color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-sort:active {
+  scale: 0.96;
 }
 
 .rk-rank {
@@ -373,10 +468,6 @@ a.rk-tab {
 
 .rk-table tbody tr[data-team] {
   cursor: pointer;
-}
-
-.rk-table tbody tr[data-team]:hover td {
-  background: var(--rk-track);
 }
 
 .rk-seed {
@@ -471,13 +562,23 @@ a.rk-tab {
   margin-bottom: 24px;
 }
 
+.rk-connectivity-summary .rk-connectivity-metric {
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.rk-connectivity-summary .rk-connectivity-metric:hover {
+  box-shadow: var(--shadow-border-hover);
+}
+
 .rk-connectivity-metric {
   display: flex;
   min-height: 104px;
   flex-direction: column;
   border: 1px solid var(--rk-border);
-  border-radius: 12px;
-  padding: 13px 14px;
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
   background: var(--rk-bg);
 }
 
@@ -612,10 +713,10 @@ a.rk-tab {
   flex-direction: column;
   gap: 2px;
   border: 1px solid var(--rk-border);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   padding: 9px 12px;
   background: var(--rk-bg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-border);
   pointer-events: none;
 }
 
@@ -719,6 +820,9 @@ a.rk-tab {
   font: inherit;
   font-size: 12px;
   cursor: pointer;
+  transition-property: color, border-color, background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 }
 
 .rk-island-group button:hover,
@@ -726,6 +830,10 @@ a.rk-tab {
   border-color: var(--rk-purple);
   color: var(--rk-purple-text);
   outline: none;
+}
+
+.rk-island-group button:active {
+  scale: 0.96;
 }
 
 /* Tournament group headers (team detail) and tournament directory rows. */
@@ -782,7 +890,7 @@ a.rk-tab {
   border: 1px solid var(--rk-border);
   border-radius: 12px;
   background: var(--rk-bg);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: none;
 }
 
 .rk-tournament-header {
@@ -875,4 +983,32 @@ a.rk-tab {
 
 .hidden {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-card:hover {
+    box-shadow: var(--shadow-border);
+  }
+
+  .rk-table tbody tr[data-team] {
+    transition: none;
+  }
+
+  .rk-table tbody tr[data-team]:hover td {
+    background: var(--rk-purple-bg);
+  }
+
+  .rk-seg:active,
+  .rk-viewtab:active,
+  .rk-toggle:active,
+  .rk-tab:active,
+  .rk-sort:active,
+  .rk-back-link:active,
+  .rk-island-group button:active {
+    scale: 1;
+  }
+
+  .rk-connectivity-summary .rk-connectivity-metric:hover {
+    box-shadow: var(--shadow-border);
+  }
 }
