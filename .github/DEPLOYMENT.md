@@ -91,7 +91,7 @@ The Durable Object will be automatically created when you deploy the Worker.
 
 ```bash
 cd packages/web
-npx wrangler pages project create scorebot-web
+npx wrangler pages project create scorebot
 ```
 
 ### 5. Set Up Custom Domain (score.kcuda.org)
@@ -101,7 +101,7 @@ After deploying for the first time:
 **Option A: Via Cloudflare Dashboard**
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Navigate to Workers & Pages
-3. Click on `scorebot-web`
+3. Click on `scorebot`
 4. Go to "Custom domains" tab
 5. Click "Set up a custom domain"
 6. Enter: `score.kcuda.org`
@@ -110,7 +110,7 @@ After deploying for the first time:
 **Option B: Via CLI**
 ```bash
 cd packages/web
-npx wrangler pages domain add score.kcuda.org --project-name=scorebot-web
+npx wrangler pages domain add score.kcuda.org --project-name=scorebot
 ```
 
 Cloudflare will automatically:
@@ -150,7 +150,7 @@ cd packages/web && npm test
 
 - Ensure you've committed all files
 - Check that you've built the shared package: `cd packages/shared && npm run build`
-- Verify Node.js versions match (CI uses Node 20)
+- Verify Node.js versions match (CI uses Node 22)
 
 ### Deployment failing
 

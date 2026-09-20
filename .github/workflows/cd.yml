@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -77,8 +77,74 @@ jobs:
           workingDirectory: 'packages/bot'
           command: deploy dist/index.js
 
-  # NOTE: web deploys must happen from local, not CI.
-  # packages/web/public/rankings/ is gitignored — those files are pulled fresh
-  # from Google Drive via the deploy-rankings skill before each deploy. CI
-  # builds an empty rankings/ directory and clobbers the live rankings pages.
-  # Run `cd packages/web && npm run deploy` locally instead.
+  deploy-web:
+    name: Deploy Web to Cloudflare Pages
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Pages deployments replace the whole site. Preserve the gitignored
+      # rankings payload from production before building so a code deploy
+      # cannot remove the published rankings and legacy supporting pages.
+      - name: Hydrate published rankings
+        working-directory: packages/web
+        run: |
+          set -euo pipefail
+          base_url="https://score.kcuda.org/rankings"
+          cache_bust="$(date +%s%N)"
+
+          mkdir -p public/rankings/2025-26
+
+          for file in \
+            graph_boys.html graph_girls.html sources.html \
+            hsni.html hsni-film.html hsni-field-map.png
+          do
+            curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/${file}?cb=${cache_bust}" \
+              --output "public/rankings/${file}"
+            test -s "public/rankings/${file}"
+          done
+
+          for file in data_boys.json data_girls.json
+          do
+            curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/2025-26/${file}?cb=${cache_bust}" \
+              --output "public/rankings/2025-26/${file}"
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" \
+              "public/rankings/2025-26/${file}"
+          done
+
+          # The new season is optional until its first Drive export is published.
+          mkdir -p public/rankings/2026-27
+          for file in data_boys.json data_girls.json
+          do
+            if curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/2026-27/${file}?cb=${cache_bust}" \
+              --output "public/rankings/2026-27/${file}" \
+              && node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" \
+                "public/rankings/2026-27/${file}"
+            then
+              echo "Hydrated 2026-27/${file}"
+            else
+              rm -f "public/rankings/2026-27/${file}"
+            fi
+          done
+
+      - name: Build and deploy web
+        working-directory: packages/web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy

@@ -5,6 +5,8 @@
 # Production rankings now render through the app UI (full-season snapshots
 # published by the pipeline). 302 while the new UI proves out; flip to 301 later.
 # Graph/sources pages stay live underneath.
+/rankings             /standings             302
+/rankings/            /standings             302
 /rankings/boys         /standings             302
 /rankings/boys.html    /standings             302
 /rankings/girls        /standings?division=girls  302
