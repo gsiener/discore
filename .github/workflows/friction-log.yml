@@ -9,7 +9,7 @@ on:
 
 concurrency:
   group: friction-log
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions: {}
 
