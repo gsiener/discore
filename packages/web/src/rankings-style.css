@@ -922,7 +922,7 @@ a.rk-tab {
    across rows. Rows are not interactive, so no hover state. */
 .rk-team-game {
   display: grid;
-  grid-template-columns: 12px 20px minmax(0, 1fr) auto 78px 76px 84px;
+  grid-template-columns: 12px 20px 68px minmax(0, 1fr) 78px 76px 84px;
   align-items: baseline;
   gap: 10px;
   padding: 11px 0;
@@ -1048,9 +1048,9 @@ a.rk-tab {
 
 @media (max-width: 640px) {
   .rk-team-game {
-    grid-template-columns: 12px 20px minmax(0, 1fr) auto;
+    grid-template-columns: 12px 20px auto minmax(0, 1fr);
     grid-template-areas:
-      "dot result opp score"
+      "dot result score opp"
       "dot result facts facts";
     row-gap: 2px;
   }

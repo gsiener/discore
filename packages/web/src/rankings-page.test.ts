@@ -101,9 +101,11 @@ describe('rankings page wiring', () => {
     expect(firstGame.querySelector('.rk-team-game-score')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-facts')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-date')).not.toBeNull();
-    // Score sits by the opponent name, ahead of the metric columns.
+    // Score sits in the left cluster, ahead of the opponent name.
     const scoreEl = firstGame.querySelector('.rk-team-game-score')!;
+    const oppEl = firstGame.querySelector('.rk-team-game-opp')!;
     const factsEl = firstGame.querySelector('.rk-team-game-facts')!;
+    expect(scoreEl.compareDocumentPosition(oppEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(scoreEl.compareDocumentPosition(factsEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // Effect renders as a pill.
     expect(
