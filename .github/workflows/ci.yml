@@ -46,7 +46,77 @@ jobs:
           cd packages/bot
           npx tsc --noEmit
 
+      - name: Build bot bundle
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd packages/bot
+          node build.js
+
+      # Main-only: the Pages dist must ship the production rankings
+      # payload (gitignored), so hydrate before building on main.
+      # PR builds skip this and just validate that vite compiles.
+      - name: Hydrate published rankings
+        if: github.ref == 'refs/heads/main'
+        working-directory: packages/web
+        run: |
+          set -euo pipefail
+          base_url="https://score.kcuda.org/rankings"
+          cache_bust="$(date +%s%N)"
+
+          mkdir -p public/rankings/2025-26
+
+          for file in \
+            graph_boys.html graph_girls.html sources.html \
+            hsni.html hsni-film.html hsni-field-map.png
+          do
+            curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/${file}?cb=${cache_bust}" \
+              --output "public/rankings/${file}"
+            test -s "public/rankings/${file}"
+          done
+
+          for file in data_boys.json data_girls.json
+          do
+            curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/2025-26/${file}?cb=${cache_bust}" \
+              --output "public/rankings/2025-26/${file}"
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" \
+              "public/rankings/2025-26/${file}"
+          done
+
+          # The new season is optional until its first Drive export is published.
+          mkdir -p public/rankings/2026-27
+          for file in data_boys.json data_girls.json
+          do
+            if curl --fail --location --silent --show-error --retry 3 \
+              "${base_url}/2026-27/${file}?cb=${cache_bust}" \
+              --output "public/rankings/2026-27/${file}" \
+              && node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" \
+                "public/rankings/2026-27/${file}"
+            then
+              echo "Hydrated 2026-27/${file}"
+            else
+              rm -f "public/rankings/2026-27/${file}"
+            fi
+          done
+
       - name: Build web
         run: |
           cd packages/web
           npm run build
+
+      - name: Upload bot bundle
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-dist
+          path: packages/bot/dist/index.js
+          retention-days: 1
+
+      - name: Upload web dist
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: packages/web/dist
+          retention-days: 1
