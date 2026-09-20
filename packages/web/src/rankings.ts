@@ -654,51 +654,77 @@ function renderTournaments(): void {
   }
 }
 
-function eventGroupHeader(grp: TeamGameGroup): string {
+const CAL_ICON =
+  `<svg class="rk-cal" width="14" height="14" viewBox="0 0 16 16" fill="none" ` +
+  `stroke="currentColor" stroke-width="1.5" aria-hidden="true">` +
+  `<rect x="2" y="3" width="12" height="11" rx="2"/>` +
+  `<line x1="2" y1="6.5" x2="14" y2="6.5"/>` +
+  `<line x1="5.5" y1="1.5" x2="5.5" y2="4"/><line x1="10.5" y1="1.5" x2="10.5" y2="4"/></svg>`;
+
+function fmtDateShort(iso: string): string {
+  if (!iso) return '—';
+  const d = new Date(iso.length === 10 ? iso + 'T00:00:00Z' : iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+/** "Jul 11 – Jul 12, 2026": year once when the range stays in one year. */
+function fmtDateRange(from: string, to: string): string {
+  if (from === to || !from || !to) return fmtDate(from || to);
+  if (from.slice(0, 4) === to.slice(0, 4)) return `${fmtDateShort(from)} – ${fmtDate(to)}`;
+  return `${fmtDate(from)} – ${fmtDate(to)}`;
+}
+
+function eventCard(grp: TeamGameGroup): string {
   const record =
     grp.ties > 0 ? `${grp.wins}–${grp.losses}–${grp.ties}` : `${grp.wins}–${grp.losses}`;
-  const dates =
-    grp.from === grp.to ? fmtDate(grp.from) : `${fmtDate(grp.from)} – ${fmtDate(grp.to)}`;
   return (
-    `<tr class="rk-event-group"><td colspan="7"><strong>${grp.name}</strong>` +
-    `<span class="rk-event-record">${record}</span>` +
-    `<span class="rk-event-meta">${dates}</span></td></tr>`
+    `<section class="rk-team-event">` +
+    `<div class="rk-team-event-head"><div>` +
+    `<h3>${grp.name}</h3>` +
+    `<p class="rk-team-event-dates">${CAL_ICON}<span>${fmtDateRange(grp.from, grp.to)}</span></p>` +
+    `</div><span class="rk-team-event-record">${record}</span></div>` +
+    `<ul class="rk-team-event-games">` +
+    grp.games.map((g) => gameRow(g)).join('') +
+    `</ul></section>`
   );
 }
 
-function tournamentSection(g: SnapshotGame, isLast = false): string {
-  const outcome =
-    g.result === 'W' ? 'rk-game-win' : g.result === 'L' ? 'rk-game-loss' : 'rk-game-tie';
-  const classes = ['rk-game', outcome];
-  if (g.ignored) classes.push('ignored', 'rk-game-ignored');
-  if (isLast) classes.push('rk-group-end');
+function gameRow(g: SnapshotGame): string {
+  const outcome = g.ignored
+    ? 'ignored'
+    : g.result === 'W'
+      ? 'win'
+      : g.result === 'L'
+        ? 'loss'
+        : 'tie';
   const effectCls =
-    g.effect > 0 ? 'rk-effect-pos' : g.effect < 0 ? 'rk-effect-neg' : 'rk-effect-zero';
+    g.effect > 0 ? 'rk-team-game-effect-pos' : g.effect < 0 ? 'rk-team-game-effect-neg' : '';
   const effectText = (g.effect >= 0 ? '+' : '') + g.effect.toFixed(1);
-  const statusCls = g.ignored ? 'rk-game-status-ignored' : 'rk-game-status-counted';
-  const statusText = g.ignored ? `ignored${g.ignoreReason ? ` · ${g.ignoreReason}` : ''}` : 'counted';
+  const weights =
+    `${g.scoreWeight.toFixed(2)}/${g.dateWeight.toFixed(2)}/${g.seriesMultiplier.toFixed(1)}`;
+  const verdict = g.result === 'W' ? 'Win' : g.result === 'L' ? 'Loss' : 'Tie';
+  const ignoredFlag = g.ignored
+    ? `<span class="rk-team-game-flag">ignored${g.ignoreReason ? ` · ${g.ignoreReason}` : ''}</span>`
+    : '';
   return (
-    `<tr class="${classes.join(' ')}">` +
-    `<td class="rk-game-opponent">${g.opponentName}</td>` +
-    `<td>${fmtDate(g.date)}</td>` +
-    `<td><span class="rk-result rk-result-${g.result.toLowerCase()}">${g.result} ${g.scoreFor}-${g.scoreAgainst}</span></td>` +
-    `<td class="num"><span class="rk-game-rating">${g.gameRating.toFixed(1)}</span></td>` +
-    `<td class="num"><span class="rk-effect ${effectCls}">${effectText}</span></td>` +
-    `<td class="num"><span class="rk-weights">${g.scoreWeight.toFixed(2)}/${g.dateWeight.toFixed(2)}/${g.seriesMultiplier.toFixed(1)}</span></td>` +
-    `<td><span class="rk-game-status ${statusCls}">${statusText}</span></td>` +
-    `</tr>`
+    `<li class="rk-team-game rk-team-game-${outcome}" aria-label="${verdict} vs ${g.opponentName} ${g.scoreFor}–${g.scoreAgainst}">` +
+    `<span class="rk-team-game-dot" aria-hidden="true"></span>` +
+    `<span class="rk-team-game-result" aria-hidden="true">${g.result}</span>` +
+    `<div class="rk-team-game-main">` +
+    `<span class="rk-team-game-opp">${g.opponentName}</span>` +
+    `<span class="rk-team-game-meta">${fmtDateShort(g.date)} · ` +
+    `<span title="Game rating ${g.gameRating.toFixed(1)}, weights (S/D/X) ${weights}">${g.gameRating.toFixed(1)}</span> · ` +
+    `<span class="${effectCls}" title="Rating effect of this game">${effectText}</span>${ignoredFlag}</span>` +
+    `</div>` +
+    `<span class="rk-team-game-score">${g.scoreFor}–${g.scoreAgainst}</span>` +
+    `</li>`
   );
 }
 
 function renderTeamGamesBody(games: SnapshotGame[]): void {
   const body = document.getElementById('team-games-body')!;
-  body.innerHTML = '';
-  for (const grp of groupTeamGames(games)) {
-    body.insertAdjacentHTML('beforeend', eventGroupHeader(grp));
-    grp.games.forEach((g, i) => {
-      body.insertAdjacentHTML('beforeend', tournamentSection(g, i === grp.games.length - 1));
-    });
-  }
+  body.innerHTML = groupTeamGames(games).map((grp) => eventCard(grp)).join('');
 }
 
 function showTeam(id: string): void {

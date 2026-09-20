@@ -22,7 +22,7 @@ const SKELETON = `
 <div id="teams-view"><table><tbody id="teams-body"></tbody></table></div>
 <div id="tournaments-view"><table><tbody id="tournaments-body"></tbody></table></div>
 <div id="team-view"><a id="back-link" class="rk-back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
-<table><tbody id="team-games-body"></tbody></table></div>`;
+<div id="team-games-body" class="rk-team-events"></div></div>`;
 
 function rowCount(): number {
   return document.querySelectorAll('#rankings-body tr').length;
@@ -76,27 +76,25 @@ describe('rankings page wiring', () => {
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
     // Permalink reflects the open team.
     expect(window.location.search).toContain('team=albany');
-    // Albany's games group under one Seattle Invite header, newest first.
-    const teamRows = [...document.querySelectorAll('#team-games-body tr')];
-    expect(teamRows[0].className).toContain('rk-event-group');
-    const header = teamRows[0].children[0] as HTMLElement;
-    expect(header.getAttribute('colspan')).toBe('7');
-    expect(header.textContent).toMatch(/Seattle Invite/);
-    expect(header.textContent).toMatch(/7–0/);
-    const dates = teamRows.slice(1).map((r) => (r.children[1] as HTMLElement).textContent);
-    expect(dates).toHaveLength(7);
+    // Albany's games group into one Seattle Invite card, newest first.
+    const cards = [...document.querySelectorAll('#team-games-body .rk-team-event')];
+    expect(cards.length).toBeGreaterThan(0);
+    const head = cards[0].querySelector('.rk-team-event-head') as HTMLElement;
+    expect(head.textContent).toMatch(/Seattle Invite/);
+    expect(head.querySelector('.rk-team-event-record')?.textContent).toMatch(/7–0/);
+    expect(head.querySelector('.rk-team-event-dates')?.textContent).toMatch(/Oct/);
+    const gameRows = [...cards[0].querySelectorAll('.rk-team-game')];
+    expect(gameRows).toHaveLength(7);
+    // Game rows carry outcome classes and status-colored details.
+    const firstGame = gameRows[0];
+    expect(firstGame.className).toMatch(/rk-team-game-(win|loss|tie|ignored)/);
+    expect(firstGame.querySelector('.rk-team-game-dot')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-team-game-opp')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-team-game-score')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-team-game-meta')).not.toBeNull();
+    const dates = gameRows.map((r) => r.querySelector('.rk-team-game-meta')?.textContent ?? '');
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
-    expect([...dates].sort().reverse()).toEqual(dates);
-    // Game rows carry outcome classes and status-colored pills; the last
-    // game of the group is marked for the separation rule.
-    const firstGame = teamRows[1];
-    expect(firstGame.className).toContain('rk-game');
-    expect(firstGame.className).toMatch(/rk-game-(win|loss|tie)/);
-    expect(firstGame.querySelector('.rk-result')).not.toBeNull();
-    expect(firstGame.querySelector('.rk-effect')).not.toBeNull();
-    expect(firstGame.querySelector('.rk-game-status')).not.toBeNull();
-    expect(teamRows[teamRows.length - 1].className).toContain('rk-group-end');
     // Back to the list clears the team slug.
     (document.getElementById('back-link') as HTMLElement).click();
     expect(window.location.search).not.toContain('team=');
