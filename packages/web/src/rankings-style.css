@@ -851,6 +851,162 @@ a.rk-tab {
   color: var(--rk-muted);
 }
 
+/* ---- team detail: tournament separation + status color ---- */
+/* Zebra striping would cut across tournament boundaries, so the team
+   detail body uses group bands instead: gray header, plain rows. */
+#team-games-body tr:nth-child(even) td {
+  background: transparent;
+}
+
+#team-games-body tr.rk-event-group td {
+  background: var(--rk-track);
+  border-top: 2px solid var(--rk-border);
+  border-bottom: 1px solid var(--rk-border);
+  padding: 10px 12px;
+}
+
+#team-games-body tr.rk-event-group:first-child td {
+  border-top: none;
+}
+
+#team-games-body .rk-event-record {
+  display: inline-block;
+  margin-left: 10px;
+  border-radius: 999px;
+  background: var(--rk-purple-bg);
+  color: var(--rk-purple-text);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+#team-games-body .rk-event-meta {
+  margin-left: 10px;
+}
+
+/* Thicker rule under the last game of each tournament. */
+#team-games-body tr.rk-group-end td {
+  border-bottom: 2px solid var(--rk-border);
+}
+
+/* Outcome accent on the row's leading edge. */
+#team-games-body tr.rk-game-win td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-success);
+}
+
+#team-games-body tr.rk-game-loss td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-danger);
+}
+
+#team-games-body tr.rk-game-tie td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-warning);
+}
+
+#team-games-body tr.rk-game-ignored td:first-child {
+  box-shadow: inset 3px 0 0 var(--rk-border);
+}
+
+#team-games-body tr.rk-game:hover td {
+  background: var(--rk-purple-bg);
+}
+
+#team-games-body tr.rk-game-ignored:hover td {
+  background: var(--rk-track);
+}
+
+/* Result pill: W green, L red, T amber. */
+.rk-result {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+.rk-result-w {
+  background: var(--rk-green-bg);
+  color: var(--rk-green-text);
+  border-color: var(--color-success);
+}
+
+.rk-result-l {
+  background: var(--color-danger-subtle);
+  color: var(--rk-red);
+  border-color: var(--color-danger);
+}
+
+.rk-result-t {
+  background: var(--rk-amber-bg);
+  color: var(--rk-amber-text);
+  border-color: var(--color-warning);
+}
+
+tr.rk-game-ignored .rk-result {
+  background: transparent;
+  color: var(--rk-muted);
+  border-color: var(--rk-border);
+}
+
+/* Effect: green for positive, red for negative, muted for zero. */
+.rk-effect {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-effect-pos {
+  color: var(--rk-green-text);
+}
+
+.rk-effect-neg {
+  color: var(--rk-red);
+}
+
+.rk-effect-zero {
+  color: var(--rk-muted);
+}
+
+tr.rk-game-ignored .rk-effect {
+  color: var(--rk-muted);
+  font-weight: 400;
+}
+
+.rk-game-rating {
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-weights {
+  color: var(--rk-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status pill: counted green, ignored muted. */
+.rk-game-status {
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+.rk-game-status-counted {
+  background: var(--rk-green-bg);
+  color: var(--rk-green-text);
+  border-color: var(--color-success);
+}
+
+.rk-game-status-ignored {
+  background: transparent;
+  color: var(--rk-muted);
+  border-color: var(--rk-border);
+}
+
 .rk-event-name {
   font-weight: 600;
   color: var(--rk-text);

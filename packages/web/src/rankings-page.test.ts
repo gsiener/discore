@@ -88,6 +88,15 @@ describe('rankings page wiring', () => {
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
     expect([...dates].sort().reverse()).toEqual(dates);
+    // Game rows carry outcome classes and status-colored pills; the last
+    // game of the group is marked for the separation rule.
+    const firstGame = teamRows[1];
+    expect(firstGame.className).toContain('rk-game');
+    expect(firstGame.className).toMatch(/rk-game-(win|loss|tie)/);
+    expect(firstGame.querySelector('.rk-result')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-effect')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-game-status')).not.toBeNull();
+    expect(teamRows[teamRows.length - 1].className).toContain('rk-group-end');
     // Back to the list clears the team slug.
     (document.getElementById('back-link') as HTMLElement).click();
     expect(window.location.search).not.toContain('team=');
