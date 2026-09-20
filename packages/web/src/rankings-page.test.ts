@@ -73,6 +73,8 @@ describe('rankings page wiring', () => {
     expect(document.getElementById('tb-teams')!.classList.contains('rk-tab-active')).toBe(true);
     expect(document.getElementById('back-link')!.classList.contains('rk-back-link')).toBe(true);
     expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(true);
+    // Search only lives on the main rankings page, not team detail.
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
     expect((document.getElementById('team-name') as HTMLElement).textContent).not.toBe('');
     // Permalink reflects the open team.
     expect(window.location.search).toContain('team=albany');
@@ -120,6 +122,7 @@ describe('rankings page wiring', () => {
     (document.getElementById('back-link') as HTMLElement).click();
     expect(window.location.search).not.toContain('team=');
     expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(false);
   });
 
   it('deep-links to a team from the URL', async () => {
@@ -131,7 +134,8 @@ describe('rankings page wiring', () => {
       expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false),
     );
     expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(true);
-    expect((document.getElementById('team-name') as HTMLElement).textContent).toBe('Lincoln Lynx');
+    expect(document.querySelector('#team-name .rk-team-rank')?.textContent).toBe('#3');
+    expect((document.getElementById('team-name') as HTMLElement).textContent).toBe('#3 Lincoln Lynx');
   });
 
   it('switches to Teams and Tournaments tabs', async () => {
@@ -139,6 +143,8 @@ describe('rankings page wiring', () => {
 
     (document.getElementById('tb-teams') as HTMLButtonElement).click();
     expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
+    // Search is standings-only.
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
     const teamRows = document.querySelectorAll('#teams-body tr');
     expect(teamRows.length).toBe(2);
     expect(teamRows[0].textContent).toMatch(/Albany Cougars/);
@@ -151,6 +157,7 @@ describe('rankings page wiring', () => {
 
     (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
     expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
     expect(window.location.search).toContain('view=tournaments');
     const eventSections = document.querySelectorAll('#tournaments-body .rk-tournament-section');
     expect(eventSections.length).toBe(2);
@@ -164,8 +171,12 @@ describe('rankings page wiring', () => {
 
     (document.getElementById('tb-teams') as HTMLButtonElement).click();
     expect(window.location.search).toContain('view=teams');
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
+    (document.getElementById('tab-connectivity') as HTMLButtonElement).click();
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
     (document.getElementById('tb-rankings') as HTMLButtonElement).click();
     expect(window.location.search).not.toContain('view=');
+    expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(false);
   });
 
   it('labels the fixture fallback with the requested season', async () => {

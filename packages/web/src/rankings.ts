@@ -593,6 +593,8 @@ function setView(view: State['view']): void {
     document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
   }
   document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
+  // Search filters the standings list, so it only lives on the main rankings page.
+  document.getElementById('header-search')!.classList.toggle('hidden', view !== 'standings');
   const active = VIEW_TABS[view === 'team' ? 'teams' : view];
   for (const v of listViews) {
     const { tab, subtab } = VIEW_TABS[v];
@@ -756,7 +758,16 @@ function showTeam(id: string): void {
   state.teamId = id;
   setView('team');
   writeUrl();
-  document.getElementById('team-name')!.textContent = t.name;
+  const nameEl = document.getElementById('team-name')!;
+  nameEl.innerHTML = '';
+  if (t.rank != null) {
+    const badge = document.createElement('span');
+    badge.className = 'rk-team-rank';
+    badge.textContent = `#${t.rank}`;
+    nameEl.appendChild(badge);
+    nameEl.appendChild(document.createTextNode(' '));
+  }
+  nameEl.appendChild(document.createTextNode(t.name));
   document.getElementById('team-summary')!.textContent = teamSummary(t);
   renderTeamGamesBody(t.games);
 }

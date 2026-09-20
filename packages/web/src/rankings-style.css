@@ -1,4 +1,7 @@
-.rk-main {
+/* Tokens live on :root (not .rk-main) so the header nav — which sits
+   outside <main> — resolves the same values. Scoping them to .rk-main
+   left the search input's border var undefined, rendering it borderless. */
+:root {
   --rk-bg: var(--color-surface);
   --rk-text: var(--color-text);
   --rk-muted: var(--color-text-secondary);
@@ -16,6 +19,9 @@
   --rk-amber-bg: var(--color-warning-subtle);
   --rk-input-bg: var(--color-surface);
   --rk-search-border: var(--color-border);
+}
+
+.rk-main {
   max-width: 1100px;
   margin: 0 auto;
   padding: 16px 20px 48px;
@@ -82,6 +88,8 @@ a.rk-tab {
 }
 
 .rk-search {
+  appearance: none;
+  -webkit-appearance: none;
   border: 1.5px solid var(--rk-search-border);
   border-radius: 10px;
   padding: 9px 14px 9px 34px;
@@ -1214,6 +1222,21 @@ a.rk-tab {
   margin-bottom: 12px;
   font-size: 15px;
   color: var(--rk-muted);
+}
+
+#team-name {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rk-team-rank {
+  color: var(--rk-purple);
+  font-weight: 800;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .rk-table tr.ignored td {
