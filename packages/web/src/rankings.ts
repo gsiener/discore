@@ -715,24 +715,28 @@ function gameRow(g: SnapshotGame): string {
         ? 'loss'
         : 'tie';
   const effectCls =
-    g.effect > 0 ? 'rk-team-game-effect-pos' : g.effect < 0 ? 'rk-team-game-effect-neg' : '';
+    g.effect > 0
+      ? 'rk-team-game-effect-pos'
+      : g.effect < 0
+        ? 'rk-team-game-effect-neg'
+        : 'rk-team-game-effect-zero';
   const effectText = (g.effect >= 0 ? '+' : '') + g.effect.toFixed(1);
   const weights =
     `${g.scoreWeight.toFixed(2)}/${g.dateWeight.toFixed(2)}/${g.seriesMultiplier.toFixed(1)}`;
   const verdict = g.result === 'W' ? 'Win' : g.result === 'L' ? 'Loss' : 'Tie';
   const ignoredFlag = g.ignored
-    ? `<span class="rk-team-game-flag">ignored${g.ignoreReason ? ` · ${g.ignoreReason}` : ''}</span>`
+    ? `<span class="rk-team-game-flag"> · ignored${g.ignoreReason ? ` · ${g.ignoreReason}` : ''}</span>`
     : '';
   return (
     `<li class="rk-team-game rk-team-game-${outcome}" aria-label="${verdict} vs ${g.opponentName} ${g.scoreFor}–${g.scoreAgainst}">` +
     `<span class="rk-team-game-dot" aria-hidden="true"></span>` +
     `<span class="rk-team-game-result" aria-hidden="true">${g.result}</span>` +
-    `<div class="rk-team-game-main">` +
-    `<span class="rk-team-game-opp">${g.opponentName}</span>` +
-    `<span class="rk-team-game-meta">${fmtDateShort(g.date)} · ` +
-    `<span title="Game rating ${g.gameRating.toFixed(1)}, weights (S/D/X) ${weights}">${g.gameRating.toFixed(1)}</span> · ` +
-    `<span class="${effectCls}" title="Rating effect of this game">${effectText}</span>${ignoredFlag}</span>` +
-    `</div>` +
+    `<span class="rk-team-game-opp">${g.opponentName}${ignoredFlag}</span>` +
+    `<span class="rk-team-game-facts">` +
+    `<span class="rk-team-game-date">${fmtDateShort(g.date)}</span>` +
+    `<span class="rk-team-game-rating" title="Game rating ${g.gameRating.toFixed(1)}, weights (S/D/X) ${weights}">${g.gameRating.toFixed(1)}</span>` +
+    `<span class="${effectCls}" title="Rating effect of this game">${effectText}</span>` +
+    `</span>` +
     `<span class="rk-team-game-score">${g.scoreFor}–${g.scoreAgainst}</span>` +
     `</li>`
   );

@@ -917,25 +917,20 @@ a.rk-tab {
   padding: 0;
 }
 
+/* Single-line rows: outcome, opponent, then aligned metric columns and
+   the score pinned right. Fixed column widths keep numbers lined up
+   across rows. Rows are not interactive, so no hover state. */
 .rk-team-game {
   display: grid;
-  grid-template-columns: 12px 20px minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: 12px 20px minmax(0, 1fr) 78px 76px 76px 68px;
+  align-items: baseline;
   gap: 10px;
-  padding: 12px 8px;
-  margin: 0 -8px;
-  border-radius: 8px;
-  transition-property: background-color;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
+  padding: 11px 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .rk-team-game + .rk-team-game {
   border-top: 1px solid var(--rk-border);
-}
-
-.rk-team-game:hover {
-  background: var(--rk-purple-bg);
 }
 
 .rk-team-game-dot {
@@ -943,6 +938,7 @@ a.rk-tab {
   height: 8px;
   border-radius: 50%;
   justify-self: center;
+  align-self: center;
 }
 
 .rk-team-game-win .rk-team-game-dot {
@@ -966,13 +962,6 @@ a.rk-tab {
   font-size: 14px;
 }
 
-.rk-team-game-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
 .rk-team-game-opp {
   color: var(--rk-text);
   font-size: 15px;
@@ -986,18 +975,30 @@ a.rk-tab {
   color: var(--rk-muted);
 }
 
-.rk-team-game-score {
-  color: var(--rk-muted);
-  font-size: 15px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+/* Pass-through on desktop so date/rating/effect land in the grid columns. */
+.rk-team-game-facts {
+  display: contents;
 }
 
-.rk-team-game-meta {
+.rk-team-game-date {
   color: var(--rk-muted);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rk-team-game-rating {
+  color: var(--rk-muted);
+  font-size: 14px;
+  text-align: right;
+}
+
+.rk-team-game-effect-pos,
+.rk-team-game-effect-neg,
+.rk-team-game-effect-zero {
+  font-size: 14px;
+  text-align: right;
 }
 
 .rk-team-game-effect-pos {
@@ -1010,14 +1011,72 @@ a.rk-tab {
   font-weight: 600;
 }
 
+.rk-team-game-effect-zero {
+  color: var(--rk-muted);
+}
+
 .rk-team-game-ignored .rk-team-game-effect-pos,
 .rk-team-game-ignored .rk-team-game-effect-neg {
   color: var(--rk-muted);
   font-weight: 400;
 }
 
+.rk-team-game-score {
+  color: var(--rk-muted);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap;
+}
+
 .rk-team-game-flag {
   color: var(--rk-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  .rk-team-game {
+    grid-template-columns: 12px 20px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "dot result opp score"
+      "dot result facts facts";
+    row-gap: 2px;
+  }
+
+  .rk-team-game-dot {
+    grid-area: dot;
+  }
+
+  .rk-team-game-result {
+    grid-area: result;
+  }
+
+  .rk-team-game-opp {
+    grid-area: opp;
+  }
+
+  .rk-team-game-score {
+    grid-area: score;
+  }
+
+  .rk-team-game-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    grid-area: facts;
+  }
+
+  .rk-team-game-facts > * {
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .rk-team-game-facts > * + *::before {
+    content: "·";
+    margin-right: 10px;
+    color: var(--rk-border);
+  }
 }
 
 .rk-event-name {

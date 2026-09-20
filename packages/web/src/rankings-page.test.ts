@@ -99,8 +99,9 @@ describe('rankings page wiring', () => {
     expect(firstGame.querySelector('.rk-team-game-dot')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-opp')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-score')).not.toBeNull();
-    expect(firstGame.querySelector('.rk-team-game-meta')).not.toBeNull();
-    const dates = gameRows.map((r) => r.querySelector('.rk-team-game-meta')?.textContent ?? '');
+    expect(firstGame.querySelector('.rk-team-game-facts')).not.toBeNull();
+    expect(firstGame.querySelector('.rk-team-game-date')).not.toBeNull();
+    const dates = gameRows.map((r) => r.querySelector('.rk-team-game-date')?.textContent ?? '');
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
     // Back to the list clears the team slug.
