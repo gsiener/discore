@@ -1,6 +1,7 @@
 ---
 title: 'deploy-rankings assumes missing 2026-27 Drive folder'
 severity: 'minor'
+issue: 'gsiener/discore#4'
 ---
 
 ## Expected Behavior
