@@ -732,12 +732,12 @@ function gameRow(g: SnapshotGame): string {
     `<span class="rk-team-game-dot" aria-hidden="true"></span>` +
     `<span class="rk-team-game-result" aria-hidden="true">${g.result}</span>` +
     `<span class="rk-team-game-opp">${g.opponentName}${ignoredFlag}</span>` +
+    `<span class="rk-team-game-score">${g.scoreFor}–${g.scoreAgainst}</span>` +
     `<span class="rk-team-game-facts">` +
     `<span class="rk-team-game-date">${fmtDateShort(g.date)}</span>` +
     `<span class="rk-team-game-rating" title="Game rating ${g.gameRating.toFixed(1)}, weights (S/D/X) ${weights}">${g.gameRating.toFixed(1)}</span>` +
     `<span class="${effectCls}" title="Rating effect of this game">${effectText}</span>` +
     `</span>` +
-    `<span class="rk-team-game-score">${g.scoreFor}–${g.scoreAgainst}</span>` +
     `</li>`
   );
 }

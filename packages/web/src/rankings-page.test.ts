@@ -101,6 +101,16 @@ describe('rankings page wiring', () => {
     expect(firstGame.querySelector('.rk-team-game-score')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-facts')).not.toBeNull();
     expect(firstGame.querySelector('.rk-team-game-date')).not.toBeNull();
+    // Score sits by the opponent name, ahead of the metric columns.
+    const scoreEl = firstGame.querySelector('.rk-team-game-score')!;
+    const factsEl = firstGame.querySelector('.rk-team-game-facts')!;
+    expect(scoreEl.compareDocumentPosition(factsEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Effect renders as a pill.
+    expect(
+      firstGame.querySelector(
+        '.rk-team-game-effect-pos, .rk-team-game-effect-neg, .rk-team-game-effect-zero',
+      ),
+    ).not.toBeNull();
     const dates = gameRows.map((r) => r.querySelector('.rk-team-game-date')?.textContent ?? '');
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
