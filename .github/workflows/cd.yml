@@ -1,18 +1,30 @@
 name: CD - Deploy to Cloudflare
 
+# Runs after CI passes instead of on push, so the test suite runs once
+# (in CI) rather than twice. A single build job produces both artifacts;
+# the two deploys then run in parallel with no install or rebuild.
 on:
-  push:
+  workflow_run:
+    workflows: ['CI - Test']
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: cd-main
+  cancel-in-progress: true
+
 jobs:
-  test:
-    name: Run Tests
+  build:
+    name: Build release artifacts
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -23,83 +35,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build shared package
+      - name: Build shared + rankings packages
         run: |
-          cd packages/shared
-          npm run build
+          npm run build --workspace=@scorebot/shared
+          npm run build --workspace=@scorebot/rankings
 
-      - name: Build rankings package
-        run: |
-          cd packages/rankings
-          npm run build
-
-      - name: Run tests
-        run: npm test
-
-      - name: Type check bot
-        run: |
-          cd packages/bot
-          npx tsc --noEmit
-
-  deploy-worker:
-    name: Deploy Worker to Cloudflare
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build shared package
-        run: |
-          cd packages/shared
-          npm run build
-
-      - name: Build bot package
-        run: |
-          cd packages/bot
-          node build.js
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: 'packages/bot'
-          command: deploy dist/index.js
-
-  deploy-web:
-    name: Deploy Web to Cloudflare Pages
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build shared package
-        run: npm run build --workspace=@scorebot/shared
-
-      - name: Build rankings package
-        run: npm run build --workspace=@scorebot/rankings
+      - name: Build bot bundle
+        working-directory: packages/bot
+        run: node build.js
 
       # Pages deployments replace the whole site. Preserve the gitignored
       # rankings payload from production before building so a code deploy
@@ -148,9 +91,70 @@ jobs:
             fi
           done
 
-      - name: Build and deploy web
+      - name: Build web
         working-directory: packages/web
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npm run deploy
+        run: npm run build
+
+      - name: Upload bot bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-dist
+          path: packages/bot/dist/index.js
+          retention-days: 1
+
+      - name: Upload web dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: packages/web/dist
+          retention-days: 1
+
+  deploy-worker:
+    name: Deploy Worker to Cloudflare
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Download bot bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: bot-dist
+          path: packages/bot/dist
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'packages/bot'
+          command: deploy dist/index.js
+
+  deploy-web:
+    name: Deploy Web to Cloudflare Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Download web dist
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: packages/web/dist
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'packages/web'
+          command: pages deploy dist --project-name=scorebot
