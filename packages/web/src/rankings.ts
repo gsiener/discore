@@ -640,7 +640,7 @@ function renderTournaments(): void {
     const dates = e.from === e.to ? fmtDate(e.from) : `${fmtDate(e.from)} – ${fmtDate(e.to)}`;
     section.innerHTML =
       `<div class="rk-tournament-header">` +
-      `<div><h3>${e.name}</h3><span class="rk-tournament-counts">${e.games} games · ${e.teams} teams</span></div>` +
+      `<div><h3>${eventTitleHtml(e.name, e.url, 'rk-tournament-link')}</h3><span class="rk-tournament-counts">${e.games} games · ${e.teams} teams</span></div>` +
       `<div class="rk-tournament-facts"><span class="rk-tournament-date">${dates}</span>` +
       `<span class="rk-event-type${e.league ? ' rk-event-league' : ''}">${e.league ? 'League' : 'Tournament'}</span></div>` +
       `</div>` +
@@ -675,13 +675,29 @@ function fmtDateRange(from: string, to: string): string {
   return `${fmtDate(from)} – ${fmtDate(to)}`;
 }
 
-function eventCard(grp: TeamGameGroup): string {
+/** Tournament name -> source URL, for linking event titles. */
+function eventUrlByName(): Map<string, string> {
+  const m = new Map<string, string>();
+  for (const e of tournamentSummaries) {
+    if (e.url && !m.has(e.name)) m.set(e.name, e.url);
+  }
+  return m;
+}
+
+/** Plain title, or a link when we have the event's source URL. */
+function eventTitleHtml(name: string, url: string | null, cls: string): string {
+  return url
+    ? `<a class="${cls}" href="${url}" target="_blank" rel="noopener noreferrer">${name}</a>`
+    : name;
+}
+
+function eventCard(grp: TeamGameGroup, url: string | null): string {
   const record =
     grp.ties > 0 ? `${grp.wins}–${grp.losses}–${grp.ties}` : `${grp.wins}–${grp.losses}`;
   return (
     `<section class="rk-team-event">` +
     `<div class="rk-team-event-head"><div>` +
-    `<h3>${grp.name}</h3>` +
+    `<h3>${eventTitleHtml(grp.name, url, 'rk-team-event-link')}</h3>` +
     `<p class="rk-team-event-dates">${CAL_ICON}<span>${fmtDateRange(grp.from, grp.to)}</span></p>` +
     `</div><span class="rk-team-event-record">${record}</span></div>` +
     `<ul class="rk-team-event-games">` +
@@ -724,7 +740,10 @@ function gameRow(g: SnapshotGame): string {
 
 function renderTeamGamesBody(games: SnapshotGame[]): void {
   const body = document.getElementById('team-games-body')!;
-  body.innerHTML = groupTeamGames(games).map((grp) => eventCard(grp)).join('');
+  const urls = eventUrlByName();
+  body.innerHTML = groupTeamGames(games)
+    .map((grp) => eventCard(grp, urls.get(grp.name) ?? null))
+    .join('');
 }
 
 function showTeam(id: string): void {

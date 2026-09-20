@@ -871,6 +871,25 @@ a.rk-tab {
   line-height: 1.3;
 }
 
+/* Event titles link to the source when we have its URL. */
+.rk-team-event-link,
+.rk-tournament-header h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rk-team-event-link:hover,
+.rk-tournament-header h3 a:hover {
+  text-decoration: underline;
+}
+
+.rk-team-event-link:focus-visible,
+.rk-tournament-header h3 a:focus-visible {
+  outline: 2px solid var(--rk-purple);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .rk-team-event-dates {
   display: flex;
   align-items: center;

@@ -83,6 +83,14 @@ describe('rankings page wiring', () => {
     expect(head.textContent).toMatch(/Seattle Invite/);
     expect(head.querySelector('.rk-team-event-record')?.textContent).toMatch(/7–0/);
     expect(head.querySelector('.rk-team-event-dates')?.textContent).toMatch(/Oct/);
+    // Titles link to the event source when we have its URL.
+    expect(head.querySelector('.rk-team-event-link')?.getAttribute('href')).toBe(
+      'https://example.com/seattle',
+    );
+    const unleashed = cards.find((c) =>
+      c.querySelector('.rk-team-event-head')?.textContent?.match(/Fall League/),
+    );
+    if (unleashed) expect(unleashed.querySelector('.rk-team-event-link')).toBeNull();
     const gameRows = [...cards[0].querySelectorAll('.rk-team-game')];
     expect(gameRows).toHaveLength(7);
     // Game rows carry outcome classes and status-colored details.
@@ -137,6 +145,9 @@ describe('rankings page wiring', () => {
     expect(eventSections[0].querySelector('.rk-tournament-header')).not.toBeNull();
     expect(eventSections[0].querySelector('.rk-tournament-counts')?.textContent).toMatch(/12 games/);
     expect(eventSections[0].querySelector('.rk-tournament-date')).not.toBeNull();
+    expect(eventSections[0].querySelector('.rk-tournament-header h3 a')?.getAttribute('href')).toBe(
+      'https://example.com/seattle',
+    );
 
     (document.getElementById('tb-teams') as HTMLButtonElement).click();
     expect(window.location.search).toContain('view=teams');
