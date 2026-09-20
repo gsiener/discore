@@ -98,6 +98,9 @@ jobs:
       - name: Build shared package
         run: npm run build --workspace=@scorebot/shared
 
+      - name: Build rankings package
+        run: npm run build --workspace=@scorebot/rankings
+
       # Pages deployments replace the whole site. Preserve the gitignored
       # rankings payload from production before building so a code deploy
       # cannot remove the published rankings and legacy supporting pages.
