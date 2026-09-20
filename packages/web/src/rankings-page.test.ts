@@ -11,7 +11,14 @@ const SKELETON = `
 <div class="rk-tabs"><button id="tb-rankings"></button><button id="tb-teams"></button><button id="tb-tournaments"></button></div>
 <div id="standings-viewtabs"></div>
 <div id="standings-view"><table><tbody id="rankings-body"></tbody></table></div>
-<div id="connectivity-view"><div id="components-list"></div></div>
+<div id="connectivity-view">
+  <div id="connectivity-summary"></div>
+  <div class="rk-network-shell">
+    <svg id="connectivity-graph"><title></title><desc></desc></svg>
+    <div id="connectivity-tooltip" class="hidden"></div>
+  </div>
+  <section id="connectivity-islands"></section>
+</div>
 <div id="teams-view"><table><tbody id="teams-body"></tbody></table></div>
 <div id="tournaments-view"><table><tbody id="tournaments-body"></tbody></table></div>
 <div id="team-view"><a id="back-link" class="rk-back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
@@ -157,5 +164,30 @@ describe('rankings page wiring', () => {
       expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false),
     );
     expect(document.querySelectorAll('#tournaments-body .rk-tournament-section').length).toBe(2);
+  });
+
+  it('renders connectivity metrics, graph nodes, and disconnected islands', async () => {
+    vi.resetModules();
+    document.body.innerHTML = SKELETON;
+    window.history.replaceState({}, '', '/standings.html?division=boys&view=connectivity');
+    await import('./rankings.js');
+    await vi.waitFor(() =>
+      expect(document.querySelectorAll('#connectivity-graph .rk-network-node').length).toBeGreaterThan(0),
+    );
+
+    expect(document.querySelectorAll('.rk-connectivity-metric')).toHaveLength(5);
+    expect(document.getElementById('connectivity-summary')!.textContent).toMatch(/Connected groups/);
+    expect(document.getElementById('connectivity-summary')!.textContent).toMatch(/Counted matchups/);
+    expect(document.querySelectorAll('#connectivity-graph .rk-network-edges line').length).toBeGreaterThan(0);
+    expect(document.getElementById('connectivity-islands')!.textContent).toMatch(/One connected network/);
+
+    const node = document.querySelector('#connectivity-graph .rk-network-node') as SVGCircleElement;
+    node.dispatchEvent(new Event('mouseenter'));
+    expect(document.getElementById('connectivity-tooltip')!.classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('connectivity-tooltip')!.textContent).toMatch(/rating/);
+
+    const hiddenNodeCount = document.querySelectorAll('#connectivity-graph .rk-network-node').length;
+    (document.getElementById('hide-provisional') as HTMLButtonElement).click();
+    expect(document.querySelectorAll('#connectivity-graph .rk-network-node').length).toBeGreaterThan(hiddenNodeCount);
   });
 });

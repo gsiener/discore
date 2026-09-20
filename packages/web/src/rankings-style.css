@@ -464,26 +464,268 @@ a.rk-tab {
 }
 
 /* ---- connectivity + team views ---- */
-.rk-component {
+.rk-connectivity-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.rk-connectivity-metric {
+  display: flex;
+  min-height: 104px;
+  flex-direction: column;
   border: 1px solid var(--rk-border);
   border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
+  padding: 13px 14px;
+  background: var(--rk-bg);
 }
 
-.rk-component h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
+.rk-connectivity-label {
+  color: var(--rk-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
 }
 
-.rk-chip {
+.rk-connectivity-metric strong {
+  margin: 6px 0 3px;
+  color: var(--rk-text);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.rk-connectivity-detail {
+  color: var(--rk-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.rk-connectivity-intro {
+  margin: 0 0 9px;
+  color: var(--rk-muted);
+  font-size: 14px;
+}
+
+.rk-network-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rk-border);
+  border-radius: 12px;
+  background: var(--rk-bg);
+}
+
+.rk-network {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 420px;
+  touch-action: manipulation;
+}
+
+.rk-network-edges line {
+  stroke: var(--rk-border);
+  stroke-width: 0.8;
+  opacity: 0.55;
+  transition: opacity 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+}
+
+.rk-network-active .rk-network-edges line {
+  opacity: 0.08;
+}
+
+.rk-network-active .rk-network-edges .rk-link-win,
+.rk-network-active .rk-network-edges .rk-link-loss,
+.rk-network-active .rk-network-edges .rk-link-mixed {
+  stroke-width: 2.4;
+  opacity: 0.95;
+}
+
+.rk-network-edges .rk-link-win {
+  stroke: var(--color-success);
+}
+
+.rk-network-edges .rk-link-loss {
+  stroke: var(--color-danger);
+}
+
+.rk-network-edges .rk-link-mixed {
+  stroke: var(--color-warning);
+}
+
+.rk-network-node {
+  cursor: pointer;
+  stroke: var(--rk-bg);
+  stroke-width: 1.5;
+  opacity: 0.92;
+  transition: opacity 160ms ease, stroke-width 160ms ease;
+}
+
+.rk-network-active .rk-network-node {
+  opacity: 0.22;
+}
+
+.rk-network-active .rk-node-active {
+  stroke: var(--rk-text);
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.rk-network-active .rk-node-neighbor {
+  opacity: 0.9;
+}
+
+.rk-network-labels text {
+  fill: var(--rk-text);
+  font-size: 11px;
+  font-weight: 600;
+  paint-order: stroke;
+  pointer-events: none;
+  stroke: var(--rk-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.rk-network-active .rk-network-labels {
+  opacity: 0.2;
+}
+
+.rk-network-node:focus-visible {
+  outline: none;
+  stroke: var(--rk-text);
+  stroke-width: 3;
+}
+
+.rk-network-island-node {
+  stroke: var(--rk-text);
+  stroke-dasharray: 2 2;
+}
+
+.rk-network-tooltip {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  max-width: calc(100% - 28px);
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--rk-border);
+  border-radius: 9px;
+  padding: 9px 12px;
+  background: var(--rk-bg);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+.rk-network-tooltip strong {
+  color: var(--rk-text);
+  font-size: 14px;
+}
+
+.rk-network-tooltip span {
+  color: var(--rk-muted);
+  font-size: 12px;
+}
+
+.rk-network-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 18px;
+  padding: 9px 2px 0;
+  color: var(--rk-muted);
+  font-size: 12px;
+}
+
+.rk-network-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rk-network-legend i {
   display: inline-block;
+  width: 14px;
+  height: 8px;
+}
+
+.rk-legend-node {
+  width: 8px !important;
+  border-radius: 50%;
+  background: var(--rk-purple);
+}
+
+.rk-legend-line,
+.rk-legend-win,
+.rk-legend-loss {
+  height: 2px !important;
+  background: var(--rk-border);
+}
+
+.rk-legend-win {
+  background: var(--color-success);
+}
+
+.rk-legend-loss {
+  background: var(--color-danger);
+}
+
+.rk-legend-island {
+  width: 9px !important;
+  height: 9px !important;
+  border: 1px dashed var(--rk-text);
+  border-radius: 50%;
+}
+
+.rk-islands {
+  margin-top: 30px;
+  border-top: 1px solid var(--rk-border);
+  padding-top: 20px;
+}
+
+.rk-islands h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.rk-islands > p {
+  max-width: 68ch;
+  margin: 0 0 14px;
+  color: var(--rk-muted);
+  font-size: 14px;
+}
+
+.rk-island-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.rk-island-group > strong {
+  min-width: 62px;
+  color: var(--rk-muted);
+  font-size: 12px;
+}
+
+.rk-island-group button {
   border: 1px solid var(--rk-border);
   border-radius: 999px;
-  padding: 3px 12px;
-  margin: 0 6px 6px 0;
-  font-size: 13px;
-  color: var(--rk-muted);
+  padding: 4px 10px;
+  background: var(--rk-bg);
+  color: var(--rk-text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.rk-island-group button:hover,
+.rk-island-group button:focus-visible {
+  border-color: var(--rk-purple);
+  color: var(--rk-purple-text);
+  outline: none;
 }
 
 /* Tournament group headers (team detail) and tournament directory rows. */
@@ -596,6 +838,20 @@ a.rk-tab {
 }
 
 @media (max-width: 640px) {
+  .rk-connectivity-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rk-connectivity-metric:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .rk-network {
+    width: 720px;
+    min-height: 446px;
+    transform: translateX(-160px);
+  }
+
   .rk-tournament-header {
     flex-direction: column;
     gap: 10px;

@@ -69,7 +69,23 @@
         </div>
 
         <div id="connectivity-view" role="tabpanel" class="hidden">
-          <div id="components-list"></div>
+          <div id="connectivity-summary" class="rk-connectivity-summary" aria-label="Connectivity summary"></div>
+          <p class="rk-connectivity-intro">Teams that played each other sit closer together. Hover or focus a team to trace its counted games.</p>
+          <div class="rk-network-shell">
+            <svg id="connectivity-graph" class="rk-network" viewBox="0 0 1000 620" role="img" aria-labelledby="connectivity-title connectivity-desc">
+              <title id="connectivity-title">Team schedule connectivity graph</title>
+              <desc id="connectivity-desc">Teams are circles and counted games are connecting lines. Larger circles indicate higher ratings.</desc>
+            </svg>
+            <div id="connectivity-tooltip" class="rk-network-tooltip hidden" role="status"></div>
+          </div>
+          <div class="rk-network-legend" aria-label="Graph legend">
+            <span><i class="rk-legend-node"></i>dot size = rating</span>
+            <span><i class="rk-legend-line"></i>line = counted matchup</span>
+            <span><i class="rk-legend-win"></i>hover: win</span>
+            <span><i class="rk-legend-loss"></i>hover: loss</span>
+            <span><i class="rk-legend-island"></i>dashed = disconnected island</span>
+          </div>
+          <section id="connectivity-islands" class="rk-islands" aria-labelledby="connectivity-islands-title"></section>
         </div>
 
         <div id="teams-view" class="hidden">

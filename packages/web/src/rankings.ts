@@ -280,36 +280,294 @@ function renderTable(): void {
 }
 
 function renderConnectivity(): void {
-  const list = document.getElementById('components-list')!;
-  list.innerHTML = '';
+  const summary = document.getElementById('connectivity-summary')!;
+  const graph = document.getElementById('connectivity-graph') as unknown as SVGSVGElement;
+  const tooltip = document.getElementById('connectivity-tooltip')!;
+  const islands = document.getElementById('connectivity-islands')!;
+  summary.innerHTML = '';
+  graph.querySelectorAll(':scope > g').forEach((el) => el.remove());
+  islands.innerHTML = '';
+
+  const visibleTeams = snapshot.teams.filter((team) => !state.hideProvisional || team.qualified);
+  const teamById = new Map(visibleTeams.map((team) => [team.id, team]));
+  const countedGames = new Map<string, { source: string; target: string; games: SnapshotGame[] }>();
+  for (const team of visibleTeams) {
+    for (const game of team.games) {
+      if (game.ignored || !teamById.has(game.opponentId)) continue;
+      const pair = [team.id, game.opponentId].sort();
+      const key = `${pair[0]}\u0000${pair[1]}`;
+      const edge = countedGames.get(key) ?? { source: pair[0], target: pair[1], games: [] };
+      if (team.id === pair[0] && !edge.games.some((g) => g.gameId === game.gameId)) edge.games.push(game);
+      countedGames.set(key, edge);
+    }
+  }
+
+  const neighbors = new Map(visibleTeams.map((team) => [team.id, new Set<string>()]));
+  for (const edge of countedGames.values()) {
+    neighbors.get(edge.source)?.add(edge.target);
+    neighbors.get(edge.target)?.add(edge.source);
+  }
   const groups = new Map<number, SnapshotTeam[]>();
-  for (const t of snapshot.teams) {
-    const arr = groups.get(t.componentId) ?? [];
-    arr.push(t);
-    groups.set(t.componentId, arr);
+  const groupByTeam = new Map<string, number>();
+  for (const team of visibleTeams) {
+    if (groupByTeam.has(team.id)) continue;
+    const groupId = groups.size;
+    const members: SnapshotTeam[] = [];
+    const queue = [team.id];
+    groupByTeam.set(team.id, groupId);
+    for (let i = 0; i < queue.length; i++) {
+      const current = teamById.get(queue[i]);
+      if (current) members.push(current);
+      for (const next of neighbors.get(queue[i]) ?? []) {
+        if (groupByTeam.has(next)) continue;
+        groupByTeam.set(next, groupId);
+        queue.push(next);
+      }
+    }
+    groups.set(groupId, members);
   }
   const ordered = [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
-  ordered.forEach(([id, members], i) => {
-    const div = document.createElement('div');
-    div.className = 'rk-component';
-    const h3 = document.createElement('h3');
-    h3.textContent = `Component ${i + 1} · ${members.length} team${members.length === 1 ? '' : 's'}`;
-    div.appendChild(h3);
-    if (members.length === 1) {
-      const p = document.createElement('p');
-      p.className = 'rk-meta';
-      p.textContent = 'Isolated schedule: rating comparisons outside this group carry no shared evidence.';
-      div.appendChild(p);
+  const noGames = visibleTeams.filter((team) => neighbors.get(team.id)?.size === 0).length;
+  const largest = ordered[0]?.[1] ?? [];
+  const anchor = [...largest].sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))[0];
+  const distances = new Map<string, number>();
+  if (anchor) {
+    const queue = [anchor.id];
+    distances.set(anchor.id, 0);
+    for (let i = 0; i < queue.length; i++) {
+      const id = queue[i];
+      for (const next of neighbors.get(id) ?? []) {
+        if (distances.has(next)) continue;
+        distances.set(next, distances.get(id)! + 1);
+        queue.push(next);
+      }
     }
-    for (const m of [...members].sort((a, b) => b.rating - a.rating)) {
-      const chip = document.createElement('span');
-      chip.className = 'rk-chip';
-      chip.textContent = `${m.name} (${Math.round(m.rating)})`;
-      div.appendChild(chip);
-    }
-    void id;
-    list.appendChild(div);
+  }
+  const hops = [...distances.values()].sort((a, b) => a - b);
+  const medianHops = hops.length ? hops[Math.floor(hops.length / 2)] : 0;
+  const maxHops = hops[hops.length - 1] ?? 0;
+  const coverage = visibleTeams.length ? (largest.length / visibleTeams.length) * 100 : 0;
+  const coverageLabel = largest.length === visibleTeams.length ? '100%' : `${coverage.toFixed(1)}%`;
+  const metrics = [
+    ['Connected groups', String(ordered.length), ordered.length === 1 ? 'every rated team shares evidence' : 'separate schedule networks'],
+    ['Largest network', coverageLabel, `${largest.length} of ${visibleTeams.length} teams`],
+    ['Degrees from #1', `${medianHops} / ${maxHops}`, `median / max hops from ${anchor?.name ?? 'top team'}`],
+    ['Counted matchups', String(countedGames.size), 'unique opponent pairings'],
+    ['No counted games', String(noGames), 'teams outside the graph'],
+  ];
+  for (const [label, value, detail] of metrics) {
+    const item = document.createElement('div');
+    item.className = 'rk-connectivity-metric';
+    const labelEl = document.createElement('span');
+    labelEl.className = 'rk-connectivity-label';
+    labelEl.textContent = label;
+    const valueEl = document.createElement('strong');
+    valueEl.textContent = value;
+    const detailEl = document.createElement('span');
+    detailEl.className = 'rk-connectivity-detail';
+    detailEl.textContent = detail;
+    item.append(labelEl, valueEl, detailEl);
+    summary.appendChild(item);
+  }
+
+  const width = 1000;
+  const height = 620;
+  const palette = ['#178276', '#6157d9', '#d97706', '#db3d7d', '#1683b6', '#43a56f', '#9b59b6'];
+  const componentIndex = new Map(ordered.map(([id], index) => [id, index]));
+  const componentCenters = [
+    [500, 310], [120, 100], [880, 100], [120, 520], [880, 520], [500, 70], [500, 550],
+  ];
+  const hash = (value: string): number => {
+    let result = 2166136261;
+    for (const char of value) result = Math.imul(result ^ char.charCodeAt(0), 16777619);
+    return result >>> 0;
+  };
+  const nodes = visibleTeams.map((team) => {
+    const groupId = groupByTeam.get(team.id) ?? 0;
+    const index = componentIndex.get(groupId) ?? 0;
+    const center = componentCenters[index] ?? [80 + (hash(String(groupId)) % 840), 80 + (hash(team.id) % 460)];
+    const angle = (hash(team.id) / 0xffffffff) * Math.PI * 2;
+    const spread = index === 0 ? 250 : Math.min(42, 10 + (ordered[index]?.[1].length ?? 1) * 5);
+    return {
+      team,
+      x: center[0] + Math.cos(angle) * spread * (0.35 + ((hash(`${team.id}x`) % 100) / 100)),
+      y: center[1] + Math.sin(angle) * spread * (0.35 + ((hash(`${team.id}y`) % 100) / 100)),
+      vx: 0,
+      vy: 0,
+    };
   });
+  const nodeById = new Map(nodes.map((node) => [node.team.id, node]));
+  const edges = [...countedGames.values()].flatMap((edge) => {
+    const source = nodeById.get(edge.source);
+    const target = nodeById.get(edge.target);
+    return source && target ? [{ ...edge, source, target }] : [];
+  });
+
+  // A small deterministic force pass keeps the graph dependency-free and stable between renders.
+  for (let iteration = 0; iteration < 70; iteration++) {
+    for (const edge of edges) {
+      const dx = edge.target.x - edge.source.x;
+      const dy = edge.target.y - edge.source.y;
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const force = (distance - 33) * 0.003;
+      const fx = (dx / distance) * force;
+      const fy = (dy / distance) * force;
+      edge.source.vx += fx;
+      edge.source.vy += fy;
+      edge.target.vx -= fx;
+      edge.target.vy -= fy;
+    }
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distance2 = dx * dx + dy * dy;
+        if (distance2 > 1800) continue;
+        const force = 11 / Math.max(18, distance2);
+        a.vx -= dx * force;
+        a.vy -= dy * force;
+        b.vx += dx * force;
+        b.vy += dy * force;
+      }
+    }
+    for (const node of nodes) {
+      const index = componentIndex.get(groupByTeam.get(node.team.id) ?? 0) ?? 0;
+      const center = componentCenters[index] ?? [500, 310];
+      node.vx += (center[0] - node.x) * (index === 0 ? 0.0008 : 0.006);
+      node.vy += (center[1] - node.y) * (index === 0 ? 0.0008 : 0.006);
+      node.vx *= 0.82;
+      node.vy *= 0.82;
+      node.x = Math.max(18, Math.min(width - 18, node.x + node.vx));
+      node.y = Math.max(18, Math.min(height - 18, node.y + node.vy));
+    }
+  }
+
+  const svg = (tag: string): SVGElement => document.createElementNS('http://www.w3.org/2000/svg', tag);
+  const edgeLayer = svg('g');
+  edgeLayer.classList.add('rk-network-edges');
+  const nodeLayer = svg('g');
+  nodeLayer.classList.add('rk-network-nodes');
+  const labelLayer = svg('g');
+  labelLayer.classList.add('rk-network-labels');
+  graph.append(edgeLayer, nodeLayer, labelLayer);
+  const linesByTeam = new Map<string, SVGLineElement[]>();
+  const circlesByTeam = new Map<string, SVGCircleElement>();
+  for (const edge of edges) {
+    const line = svg('line') as SVGLineElement;
+    line.setAttribute('x1', edge.source.x.toFixed(1));
+    line.setAttribute('y1', edge.source.y.toFixed(1));
+    line.setAttribute('x2', edge.target.x.toFixed(1));
+    line.setAttribute('y2', edge.target.y.toFixed(1));
+    line.dataset.source = edge.source.team.id;
+    line.dataset.target = edge.target.team.id;
+    const results = new Set(edge.games.map((game) => game.result));
+    line.dataset.sourceResult = results.size === 1 ? edge.games[0]?.result ?? 'T' : 'T';
+    edgeLayer.appendChild(line);
+    for (const id of [edge.source.team.id, edge.target.team.id]) {
+      const list = linesByTeam.get(id) ?? [];
+      list.push(line);
+      linesByTeam.set(id, list);
+    }
+  }
+
+  const rankedRatings = visibleTeams.map((team) => team.rating).sort((a, b) => a - b);
+  const lowRating = rankedRatings[Math.floor(rankedRatings.length * 0.05)] ?? 0;
+  const highRating = rankedRatings[Math.floor(rankedRatings.length * 0.95)] ?? lowRating + 1;
+  const clearHighlight = (): void => {
+    graph.classList.remove('rk-network-active');
+    graph.querySelectorAll('.rk-link-win, .rk-link-loss, .rk-link-mixed, .rk-node-active, .rk-node-neighbor').forEach((el) => {
+      el.classList.remove('rk-link-win', 'rk-link-loss', 'rk-link-mixed', 'rk-node-active', 'rk-node-neighbor');
+    });
+    tooltip.classList.add('hidden');
+  };
+  for (const node of nodes) {
+    const circle = svg('circle') as SVGCircleElement;
+    const normalized = Math.max(0, Math.min(1, (node.team.rating - lowRating) / Math.max(1, highRating - lowRating)));
+    circle.setAttribute('cx', node.x.toFixed(1));
+    circle.setAttribute('cy', node.y.toFixed(1));
+    circle.setAttribute('r', (3.2 + normalized * 5).toFixed(1));
+    const groupId = groupByTeam.get(node.team.id) ?? 0;
+    circle.setAttribute('fill', palette[(componentIndex.get(groupId) ?? 0) % palette.length]);
+    circle.setAttribute('tabindex', '0');
+    circle.setAttribute('role', 'button');
+    circle.setAttribute('aria-label', `${node.team.name}, rating ${Math.round(node.team.rating)}, ${node.team.gamesPlayed} games`);
+    circle.classList.add('rk-network-node');
+    circle.dataset.teamId = node.team.id;
+    circlesByTeam.set(node.team.id, circle);
+    if (groupId !== ordered[0]?.[0]) circle.classList.add('rk-network-island-node');
+    const title = svg('title');
+    title.textContent = `${node.team.name} · ${Math.round(node.team.rating)}`;
+    circle.appendChild(title);
+    const highlight = (): void => {
+      clearHighlight();
+      graph.classList.add('rk-network-active');
+      circle.classList.add('rk-node-active');
+      for (const line of linesByTeam.get(node.team.id) ?? []) {
+        const isSource = line.dataset.source === node.team.id;
+        const opponentId = isSource ? line.dataset.target : line.dataset.source;
+        const result = isSource
+          ? line.dataset.sourceResult
+          : line.dataset.sourceResult === 'W' ? 'L' : line.dataset.sourceResult === 'L' ? 'W' : 'T';
+        line.classList.add(result === 'W' ? 'rk-link-win' : result === 'L' ? 'rk-link-loss' : 'rk-link-mixed');
+        if (opponentId) circlesByTeam.get(opponentId)?.classList.add('rk-node-neighbor');
+      }
+      tooltip.innerHTML = '';
+      const tooltipName = document.createElement('strong');
+      tooltipName.textContent = node.team.name;
+      const tooltipDetail = document.createElement('span');
+      tooltipDetail.textContent = `${Math.round(node.team.rating)} rating · ${node.team.gamesPlayed} games · ${neighbors.get(node.team.id)?.size ?? 0} opponents`;
+      tooltip.append(tooltipName, tooltipDetail);
+      tooltip.classList.remove('hidden');
+    };
+    circle.addEventListener('mouseenter', highlight);
+    circle.addEventListener('focus', highlight);
+    circle.addEventListener('mouseleave', clearHighlight);
+    circle.addEventListener('blur', clearHighlight);
+    circle.addEventListener('click', () => showTeam(node.team.id));
+    circle.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      showTeam(node.team.id);
+    });
+    nodeLayer.appendChild(circle);
+    if (node.team.rank != null && node.team.rank <= 10 && groupId === ordered[0]?.[0]) {
+      const label = svg('text');
+      const labelOnLeft = node.x > width - 160;
+      label.setAttribute('x', (node.x + (labelOnLeft ? -10 : 10)).toFixed(1));
+      label.setAttribute('y', (node.y + 4).toFixed(1));
+      if (labelOnLeft) label.setAttribute('text-anchor', 'end');
+      label.textContent = node.team.name;
+      labelLayer.appendChild(label);
+    }
+  }
+
+  const islandGroups = ordered.slice(1);
+  const heading = document.createElement('h2');
+  heading.id = 'connectivity-islands-title';
+  heading.textContent = islandGroups.length ? 'Disconnected islands' : 'One connected network';
+  islands.appendChild(heading);
+  const explanation = document.createElement('p');
+  explanation.textContent = islandGroups.length
+    ? 'These teams have no counted-game path to the main network, so ratings across groups do not share evidence.'
+    : 'Every rated team can be reached through counted games.';
+  islands.appendChild(explanation);
+  for (const [, members] of islandGroups) {
+    const group = document.createElement('div');
+    group.className = 'rk-island-group';
+    const label = document.createElement('strong');
+    label.textContent = `${members.length} team${members.length === 1 ? '' : 's'}`;
+    group.appendChild(label);
+    for (const member of [...members].sort((a, b) => b.rating - a.rating)) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = `${member.name} (${Math.round(member.rating)})`;
+      button.addEventListener('click', () => showTeam(member.id));
+      group.appendChild(button);
+    }
+    islands.appendChild(group);
+  }
 }
 
 /** Which top tab (`tb-*`) owns each list view, and which sub tab (`tab-*`) if any. */
@@ -480,7 +738,7 @@ document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   state.hideProvisional = !state.hideProvisional;
   renderProvisionalToggle(e.currentTarget as HTMLButtonElement);
   const list = state.view === 'team' ? state.returnView : state.view;
-  if (list === 'standings' || list === 'teams') showList(list);
+  if (list !== 'tournaments') showList(list);
 });
 renderProvisionalToggle(document.getElementById('hide-provisional') as HTMLButtonElement);
 document.getElementById('sort-rank')!.addEventListener('click', () => {
