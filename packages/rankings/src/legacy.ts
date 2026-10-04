@@ -115,6 +115,8 @@ export function convertLegacyExport(
       season: legacy.season,
       division: legacy.division,
       varsity: true,
+      ...(typeof t.hsniBid === 'string' && t.hsniBid ? { hsniBid: t.hsniBid } : {}),
+      ...(typeof t.ultiworldRank === 'number' ? { ultiworldRank: t.ultiworldRank } : {}),
       lat: t.lat ?? null,
       lon: t.lon ?? null,
     });

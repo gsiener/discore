@@ -487,6 +487,44 @@ a.rk-tab {
   padding: 3px 8px;
 }
 
+.rk-hsni {
+  border: 1px solid var(--color-success);
+  color: var(--rk-green-text);
+  background: var(--rk-green-bg);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.rk-bids {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.rk-uw {
+  border: 1px solid var(--rk-border);
+  color: var(--rk-muted);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.rk-muted {
+  color: var(--rk-muted);
+}
+
+.rk-toggle[aria-pressed='true'][id='bids-only'] {
+  border-color: var(--rk-purple);
+  color: var(--rk-purple-text);
+  background: var(--rk-purple-bg);
+}
+
 .rk-status {
   border: 1px solid var(--color-success);
   color: var(--rk-green-text);

@@ -6,6 +6,7 @@ const SKELETON = `
 <p id="rk-meta"></p>
 <select id="season-select"></select>
 <button id="hide-provisional"></button>
+<button id="bids-only"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
 <div class="rk-tabs"><button id="tb-rankings"></button><button id="tb-teams"></button><button id="tb-tournaments"></button></div>
@@ -39,10 +40,10 @@ describe('rankings page wiring', () => {
     expect(rowCount()).toBe(2);
     // No regions in HS data: no region filter, no Region column.
     expect(document.getElementById('region-filter')).toBeNull();
-    // 10 columns: #, Team, Status, Rating, Δ, Trend, Record, SoS, GP, Conf.
-    expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(10);
+    // 11 columns: #, Team, Status, Bids, Rating, Δ, Trend, Record, SoS, GP, Conf.
+    expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(11);
     expect(
-      [...document.querySelectorAll('#rankings-body tr')].map((row) => Number(row.children[7].textContent)),
+      [...document.querySelectorAll('#rankings-body tr')].map((row) => Number(row.children[8].textContent)),
     ).toEqual([33, 50]);
 
     // A single search input filters the list; no duplicate find box.
@@ -54,6 +55,15 @@ describe('rankings page wiring', () => {
 
     find.value = '';
     find.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(rowCount()).toBe(2);
+
+    // The bids toggle limits the list to Ultiworld-ranked / HSNI teams (none in this fixture).
+    const bidsToggle = document.getElementById('bids-only') as HTMLButtonElement;
+    expect(bidsToggle.getAttribute('aria-pressed')).toBe('false');
+    bidsToggle.click();
+    expect(bidsToggle.getAttribute('aria-pressed')).toBe('true');
+    expect(rowCount()).toBe(0);
+    bidsToggle.click();
     expect(rowCount()).toBe(2);
 
     // Provisional teams are hidden by default; the toggle offers to show them.

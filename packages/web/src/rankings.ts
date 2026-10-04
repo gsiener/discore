@@ -7,6 +7,7 @@ import {
   buildTournamentSummaries,
   filterTeams,
   groupTeamGames,
+  hasBid,
   regionAbbrev,
   regionSeed,
   sortTeams,
@@ -53,6 +54,7 @@ type ListView = 'standings' | 'connectivity' | 'teams' | 'tournaments';
 interface State {
   query: string;
   hideProvisional: boolean;
+  bidsOnly: boolean;
   sortDir: 'asc' | 'desc';
   view: ListView | 'team';
   returnView: ListView;
@@ -62,6 +64,7 @@ interface State {
 const state: State = {
   query: '',
   hideProvisional: true,
+  bidsOnly: false,
   sortDir: 'asc',
   view: 'standings',
   returnView: 'standings',
@@ -80,6 +83,8 @@ function rebuildIndex(): void {
     qualified: t.qualified,
     region: t.region,
     gamesPlayed: t.gamesPlayed,
+    hsniBid: t.hsniBid ?? null,
+    ultiworldRank: t.ultiworldRank ?? null,
   }));
   byId = new Map(snapshot.teams.map((t) => [t.id, t]));
 }
@@ -92,7 +97,7 @@ function fmtDate(iso: string): string {
 }
 
 function filteredRows(): RankRow[] {
-  return filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional });
+  return filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional, bidsOnly: state.bidsOnly });
 }
 
 function currentRows(): RankRow[] {
@@ -202,6 +207,12 @@ function confHtml(t: SnapshotTeam): string {
   return `<span class="rk-conf ${cls}">${label}</span>`;
 }
 
+function bidsHtml(t: SnapshotTeam): string {
+  const hsni = t.hsniBid ? `<span class="rk-hsni" title="HSNI bid: ${t.hsniBid}">HSNI</span>` : '';
+  const uw = t.ultiworldRank != null ? `<span class="rk-uw" title="Ultiworld power ranking">UW #${t.ultiworldRank}</span>` : '';
+  return hsni || uw ? `<span class="rk-bids">${hsni}${uw}</span>` : '<span class="rk-muted">—</span>';
+}
+
 function teamCellHtml(t: SnapshotTeam, extra = ''): string {
   return (
     `<span class="rk-teamcell"><span class="rk-avatar">${t.name.charAt(0)}</span>` +
@@ -248,6 +259,9 @@ function renderTable(): void {
     const statusTd = document.createElement('td');
     statusTd.innerHTML = statusHtml(r);
 
+    const bidsTd = document.createElement('td');
+    bidsTd.innerHTML = bidsHtml(t);
+
     const ratingTd = document.createElement('td');
     ratingTd.innerHTML =
       `<span class="rk-rating-badge">${Math.round(t.rating)}</span>` +
@@ -272,7 +286,7 @@ function renderTable(): void {
     const confTd = document.createElement('td');
     confTd.innerHTML = confHtml(t);
 
-    tr.append(rankTd, teamTd, statusTd, ratingTd, deltaTd, trendTd, recordTd, sosTd, gpTd, confTd);
+    tr.append(rankTd, teamTd, statusTd, bidsTd, ratingTd, deltaTd, trendTd, recordTd, sosTd, gpTd, confTd);
     tr.addEventListener('click', () => showTeam(t.id));
     body.appendChild(tr);
   }
@@ -288,7 +302,9 @@ function renderConnectivity(): void {
   graph.querySelectorAll(':scope > g').forEach((el) => el.remove());
   islands.innerHTML = '';
 
-  const visibleTeams = snapshot.teams.filter((team) => !state.hideProvisional || team.qualified);
+  const visibleTeams = snapshot.teams.filter((team) =>
+    state.bidsOnly ? hasBid(team) : !state.hideProvisional || team.qualified,
+  );
   const teamById = new Map(visibleTeams.map((team) => [team.id, team]));
   const countedGames = new Map<string, { source: string; target: string; games: SnapshotGame[] }>();
   for (const team of visibleTeams) {
@@ -593,6 +609,7 @@ function setView(view: State['view']): void {
     document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
   }
   document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
+  document.getElementById('bids-only')!.classList.toggle('hidden', view === 'team');
   // Search filters the standings list, so it only lives on the main rankings page.
   document.getElementById('header-search')!.classList.toggle('hidden', view !== 'standings');
   const active = VIEW_TABS[view === 'team' ? 'teams' : view];
@@ -774,7 +791,13 @@ function showTeam(id: string): void {
 
 function teamSummary(t: SnapshotTeam): string {
   return `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} · ` +
+    (t.hsniBid ? `HSNI bid: ${t.hsniBid} · ` : '') +
     `SoS ${t.sosPercentile}/100 · confidence ${t.confidence} · ${statusLabel(t)}`;
+}
+
+function renderBidsToggle(btn: HTMLButtonElement): void {
+  btn.setAttribute('aria-pressed', String(state.bidsOnly));
+  btn.textContent = state.bidsOnly ? 'Showing Ultiworld + HSNI only' : 'Ultiworld + HSNI only';
 }
 
 function renderProvisionalToggle(btn: HTMLButtonElement): void {
@@ -813,7 +836,14 @@ document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   const list = state.view === 'team' ? state.returnView : state.view;
   if (list !== 'tournaments') showList(list);
 });
+document.getElementById('bids-only')!.addEventListener('click', (e) => {
+  state.bidsOnly = !state.bidsOnly;
+  renderBidsToggle(e.currentTarget as HTMLButtonElement);
+  const list = state.view === 'team' ? state.returnView : state.view;
+  if (list !== 'tournaments') showList(list);
+});
 renderProvisionalToggle(document.getElementById('hide-provisional') as HTMLButtonElement);
+renderBidsToggle(document.getElementById('bids-only') as HTMLButtonElement);
 document.getElementById('sort-rank')!.addEventListener('click', () => {
   state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
   renderTable();

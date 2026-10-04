@@ -16,6 +16,8 @@ export interface TeamSeason {
   varsity?: boolean; // false for JV/B
   external?: boolean; // true for opponents auto-created by the legacy adapter
   region?: string;
+  ultiworldRank?: number; // Ultiworld power-ranking position, when ranked
+  hsniBid?: string; // why the team holds an HSNI bid, e.g. "Seattle Invite Champion"
   lat?: number | null;
   lon?: number | null;
 }

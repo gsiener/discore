@@ -12,18 +12,29 @@ export interface RankRow {
   qualified: boolean;
   region: string | null;
   gamesPlayed: number;
+  hsniBid?: string | null;
+  ultiworldRank?: number | null;
+}
+
+/** True when the team holds an HSNI bid or sits in the Ultiworld rankings. */
+export function hasBid(r: Pick<RankRow, 'hsniBid' | 'ultiworldRank'>): boolean {
+  return !!r.hsniBid || r.ultiworldRank != null;
 }
 
 export interface TeamFilter {
   query: string;
   region: string; // 'all' or a region name
   hideProvisional: boolean;
+  /** Only Ultiworld-ranked teams and HSNI qualifiers; overrides hideProvisional. */
+  bidsOnly?: boolean;
 }
 
 export function filterTeams(rows: RankRow[], f: TeamFilter): RankRow[] {
   const q = f.query.trim().toLowerCase();
   return rows.filter((r) => {
-    if (f.hideProvisional && !r.qualified) return false;
+    if (f.bidsOnly) {
+      if (!hasBid(r)) return false;
+    } else if (f.hideProvisional && !r.qualified) return false;
     if (f.region !== 'all' && r.region !== f.region) return false;
     if (q && !r.name.toLowerCase().includes(q)) return false;
     return true;

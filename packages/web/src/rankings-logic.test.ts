@@ -32,6 +32,16 @@ describe('filterTeams', () => {
   it('hideProvisional drops unqualified teams', () => {
     expect(filterTeams(rows, { query: '', region: 'all', hideProvisional: true }).map((r) => r.id)).toEqual(['a', 'b', 'd']);
   });
+  it('bidsOnly keeps Ultiworld-ranked and HSNI teams, even provisional ones', () => {
+    const withBids: RankRow[] = [
+      { ...rows[0], ultiworldRank: 1 },
+      { ...rows[1], hsniBid: '2026 Seattle Invite Champion' },
+      { ...rows[2], hsniBid: 'Strength Bid' },
+      rows[3],
+    ];
+    expect(filterTeams(withBids, { query: '', region: 'all', hideProvisional: true, bidsOnly: true }).map((r) => r.id)).toEqual(['a', 'b', 'c']);
+    expect(filterTeams(withBids, { query: 'lynx', region: 'all', hideProvisional: true, bidsOnly: true }).map((r) => r.id)).toEqual(['b']);
+  });
   it('combines all three filters', () => {
     expect(filterTeams(rows, { query: 'east', region: 'Northeast', hideProvisional: true }).map((r) => r.id)).toEqual(['d']);
   });
