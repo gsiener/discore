@@ -89,10 +89,11 @@ export function buildSnapshot(
 
   const eventName = (id: string | null) => (id ? (dataset.events[id]?.name ?? id) : null);
 
-  // Wins/losses from rated, non-ignored games only (matches legacy summary semantics)
+  // Record covers every rated game, including blowouts the rating ignores, so it
+  // always agrees with gamesPlayed. (Ignored games still appear in each team's list.)
   const wl = new Map<string, { w: number; l: number; t: number }>();
   for (const g of normalized) {
-    if (!g.rated || ratings.ignoredGameIds.has(g.id)) continue;
+    if (!g.rated) continue;
     const e = (id: string) => {
       let r = wl.get(id);
       if (!r) {

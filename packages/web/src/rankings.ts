@@ -773,7 +773,7 @@ function showTeam(id: string): void {
 }
 
 function teamSummary(t: SnapshotTeam): string {
-  return `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} (counted) · ` +
+  return `Rating ${t.rating.toFixed(1)} · ${t.wins}–${t.losses} · ` +
     `SoS ${t.sosPercentile}/100 · confidence ${t.confidence} · ${statusLabel(t)}`;
 }
 
