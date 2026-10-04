@@ -25,6 +25,27 @@ const SKELETON = `
 <div id="team-view"><a id="back-link" class="rk-back-link"></a><h2 id="team-name"></h2><div id="team-summary"></div>
 <div id="team-games-body" class="rk-team-events"></div></div>`;
 
+/** Click the in-app Back link; resolves once history has popped and the view restored. */
+async function backFromTeam(): Promise<void> {
+  const popped = new Promise<void>((resolve) =>
+    window.addEventListener('popstate', () => resolve(), { once: true }),
+  );
+  (document.getElementById('back-link') as HTMLElement).click();
+  await popped;
+  // The app's own popstate listener runs before this promise continues; yield once more.
+  await new Promise((r) => setTimeout(r, 0));
+}
+
+/** Run a history step and wait for the popstate it triggers to be handled. */
+async function historyStep(step: () => void): Promise<void> {
+  const popped = new Promise<void>((resolve) =>
+    window.addEventListener('popstate', () => resolve(), { once: true }),
+  );
+  step();
+  await popped;
+  await new Promise((r) => setTimeout(r, 0));
+}
+
 function rowCount(): number {
   return document.querySelectorAll('#rankings-body tr').length;
 }
@@ -128,8 +149,9 @@ describe('rankings page wiring', () => {
     const dates = gameRows.map((r) => r.querySelector('.rk-team-game-date')?.textContent ?? '');
     expect(dates[0]).toContain('Oct 5');
     expect(dates[dates.length - 1]).toContain('Oct 4');
-    // Back to the list clears the team slug.
-    (document.getElementById('back-link') as HTMLElement).click();
+    // Back to the list clears the team slug. Opening a team pushed a history
+    // entry, so the in-app link is the browser Back button and restores async.
+    await backFromTeam();
     expect(window.location.search).not.toContain('team=');
     expect(document.getElementById('hide-provisional')!.classList.contains('hidden')).toBe(false);
     expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(false);
@@ -162,8 +184,21 @@ describe('rankings page wiring', () => {
 
     (teamRows[1] as HTMLElement).click();
     expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
-    (document.getElementById('back-link') as HTMLElement).click();
+    // Back returns to the Teams list the team was opened from.
+    await backFromTeam();
     expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
+    expect(window.location.search).toContain('view=teams');
+
+    // The browser's own Back/Forward buttons walk the same history.
+    (document.querySelectorAll('#teams-body tr')[0] as HTMLElement).click();
+    expect(window.location.search).toContain('team=');
+    await historyStep(() => window.history.back());
+    expect(document.getElementById('teams-view')!.classList.contains('hidden')).toBe(false);
+    expect(window.location.search).not.toContain('team=');
+    await historyStep(() => window.history.forward());
+    expect(document.getElementById('team-view')!.classList.contains('hidden')).toBe(false);
+    expect(window.location.search).toContain('team=');
+    await backFromTeam();
 
     (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
     expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);

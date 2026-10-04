@@ -129,8 +129,13 @@ function renderDivisionSegment(): void {
   });
 }
 
-/** Keep the URL a permalink of the current view (season + division + view + open team). */
-function writeUrl(): void {
+/**
+ * Keep the URL a permalink of the current view (season + division + view + open
+ * team). User navigation (opening a team, switching tabs) pushes a history entry
+ * so the browser Back button returns to the previous view; everything else
+ * (filters, division/season loads, initial deep link) replaces the current one.
+ */
+function writeUrl(push = false): void {
   const url = new URL(window.location.href);
   url.searchParams.set('season', season);
   url.searchParams.set('division', division);
@@ -145,7 +150,17 @@ function writeUrl(): void {
       url.searchParams.set('view', state.view);
     }
   }
-  window.history.replaceState({}, '', url.toString());
+  if (push && url.toString() !== window.location.href) {
+    window.history.pushState({ rk: 1 }, '', url.toString());
+  } else {
+    // Keep the marker so a pushed entry stays recognisable after being re-rendered.
+    window.history.replaceState(window.history.state, '', url.toString());
+  }
+}
+
+/** True when the current history entry was pushed by this page, so Back stays in-app. */
+function hasInAppBack(): boolean {
+  return (window.history.state as { rk?: number } | null)?.rk === 1;
 }
 
 async function setDivision(next: Division): Promise<void> {
@@ -625,9 +640,9 @@ function setView(view: State['view']): void {
 }
 
 /** Switch to a list view and render it. */
-function showList(view: ListView): void {
+function showList(view: ListView, push = false): void {
   setView(view);
-  writeUrl();
+  writeUrl(push);
   RENDERERS[view]();
 }
 
@@ -769,12 +784,12 @@ function renderTeamGamesBody(games: SnapshotGame[]): void {
     .join('');
 }
 
-function showTeam(id: string): void {
+function showTeam(id: string, push = true): void {
   const t = byId.get(id);
   if (!t) return;
   state.teamId = id;
   setView('team');
-  writeUrl();
+  writeUrl(push);
   const nameEl = document.getElementById('team-name')!;
   nameEl.innerHTML = '';
   if (t.rank != null) {
@@ -848,15 +863,18 @@ document.getElementById('sort-rank')!.addEventListener('click', () => {
   state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
   renderTable();
 });
-document.getElementById('tab-standings')!.addEventListener('click', () => showList('standings'));
-document.getElementById('tab-connectivity')!.addEventListener('click', () => showList('connectivity'));
+document.getElementById('tab-standings')!.addEventListener('click', () => showList('standings', true));
+document.getElementById('tab-connectivity')!.addEventListener('click', () => showList('connectivity', true));
 document.getElementById('back-link')!.addEventListener('click', (e) => {
   e.preventDefault();
-  showList(state.returnView);
+  // Same as the browser Back button when this page pushed the team entry; a
+  // deep-linked team has no previous in-app entry, so go to the list directly.
+  if (hasInAppBack()) window.history.back();
+  else showList(state.returnView);
 });
-document.getElementById('tb-rankings')!.addEventListener('click', () => showList('standings'));
-document.getElementById('tb-teams')!.addEventListener('click', () => showList('teams'));
-document.getElementById('tb-tournaments')!.addEventListener('click', () => showList('tournaments'));
+document.getElementById('tb-rankings')!.addEventListener('click', () => showList('standings', true));
+document.getElementById('tb-teams')!.addEventListener('click', () => showList('teams', true));
+document.getElementById('tb-tournaments')!.addEventListener('click', () => showList('tournaments', true));
 document.getElementById('theme-toggle')!.addEventListener('click', () => {
   applyTheme(!document.documentElement.classList.contains('dark'));
 });
@@ -882,6 +900,32 @@ document.getElementById('season-select')?.addEventListener('change', (e) => {
   }
 });
 
+/** Restore the view encoded in the URL after browser Back/Forward. */
+function restoreFromUrl(): void {
+  const params = new URLSearchParams(window.location.search);
+  const team = params.get('team');
+  const view = params.get('view');
+  if (team && byId.has(team)) showTeam(team, false);
+  else if (view === 'teams' || view === 'tournaments' || view === 'connectivity') showList(view);
+  else showList('standings');
+}
+window.addEventListener('popstate', () => {
+  const nextSeason = seasonFromSearch(window.location.search);
+  const nextDivision = divisionFromSearch(window.location.search);
+  if (nextSeason === season && nextDivision === division) {
+    restoreFromUrl();
+    return;
+  }
+  // The entry belongs to another season/division: reload it first. setDivision
+  // rewrites the URL, so capture the target before it runs.
+  const target = window.location.search;
+  season = nextSeason;
+  void setDivision(nextDivision).then(() => {
+    window.history.replaceState({}, '', `${window.location.pathname}${target}`);
+    restoreFromUrl();
+  });
+});
+
 applyTheme(initialDark, false);
 // Capture before setDivision rewrites the URL: deep-link to ?view= and
 // ?team= once data is loaded.
@@ -889,7 +933,7 @@ const deepLinkView = new URLSearchParams(window.location.search).get('view');
 const deepLinkTeam = new URLSearchParams(window.location.search).get('team');
 void setDivision(divisionFromSearch(window.location.search)).then(() => {
   if (deepLinkTeam && byId.has(deepLinkTeam)) {
-    showTeam(deepLinkTeam);
+    showTeam(deepLinkTeam, false);
   } else if (
     deepLinkView === 'teams' ||
     deepLinkView === 'tournaments' ||
