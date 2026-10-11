@@ -8,6 +8,7 @@ import {
   filterTeams,
   groupTeamGames,
   hasBid,
+  isNonVarsity,
   regionAbbrev,
   regionSeed,
   sortTeams,
@@ -54,6 +55,7 @@ type ListView = 'standings' | 'connectivity' | 'teams' | 'tournaments';
 interface State {
   query: string;
   hideProvisional: boolean;
+  hideNonVarsity: boolean;
   bidsOnly: boolean;
   sortDir: 'asc' | 'desc';
   view: ListView | 'team';
@@ -64,6 +66,7 @@ interface State {
 const state: State = {
   query: '',
   hideProvisional: true,
+  hideNonVarsity: true,
   bidsOnly: false,
   sortDir: 'asc',
   view: 'standings',
@@ -97,7 +100,7 @@ function fmtDate(iso: string): string {
 }
 
 function filteredRows(): RankRow[] {
-  return filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional, bidsOnly: state.bidsOnly });
+  return filterTeams(rows, { query: state.query, region: 'all', hideProvisional: state.hideProvisional, hideNonVarsity: state.hideNonVarsity, bidsOnly: state.bidsOnly });
 }
 
 function currentRows(): RankRow[] {
@@ -317,8 +320,10 @@ function renderConnectivity(): void {
   graph.querySelectorAll(':scope > g').forEach((el) => el.remove());
   islands.innerHTML = '';
 
-  const visibleTeams = snapshot.teams.filter((team) =>
-    state.bidsOnly ? hasBid(team) : !state.hideProvisional || team.qualified,
+  const visibleTeams = snapshot.teams.filter(
+    (team) =>
+      (state.bidsOnly ? hasBid(team) : !state.hideProvisional || team.qualified) &&
+      !(state.hideNonVarsity && isNonVarsity(team.name)),
   );
   const teamById = new Map(visibleTeams.map((team) => [team.id, team]));
   const countedGames = new Map<string, { source: string; target: string; games: SnapshotGame[] }>();
@@ -625,6 +630,7 @@ function setView(view: State['view']): void {
   }
   document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
   document.getElementById('bids-only')!.classList.toggle('hidden', view === 'team');
+  document.getElementById('hide-non-varsity')!.classList.toggle('hidden', view === 'team');
   // Search filters the standings list, so it only lives on the main rankings page.
   document.getElementById('header-search')!.classList.toggle('hidden', view !== 'standings');
   const active = VIEW_TABS[view === 'team' ? 'teams' : view];
@@ -766,7 +772,7 @@ function gameRow(g: SnapshotGame): string {
     `<span class="rk-team-game-dot" aria-hidden="true"></span>` +
     `<span class="rk-team-game-result" aria-hidden="true">${g.result}</span>` +
     `<span class="rk-team-game-score">${g.scoreFor}–${g.scoreAgainst}</span>` +
-    `<span class="rk-team-game-opp">${g.opponentName}${ignoredFlag}</span>` +
+    `<span class="rk-team-game-opp">${opponentLink(g)}${ignoredFlag}</span>` +
     `<span class="rk-team-game-facts">` +
     `<span class="rk-team-game-date">${fmtDateShort(g.date)}</span>` +
     `<span class="rk-team-game-rating" title="Game rating ${g.gameRating.toFixed(1)}, weights (S/D/X) ${weights}">${g.gameRating.toFixed(1)}</span>` +
@@ -774,6 +780,13 @@ function gameRow(g: SnapshotGame): string {
     `</span>` +
     `</li>`
   );
+}
+
+/** Opponent name, linked to its detail page when the opponent is in this snapshot. */
+function opponentLink(g: SnapshotGame): string {
+  if (!byId.has(g.opponentId)) return g.opponentName;
+  const href = `?season=${season}&division=${division}&team=${encodeURIComponent(g.opponentId)}`;
+  return `<a class="rk-team-game-link" href="${href}" data-team-id="${g.opponentId}">${g.opponentName}</a>`;
 }
 
 function renderTeamGamesBody(games: SnapshotGame[]): void {
@@ -820,6 +833,11 @@ function renderProvisionalToggle(btn: HTMLButtonElement): void {
   btn.textContent = state.hideProvisional ? 'Show provisional' : 'Hide provisional';
 }
 
+function renderNonVarsityToggle(btn: HTMLButtonElement): void {
+  btn.setAttribute('aria-pressed', String(state.hideNonVarsity));
+  btn.textContent = state.hideNonVarsity ? 'Show non-varsity' : 'Hide non-varsity';
+}
+
 function syncQuery(value: string): void {
   state.query = value;
   (document.getElementById('header-search') as HTMLInputElement).value = value;
@@ -851,6 +869,12 @@ document.getElementById('hide-provisional')!.addEventListener('click', (e) => {
   const list = state.view === 'team' ? state.returnView : state.view;
   if (list !== 'tournaments') showList(list);
 });
+document.getElementById('hide-non-varsity')!.addEventListener('click', (e) => {
+  state.hideNonVarsity = !state.hideNonVarsity;
+  renderNonVarsityToggle(e.currentTarget as HTMLButtonElement);
+  const list = state.view === 'team' ? state.returnView : state.view;
+  if (list !== 'tournaments') showList(list);
+});
 document.getElementById('bids-only')!.addEventListener('click', (e) => {
   state.bidsOnly = !state.bidsOnly;
   renderBidsToggle(e.currentTarget as HTMLButtonElement);
@@ -858,10 +882,18 @@ document.getElementById('bids-only')!.addEventListener('click', (e) => {
   if (list !== 'tournaments') showList(list);
 });
 renderProvisionalToggle(document.getElementById('hide-provisional') as HTMLButtonElement);
+renderNonVarsityToggle(document.getElementById('hide-non-varsity') as HTMLButtonElement);
 renderBidsToggle(document.getElementById('bids-only') as HTMLButtonElement);
 document.getElementById('sort-rank')!.addEventListener('click', () => {
   state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
   renderTable();
+});
+document.getElementById('team-games-body')!.addEventListener('click', (e) => {
+  const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-team-id]');
+  if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  showTeam(link.dataset.teamId!);
+  window.scrollTo(0, 0);
 });
 document.getElementById('tab-standings')!.addEventListener('click', () => showList('standings', true));
 document.getElementById('tab-connectivity')!.addEventListener('click', () => showList('connectivity', true));

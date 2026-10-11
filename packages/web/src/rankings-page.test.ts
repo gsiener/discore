@@ -6,6 +6,7 @@ const SKELETON = `
 <p id="rk-meta"></p>
 <select id="season-select"></select>
 <button id="hide-provisional"></button>
+<button id="hide-non-varsity"></button>
 <button id="bids-only"></button>
 <button id="sort-rank"><span id="sort-arrow"></span></button>
 <button id="tab-standings"></button><button id="tab-connectivity"></button>
@@ -93,7 +94,12 @@ describe('rankings page wiring', () => {
     expect(provisionalToggle.textContent).toBe('Show provisional');
 
     provisionalToggle.click();
+    expect(rowCount()).toBe(6);
+    const nonVarsityToggle = document.getElementById('hide-non-varsity') as HTMLButtonElement;
+    expect(nonVarsityToggle.textContent).toBe('Show non-varsity');
+    nonVarsityToggle.click();
     expect(rowCount()).toBe(7);
+    expect(nonVarsityToggle.textContent).toBe('Hide non-varsity');
     expect(provisionalToggle.textContent).toBe('Hide provisional');
 
     provisionalToggle.click();

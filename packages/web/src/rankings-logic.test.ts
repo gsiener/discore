@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildTournamentSummaries,
   filterTeams,
+  isNonVarsity,
   regionAbbrev,
   regionSeed,
   sortTeams,
@@ -20,6 +21,19 @@ const rows: RankRow[] = [
   { id: 'c', name: 'League Only FC', rank: 3, rating: 1500, qualified: false, region: 'South', gamesPlayed: 5 },
   { id: 'd', name: 'Eastside Prep', rank: 4, rating: 1950, qualified: true, region: 'Northeast', gamesPlayed: 6 },
 ];
+
+describe('isNonVarsity', () => {
+  it('flags JV, middle school and B/C teams', () => {
+    for (const n of ['Grant JV', 'Mason (JV)', 'Lincoln Lynx JV Black', 'Maplewood MS', 'Brown Middle School', 'Northfield B', 'Lebanon (B)', 'Needham-B', 'Franklin Varsity B', 'Lone Peak Boys B Team', 'RCU C']) {
+      expect(isNonVarsity(n), n).toBe(true);
+    }
+  });
+  it('keeps varsity teams', () => {
+    for (const n of ['Lincoln Lynx', 'Middleton', 'Middletown', 'Middlesex School', 'B-CC', 'Washtenaw Technical Middle College', 'Midtown Gx V']) {
+      expect(isNonVarsity(n), n).toBe(false);
+    }
+  });
+});
 
 describe('filterTeams', () => {
   it('matches query case-insensitively against name', () => {

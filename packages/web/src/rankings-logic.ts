@@ -21,10 +21,25 @@ export function hasBid(r: Pick<RankRow, 'hsniBid' | 'ultiworldRank'>): boolean {
   return !!r.hsniBid || r.ultiworldRank != null;
 }
 
+/**
+ * Snapshots carry no level flag, so non-varsity (JV, middle school, B/C team)
+ * is inferred from the team name.
+ */
+export function isNonVarsity(name: string): boolean {
+  return (
+    /\b(?:JV|MS)\b/i.test(name) ||
+    /\bmiddle school\b/i.test(name) ||
+    /\bB Team\b/i.test(name) ||
+    /(?:^|[\s(-])[BC]\)?$/.test(name)
+  );
+}
+
 export interface TeamFilter {
   query: string;
   region: string; // 'all' or a region name
   hideProvisional: boolean;
+  /** Hide JV, middle school and B/C teams. Applies even with bidsOnly. */
+  hideNonVarsity?: boolean;
   /** Only Ultiworld-ranked teams and HSNI qualifiers; overrides hideProvisional. */
   bidsOnly?: boolean;
 }
@@ -35,6 +50,7 @@ export function filterTeams(rows: RankRow[], f: TeamFilter): RankRow[] {
     if (f.bidsOnly) {
       if (!hasBid(r)) return false;
     } else if (f.hideProvisional && !r.qualified) return false;
+    if (f.hideNonVarsity && isNonVarsity(r.name)) return false;
     if (f.region !== 'all' && r.region !== f.region) return false;
     if (q && !r.name.toLowerCase().includes(q)) return false;
     return true;

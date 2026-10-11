@@ -1017,6 +1017,15 @@ a.rk-tab {
   text-overflow: ellipsis;
 }
 
+.rk-team-game-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rk-team-game-link:hover {
+  text-decoration: underline;
+}
+
 .rk-team-game-ignored .rk-team-game-opp {
   color: var(--rk-muted);
 }
