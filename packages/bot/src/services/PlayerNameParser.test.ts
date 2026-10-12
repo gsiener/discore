@@ -81,6 +81,12 @@ describe('PlayerNameParser', () => {
   });
 
   describe('extractPlayerNames', () => {
+    it('does not treat play descriptions as players', () => {
+      const game = createMockGame();
+      expect(parser.extractPlayerNames('Foul called', game)).toEqual([]);
+      expect(parser.extractPlayerNames('Turn over', game)).toEqual([]);
+    });
+
     it('should extract Jake and Mason from "Jake to Mason 5-3" and exclude "Score"', () => {
       const game = createMockGame();
       const names = parser.extractPlayerNames('Jake to Mason 5-3', game);
