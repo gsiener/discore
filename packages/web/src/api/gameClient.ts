@@ -3,6 +3,7 @@
  * The only module that knows the API base URL, endpoint paths, and HTTP error handling
  */
 
+import { currentSeason, isInSeason, seasonRange } from '@scorebot/shared';
 import type {
   AdvancedStats,
   AggregatedPlayerStats,
@@ -22,12 +23,31 @@ export interface AggregatedStatsResponse {
   playerChemistry?: PlayerChemistry[];
 }
 
+/**
+ * Season shown by every page: `?season=2025-26` picks one, `?season=all`
+ * disables filtering (returns null), otherwise the current season.
+ */
+export function selectedSeason(search: string = window.location.search): string | null {
+  const param = new URLSearchParams(search).get('season');
+  if (param === 'all') return null;
+  if (param && /^\d{4}-\d{2}$/.test(param)) return param;
+  return currentSeason();
+}
+
 export async function fetchGames(limit = 100): Promise<GameSummary[]> {
   const response = await fetch(`${API_BASE_URL}/games?limit=${limit}`);
   if (!response.ok) throw new Error('Failed to fetch games');
 
   const data = await response.json();
-  return data.games;
+  const games: GameSummary[] = data.games;
+  const season = selectedSeason();
+  if (!season) return games;
+
+  return games.filter((g) => {
+    const date =
+      g.gameDate ?? (g.startedAt ? new Date(g.startedAt).toISOString().slice(0, 10) : undefined);
+    return isInSeason(date, season);
+  });
 }
 
 export async function fetchGame(gameId: string): Promise<Game> {
@@ -53,6 +73,12 @@ export async function fetchAggregatedStats(
   let url = `${API_BASE_URL}/stats/aggregated?limit=${limit}`;
   if (tournament) {
     url += `&tournament=${encodeURIComponent(tournament)}`;
+  }
+
+  const season = selectedSeason();
+  if (season) {
+    const { from, to } = seasonRange(season);
+    url += `&from=${from}&to=${to}`;
   }
 
   const response = await fetch(url);
