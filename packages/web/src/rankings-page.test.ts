@@ -90,7 +90,7 @@ describe('rankings page wiring', () => {
 
     // Provisional teams are hidden by default; the toggle offers to show them.
     const provisionalToggle = document.getElementById('hide-provisional') as HTMLButtonElement;
-    expect(provisionalToggle.getAttribute('aria-pressed')).toBe('true');
+    expect(provisionalToggle.getAttribute('aria-pressed')).toBe('false');
     expect(provisionalToggle.textContent).toBe('Show provisional');
 
     provisionalToggle.click();
@@ -99,8 +99,8 @@ describe('rankings page wiring', () => {
     expect(nonVarsityToggle.textContent).toBe('Show non-varsity');
     nonVarsityToggle.click();
     expect(rowCount()).toBe(7);
-    expect(nonVarsityToggle.textContent).toBe('Hide non-varsity');
-    expect(provisionalToggle.textContent).toBe('Hide provisional');
+    expect(nonVarsityToggle.textContent).toBe('Showing non-varsity');
+    expect(provisionalToggle.textContent).toBe('Showing provisional');
 
     provisionalToggle.click();
     expect(rowCount()).toBeLessThan(7);
@@ -208,6 +208,10 @@ describe('rankings page wiring', () => {
 
     (document.getElementById('tb-tournaments') as HTMLButtonElement).click();
     expect(document.getElementById('tournaments-view')!.classList.contains('hidden')).toBe(false);
+    // List filters don't apply to tournaments.
+    for (const id of ['hide-provisional', 'hide-non-varsity', 'bids-only']) {
+      expect(document.getElementById(id)!.classList.contains('hidden')).toBe(true);
+    }
     expect(document.getElementById('header-search')!.classList.contains('hidden')).toBe(true);
     expect(window.location.search).toContain('view=tournaments');
     const eventSections = document.querySelectorAll('#tournaments-body .rk-tournament-section');

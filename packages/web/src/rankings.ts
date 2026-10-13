@@ -628,9 +628,11 @@ function setView(view: State['view']): void {
   for (const v of [...listViews, 'team'] as const) {
     document.getElementById(`${v}-view`)!.classList.toggle('hidden', view !== v);
   }
-  document.getElementById('hide-provisional')!.classList.toggle('hidden', view === 'team');
-  document.getElementById('bids-only')!.classList.toggle('hidden', view === 'team');
-  document.getElementById('hide-non-varsity')!.classList.toggle('hidden', view === 'team');
+  // These filter the rankings/teams lists; tournaments and team detail ignore them.
+  const showFilters = view !== 'team' && view !== 'tournaments';
+  for (const id of ['hide-provisional', 'hide-non-varsity', 'bids-only']) {
+    document.getElementById(id)!.classList.toggle('hidden', !showFilters);
+  }
   // Search filters the standings list, so it only lives on the main rankings page.
   document.getElementById('header-search')!.classList.toggle('hidden', view !== 'standings');
   const active = VIEW_TABS[view === 'team' ? 'teams' : view];
@@ -829,13 +831,13 @@ function renderBidsToggle(btn: HTMLButtonElement): void {
 }
 
 function renderProvisionalToggle(btn: HTMLButtonElement): void {
-  btn.setAttribute('aria-pressed', String(state.hideProvisional));
-  btn.textContent = state.hideProvisional ? 'Show provisional' : 'Hide provisional';
+  btn.setAttribute('aria-pressed', String(!state.hideProvisional));
+  btn.textContent = state.hideProvisional ? 'Show provisional' : 'Showing provisional';
 }
 
 function renderNonVarsityToggle(btn: HTMLButtonElement): void {
-  btn.setAttribute('aria-pressed', String(state.hideNonVarsity));
-  btn.textContent = state.hideNonVarsity ? 'Show non-varsity' : 'Hide non-varsity';
+  btn.setAttribute('aria-pressed', String(!state.hideNonVarsity));
+  btn.textContent = state.hideNonVarsity ? 'Show non-varsity' : 'Showing non-varsity';
 }
 
 function syncQuery(value: string): void {

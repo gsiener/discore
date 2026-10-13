@@ -315,11 +315,6 @@ a.rk-tab {
   scale: 0.96;
 }
 
-.rk-toggle[aria-pressed="true"] {
-  background: var(--rk-text);
-  color: var(--rk-bg);
-  border-color: var(--rk-text);
-}
 
 /* ---- view tabs ---- */
 .rk-viewtabs {
@@ -519,7 +514,7 @@ a.rk-tab {
   color: var(--rk-muted);
 }
 
-.rk-toggle[aria-pressed='true'][id='bids-only'] {
+.rk-toggle[aria-pressed='true'] {
   border-color: var(--rk-purple);
   color: var(--rk-purple-text);
   background: var(--rk-purple-bg);
