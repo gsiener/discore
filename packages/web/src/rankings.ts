@@ -303,7 +303,7 @@ function renderTable(): void {
     const confTd = document.createElement('td');
     confTd.innerHTML = confHtml(t);
 
-    tr.append(statusTd, bidsTd, rankTd, teamTd, ratingTd, deltaTd, trendTd, recordTd, gpTd, confTd);
+    tr.append(rankTd, teamTd, ratingTd, deltaTd, trendTd, recordTd, gpTd, confTd, bidsTd, statusTd);
     tr.addEventListener('click', () => showTeam(t.id));
     body.appendChild(tr);
   }

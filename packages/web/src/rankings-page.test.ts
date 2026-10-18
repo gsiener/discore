@@ -62,7 +62,7 @@ describe('rankings page wiring', () => {
     expect(rowCount()).toBe(2);
     // No regions in HS data: no region filter, no Region column.
     expect(document.getElementById('region-filter')).toBeNull();
-    // 10 columns: Status, Bids, #, Team, Rating, Δ, Trend, Record, GP, Conf.
+    // 10 columns: #, Team, Rating, Δ, Trend, Record, GP, Conf, Bids, Status.
     expect(document.querySelector('#rankings-body tr')!.childElementCount).toBe(10);
 
     // A single search input filters the list; no duplicate find box.
