@@ -363,7 +363,10 @@ a.rk-tab {
   table-layout: fixed;
 }
 
-/* Fixed column widths so filtering rows never reflows the layout. */
+/* Fixed column widths so filtering rows never reflows the layout. Every
+   standings column has a width, so spare room is spread across all of them
+   instead of pooling after the team name. */
+.rk-table-standings .col-team { width: 220px; }
 .rk-table-standings .col-status { width: 120px; }
 .rk-table-standings .col-bids { width: 104px; }
 .rk-table-standings .col-rank { width: 44px; }
@@ -415,6 +418,11 @@ a.rk-tab {
 .rk-table th.num,
 .rk-table td.num {
   text-align: right;
+}
+
+.rk-table th.ctr,
+.rk-table td.ctr {
+  text-align: center;
 }
 
 .rk-sort {
@@ -525,7 +533,6 @@ a.rk-tab {
 .rk-rating {
   display: inline-flex;
   align-items: baseline;
-  justify-content: flex-end;
   gap: 6px;
   font-variant-numeric: tabular-nums;
 }
@@ -545,10 +552,6 @@ a.rk-tab {
   min-width: 3.5ch;
   text-align: left;
   cursor: help;
-}
-
-.rk-delta-col {
-  text-align: center;
 }
 
 .rk-delta {

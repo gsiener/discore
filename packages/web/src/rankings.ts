@@ -280,24 +280,24 @@ function renderTable(): void {
     bidsTd.innerHTML = bidsHtml(t);
 
     const ratingTd = document.createElement('td');
-    ratingTd.className = 'num';
     ratingTd.innerHTML =
       `<span class="rk-rating"><span class="rk-rating-badge">${Math.round(t.rating)}</span>` +
       (t.sd == null ? '' : `<span class="rk-sd" title="Per-game rating variability (shrunk toward pooled variance)">±${Math.round(t.sd)}</span>`) +
       `</span>`;
 
     const deltaTd = document.createElement('td');
-    deltaTd.className = 'rk-delta-col';
+    deltaTd.className = 'ctr';
     deltaTd.innerHTML = `<span class="rk-delta" title="Rank movement needs a prior snapshot">—</span>`;
 
     const trendTd = document.createElement('td');
     trendTd.innerHTML = sparkSvg(t);
 
     const recordTd = document.createElement('td');
-    recordTd.className = 'num';
+    recordTd.className = 'ctr';
     recordTd.innerHTML = recordHtml(t);
 
     const gpTd = document.createElement('td');
+    gpTd.className = 'ctr';
     gpTd.textContent = String(t.gamesPlayed);
 
     const confTd = document.createElement('td');
