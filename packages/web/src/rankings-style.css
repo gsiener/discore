@@ -364,13 +364,13 @@ a.rk-tab {
 }
 
 /* Fixed column widths so filtering rows never reflows the layout. */
+.rk-table-standings .col-status { width: 120px; }
+.rk-table-standings .col-bids { width: 104px; }
 .rk-table-standings .col-rank { width: 44px; }
-.rk-table-standings .col-status { width: 112px; }
-.rk-table-standings .col-rating { width: 112px; }
-.rk-table-standings .col-delta { width: 56px; }
+.rk-table-standings .col-rating { width: 128px; }
+.rk-table-standings .col-delta { width: 48px; }
 .rk-table-standings .col-trend { width: 84px; }
 .rk-table-standings .col-record { width: 82px; }
-.rk-table-standings .col-sos { width: 70px; }
 .rk-table-standings .col-gp { width: 56px; }
 .rk-table-standings .col-conf { width: 92px; }
 .rk-table-teams .col-status { width: 112px; }
@@ -444,20 +444,6 @@ a.rk-tab {
   align-items: center;
   gap: 10px;
   min-width: 0;
-}
-
-.rk-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--rk-track);
-  color: var(--rk-muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  flex-shrink: 0;
 }
 
 .rk-teamname {
@@ -536,8 +522,15 @@ a.rk-tab {
   background: transparent;
 }
 
-.rk-rating-badge,
-.rk-sos-badge {
+.rk-rating {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-rating-badge {
   background: var(--color-danger-solid);
   color: oklch(99% 0 0);
   font-weight: 700;
@@ -549,8 +542,13 @@ a.rk-tab {
 .rk-sd {
   color: var(--rk-muted);
   font-size: 13px;
-  margin-left: 6px;
-  border-bottom: 1px dotted var(--rk-muted);
+  min-width: 3.5ch;
+  text-align: left;
+  cursor: help;
+}
+
+.rk-delta-col {
+  text-align: center;
 }
 
 .rk-delta {

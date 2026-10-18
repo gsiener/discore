@@ -233,8 +233,7 @@ function bidsHtml(t: SnapshotTeam): string {
 
 function teamCellHtml(t: SnapshotTeam, extra = ''): string {
   return (
-    `<span class="rk-teamcell"><span class="rk-avatar">${t.name.charAt(0)}</span>` +
-    `<span class="rk-teamname">${t.name}</span>${extra}</span>`
+    `<span class="rk-teamcell"><span class="rk-teamname">${t.name}</span>${extra}</span>`
   );
 }
 
@@ -281,11 +280,14 @@ function renderTable(): void {
     bidsTd.innerHTML = bidsHtml(t);
 
     const ratingTd = document.createElement('td');
+    ratingTd.className = 'num';
     ratingTd.innerHTML =
-      `<span class="rk-rating-badge">${Math.round(t.rating)}</span>` +
-      (t.sd == null ? '' : `<span class="rk-sd" title="Per-game rating variability (shrunk toward pooled variance)">±${t.sd.toFixed(1)}</span>`);
+      `<span class="rk-rating"><span class="rk-rating-badge">${Math.round(t.rating)}</span>` +
+      (t.sd == null ? '' : `<span class="rk-sd" title="Per-game rating variability (shrunk toward pooled variance)">±${Math.round(t.sd)}</span>`) +
+      `</span>`;
 
     const deltaTd = document.createElement('td');
+    deltaTd.className = 'rk-delta-col';
     deltaTd.innerHTML = `<span class="rk-delta" title="Rank movement needs a prior snapshot">—</span>`;
 
     const trendTd = document.createElement('td');
@@ -295,16 +297,13 @@ function renderTable(): void {
     recordTd.className = 'num';
     recordTd.innerHTML = recordHtml(t);
 
-    const sosTd = document.createElement('td');
-    sosTd.innerHTML = `<span class="rk-sos-badge" title="Mean opponent rating ${Math.round(t.sos)}">${t.sosPercentile}</span>`;
-
     const gpTd = document.createElement('td');
     gpTd.textContent = String(t.gamesPlayed);
 
     const confTd = document.createElement('td');
     confTd.innerHTML = confHtml(t);
 
-    tr.append(rankTd, teamTd, statusTd, bidsTd, ratingTd, deltaTd, trendTd, recordTd, sosTd, gpTd, confTd);
+    tr.append(statusTd, bidsTd, rankTd, teamTd, ratingTd, deltaTd, trendTd, recordTd, gpTd, confTd);
     tr.addEventListener('click', () => showTeam(t.id));
     body.appendChild(tr);
   }
