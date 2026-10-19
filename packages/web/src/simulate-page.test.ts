@@ -44,6 +44,27 @@ describe('simulate page wiring', () => {
     expect(document.getElementById('matchup-result')!.textContent ?? '').toMatch(/different/i);
   });
 
+  it('picks teams by typing in the typeahead', () => {
+    const a = document.getElementById('matchup-a') as HTMLSelectElement;
+    const input = a.nextElementSibling!.querySelector('input')!;
+    const key = (k: string) => input.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
+    input.dispatchEvent(new FocusEvent('focus'));
+    input.value = 'cou'; // word-prefix match on "Albany Cougars"
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    const options = [...a.nextElementSibling!.querySelectorAll('[role="option"]')].map((li) => li.textContent);
+    expect(options[0]).toBe('Albany Cougars');
+    key('Enter');
+    expect(a.value).toBe('albany');
+    expect(input.value).toBe('Albany Cougars');
+    expect(document.getElementById('matchup-result')!.textContent).toMatch(/Albany Cougars|different/);
+
+    input.value = 'zzz';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(a.nextElementSibling!.textContent).toMatch(/No matching team/);
+    key('Escape');
+    expect(input.value).toBe('Albany Cougars');
+  });
+
   it('runs what-if scenarios', () => {
     const hw = document.getElementById('hypo-winner') as HTMLSelectElement;
     const hl = document.getElementById('hypo-loser') as HTMLSelectElement;

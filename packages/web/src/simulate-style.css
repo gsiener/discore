@@ -95,3 +95,55 @@
   font-weight: 700;
   margin-top: 12px;
 }
+
+.rk-combo {
+  position: relative;
+}
+
+.rk-combo-input {
+  width: 260px;
+  max-width: 100%;
+}
+
+.rk-combo-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--rk-input-bg);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px oklch(0% 0 0 / 0.12);
+}
+
+.rk-combo-list li {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rk-combo-list li[aria-selected='true'] {
+  background: var(--rk-purple-bg);
+}
+
+.rk-combo-list .rk-combo-empty {
+  color: var(--rk-muted);
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .rk-combo,
+  .rk-combo-input {
+    width: 100%;
+  }
+}

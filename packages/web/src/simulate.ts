@@ -27,6 +27,7 @@ import {
   type LoadedData,
   type Season,
 } from './snapshotLoader.js';
+import { attachTypeahead } from './teamTypeahead.js';
 
 const fixture = {
   snapshot: fixtureSnapshot as unknown as Snapshot,
@@ -151,9 +152,8 @@ for (const id of ['matchup-a', 'matchup-b', 'cap-select']) {
   document.getElementById(id)!.addEventListener('change', renderMatchup);
 }
 
-for (const id of ['matchup-a', 'matchup-b', 'cap-select']) {
-  document.getElementById(id)!.addEventListener('change', renderMatchup);
-}
+const TEAM_PICKERS = ['matchup-a', 'matchup-b', 'hypo-winner', 'hypo-loser'];
+const typeaheads = TEAM_PICKERS.map((id) => attachTypeahead(document.getElementById(id) as HTMLSelectElement));
 document.getElementById('hypo-add')!.addEventListener('click', () => {
   const err = document.getElementById('scenario-error')!;
   const winnerId = (document.getElementById('hypo-winner') as HTMLSelectElement).value;
@@ -203,7 +203,7 @@ async function initSimulate(next: Division): Promise<void> {
   koScores.clear();
   lastKoKey = '';
   lastFinalKey = '';
-  for (const id of ['matchup-a', 'matchup-b', 'hypo-winner', 'hypo-loser']) {
+  for (const id of TEAM_PICKERS) {
     fillSelect(document.getElementById(id) as HTMLSelectElement);
   }
   const setDefault = (id: string, i: number) => {
@@ -213,6 +213,7 @@ async function initSimulate(next: Division): Promise<void> {
   setDefault('matchup-b', 1);
   setDefault('hypo-winner', 0);
   setDefault('hypo-loser', 1);
+  for (const t of typeaheads) t.sync();
   const url = new URL(window.location.href);
   url.searchParams.set('season', season);
   url.searchParams.set('division', next);
