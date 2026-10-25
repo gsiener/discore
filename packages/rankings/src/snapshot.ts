@@ -115,8 +115,10 @@ export function buildSnapshot(
     }
   }
 
+  // Only qualified teams are ranked, so published ranks are contiguous (1..N) and
+  // match the legacy engine's numbering; unqualified varsity and JV teams get null.
   const varsitySorted = [...ratings.teams.entries()]
-    .filter(([id]) => varsity.get(id) ?? true)
+    .filter(([id]) => (varsity.get(id) ?? true) && eligibility.get(id)!.qualified)
     .sort((a, b) => b[1].rating - a[1].rating || a[0].localeCompare(b[0]));
   const rankOf = new Map(varsitySorted.map(([id], i) => [id, i + 1]));
 

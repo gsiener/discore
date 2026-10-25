@@ -25,10 +25,12 @@ describe('buildSnapshot', () => {
     expect(a.meta.totalGames).toBe(18);
   });
 
-  it('ranks varsity by rating with dense ranks; JV unranked', () => {
+  it('ranks only qualified teams, densely by rating; JV and unqualified unranked', () => {
     const s = snap();
-    const varsity = s.teams.filter((t) => t.id !== 'albany-jv');
-    expect(varsity.map((t) => t.rank)).toEqual([1, 2, 3, 4, 5, 6]);
+    const ranked = s.teams.filter((t) => t.rank != null);
+    expect(ranked.every((t) => t.qualified)).toBe(true);
+    expect(ranked.map((t) => t.rank)).toEqual(ranked.map((_, i) => i + 1));
+    expect(s.teams.filter((t) => !t.qualified).every((t) => t.rank === null)).toBe(true);
     const jv = s.teams.find((t) => t.id === 'albany-jv')!;
     expect(jv.rank).toBeNull();
     expect(jv.qualified).toBe(false);

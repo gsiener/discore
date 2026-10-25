@@ -37,7 +37,7 @@ export class PlayerNameParser {
     ...PlayerNameParser.THROW_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
     ...PLAY_DESCRIPTORS.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
     'Redux', 'Repeat', 'After', 'Insane', 'Sorry',
-    'Soft', 'Cap', 'Correction', 'Playing',
+    'Soft', 'Cap', 'Correction', 'Playing', 'Time',
     'Stuy', 'Wiss',
     'State', 'Champions', 'Champs', 'Stall', 'Senior',
     'Foul', 'Called', 'Turn', 'Turnover',
