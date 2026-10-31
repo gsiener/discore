@@ -173,6 +173,18 @@ describe('groupTeamGames', () => {
     expect(groups[0].from).toBe('2025-10-04');
     expect(groups[0].to).toBe('2025-10-06');
   });
+
+  it('puts later-played games first within the same day', () => {
+    const groups = groupTeamGames([
+      g('legacy-00007', 'E', '2025-10-06', 'W'),
+      g('legacy-00009', 'E', '2025-10-06', 'W'),
+      g('legacy-00005', 'E', '2025-10-04', 'W'),
+      g('legacy-00008', 'E', '2025-10-06', 'W'),
+    ]);
+    expect(groups[0].games.map((x) => x.gameId)).toEqual([
+      'legacy-00009', 'legacy-00008', 'legacy-00007', 'legacy-00005',
+    ]);
+  });
 });
 
 describe('statusLabel', () => {

@@ -101,7 +101,8 @@ export function groupTeamGames(games: SnapshotGame[]): TeamGameGroup[] {
     if (g.date > grp.to) grp.to = g.date;
   }
   for (const grp of acc.values()) {
-    grp.games.sort((a, b) => b.date.localeCompare(a.date) || a.gameId.localeCompare(b.gameId));
+    // Newest first. Within a day, game ids follow source (play) order, so reverse them too.
+    grp.games.sort((a, b) => b.date.localeCompare(a.date) || b.gameId.localeCompare(a.gameId));
   }
   return [...acc.values()].sort((a, b) => {
     if (a.key === '') return 1;
