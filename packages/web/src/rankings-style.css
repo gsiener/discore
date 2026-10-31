@@ -959,6 +959,19 @@ a.rk-tab {
   padding: 0;
 }
 
+.rk-team-event-phase {
+  margin: 16px 0 0;
+  color: var(--rk-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rk-team-event-phase + .rk-team-event-games {
+  margin-top: 4px;
+}
+
 /* Single-line rows: outcome, opponent, then aligned metric columns and
    the score pinned right. Fixed column widths keep numbers lined up
    across rows. Rows are not interactive, so no hover state. */

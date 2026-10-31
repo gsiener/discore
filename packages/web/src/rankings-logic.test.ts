@@ -147,7 +147,7 @@ describe('buildTournamentSummaries', () => {
 describe('groupTeamGames', () => {
   const g = (id: string, event: string | null, date: string, result: 'W' | 'L'): SnapshotGame => ({
     gameId: id, opponentId: 'x', opponentName: 'X', result, scoreFor: 13, scoreAgainst: 11,
-    date, eventName: event, gameRating: 1500, effect: 0, scoreWeight: 1, dateWeight: 1,
+    date, eventName: event, phase: null, gameRating: 1500, effect: 0, scoreWeight: 1, dateWeight: 1,
     seriesMultiplier: 1, weight: 1, ignored: false, ignoreReason: null,
   });
 

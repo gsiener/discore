@@ -19,4 +19,5 @@ export * from './alternate.js';
 export * from './adapter.js';
 export * from './dataset.js';
 export * from './snapshot.js';
+export * from './phases.js';
 export * from './legacy.js';

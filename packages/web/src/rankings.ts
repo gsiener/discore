@@ -741,10 +741,27 @@ function eventCard(grp: TeamGameGroup, url: string | null): string {
     `<h3>${eventTitleHtml(grp.name, url, 'rk-team-event-link')}</h3>` +
     `<p class="rk-team-event-dates">${CAL_ICON}<span>${fmtDateRange(grp.from, grp.to)}</span></p>` +
     `</div><span class="rk-team-event-record">${record}</span></div>` +
-    `<ul class="rk-team-event-games">` +
-    grp.games.map((g) => gameRow(g)).join('') +
-    `</ul></section>`
+    eventGamesHtml(grp.games) +
+    `</section>`
   );
+}
+
+/**
+ * Games list for one event. When pool play vs bracket could be inferred, split
+ * into Bracket (later, so first in a newest-first list) and Pool sections.
+ */
+function eventGamesHtml(games: SnapshotGame[]): string {
+  const list = (gs: SnapshotGame[]) =>
+    `<ul class="rk-team-event-games">${gs.map((g) => gameRow(g)).join('')}</ul>`;
+  if (!games.some((g) => g.phase)) return list(games);
+  const sections: [string, SnapshotGame[]][] = [
+    ['Bracket', games.filter((g) => g.phase === 'bracket')],
+    ['Pool play', games.filter((g) => g.phase !== 'bracket')],
+  ];
+  return sections
+    .filter(([, gs]) => gs.length > 0)
+    .map(([label, gs]) => `<h4 class="rk-team-event-phase">${label}</h4>${list(gs)}`)
+    .join('');
 }
 
 function gameRow(g: SnapshotGame): string {

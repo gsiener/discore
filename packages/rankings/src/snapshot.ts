@@ -1,5 +1,6 @@
 import { datasetFingerprint, datasetToNormalized } from './adapter.js';
 import { computeEligibility } from './eligibility.js';
+import { inferGamePhases, type GamePhase } from './phases.js';
 import type { CanonicalDataset } from './model.js';
 import { runRatings } from './ratings.js';
 import type { Ruleset } from './rules.js';
@@ -15,6 +16,8 @@ export interface SnapshotGame {
   scoreAgainst: number;
   date: string;
   eventName: string | null;
+  /** Inferred pool play vs bracket; null when the event's format can't be read. */
+  phase: GamePhase | null;
   gameRating: number;
   /** gameRating - teamRating. Explanatory, NOT the causal effect of this game. */
   effect: number;
@@ -91,6 +94,7 @@ export function buildSnapshot(
   const componentId = new Map<string, number>();
   ratings.connectedComponents.forEach((comp, i) => comp.forEach((id) => componentId.set(id, i)));
 
+  const phases = inferGamePhases(dataset);
   const eventName = (id: string | null) => (id ? (dataset.events[id]?.name ?? id) : null);
 
   // Record covers every rated game, including blowouts the rating ignores, so it
@@ -147,6 +151,7 @@ export function buildSnapshot(
             scoreAgainst: c.won ? c.l : c.w,
             date: g.date,
             eventName: eventName(g.eventId),
+            phase: phases.get(c.gameId) ?? null,
             gameRating: round1(c.gameRating),
             effect: round1(c.effect),
             scoreWeight: round3(c.scoreWeight),
