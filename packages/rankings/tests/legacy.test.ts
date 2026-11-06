@@ -56,4 +56,32 @@ describe('convertLegacyExport', () => {
     )!;
     expect([g.scoreA, g.scoreB]).toEqual([13, 3]);
   });
+
+  it('marks jv teams non-varsity and manual ignores excluded', () => {
+    const withFlags: LegacyExport = {
+      ...mini,
+      teams: [
+        {
+          name: 'Albany Cougars',
+          games: [
+            { opponent: 'Albany JV', result: 'W', score: '13-2', tournament: null, date: 'Oct 4', excluded: true },
+          ],
+        },
+        {
+          name: 'Albany JV',
+          jv: true,
+          games: [
+            { opponent: 'Albany Cougars', result: 'L', score: '2-13', tournament: null, date: 'Oct 4', excluded: true },
+          ],
+        },
+      ],
+    };
+    const { dataset, report } = convertLegacyExport(withFlags);
+    expect(dataset.teams.find((t) => t.displayName === 'Albany JV')!.varsity).toBe(false);
+    expect(dataset.teams.find((t) => t.displayName === 'Albany Cougars')!.varsity).toBe(true);
+    expect(dataset.games).toHaveLength(1);
+    expect(report.mirroredGames).toBe(1);
+    expect(dataset.games[0].status).toBe('excluded');
+    expect(dataset.games[0].date).toBe('2025-10-04');
+  });
 });

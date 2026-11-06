@@ -7,11 +7,13 @@ export interface LegacyGameLog {
   score: string; // "13-4", always the team's own score first
   tournament: string | null;
   date: string | null; // "Oct 4", no year
-  ignored?: boolean;
+  ignored?: boolean; // legacy Python blowout flag; not used (the TS engine applies its own)
+  excluded?: boolean; // manual ignore from the data module: kept in the log, never rated
 }
 
 export interface LegacyTeam {
   name: string;
+  jv?: boolean; // JV/B squad: rated, never ranked
   games: LegacyGameLog[];
   hsniBid?: unknown;
   ultiworldRank?: number | null;
@@ -70,9 +72,10 @@ export function mirrorKey(
  * a canonical dataset. Each game appears in both teams' logs; entries are
  * collapsed by (teams, date, scores, event) with distinct ids kept as rematches.
  *
- * Limitations (reported, not hidden): dates carry no year (resolved by season),
- * JV flags and manual ignores from the Python data modules are not in the
- * export, and opponents missing from the team list become external teams.
+ * Limitations (reported, not hidden): dates carry no year (resolved by season)
+ * and opponents missing from the team list become external teams. JV flags
+ * (`jv`) and manual ignores (`excluded`) are honored when the export has them;
+ * exports from before 2026-11 lack both, so every team reads as varsity.
  */
 export function convertLegacyExport(
   legacy: LegacyExport,
@@ -114,7 +117,7 @@ export function convertLegacyExport(
       displayName: t.name,
       season: legacy.season,
       division: legacy.division,
-      varsity: true,
+      varsity: !t.jv,
       ...(typeof t.hsniBid === 'string' && t.hsniBid ? { hsniBid: t.hsniBid } : {}),
       ...(typeof t.ultiworldRank === 'number' ? { ultiworldRank: t.ultiworldRank } : {}),
       lat: t.lat ?? null,
@@ -206,11 +209,15 @@ export function convertLegacyExport(
         teamBId: oppId,
         scoreA: mine,
         scoreB: theirs,
-        status: date ? 'final' : 'excluded',
+        status: date && !g.excluded ? 'final' : 'excluded',
         date: date ?? '2000-01-01',
         eventId,
         seriesRound: 'regular',
-        notes: date ? undefined : `undated legacy log entry (${g.date})`,
+        notes: !date
+          ? `undated legacy log entry (${g.date})`
+          : g.excluded
+            ? 'manual ignore (MANUAL_IGNORES in the Python data module)'
+            : undefined,
       });
     }
   }

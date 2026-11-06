@@ -82,4 +82,21 @@ describe('runRatings', () => {
     const r2 = runRatings([...games].reverse(), HS_2025_V1);
     expect([...r1.ignoredGameIds].sort()).toEqual([...r2.ignoredGameIds].sort());
   });
+
+  it('centers each connected component, so input order cannot move a group', () => {
+    const games = [
+      ng({ id: 'g1', winnerId: 'A', loserId: 'B', w: 13, l: 5 }),
+      ng({ id: 'g2', winnerId: 'C', loserId: 'D', w: 13, l: 11 }),
+      ng({ id: 'g3', winnerId: 'D', loserId: 'E', w: 13, l: 9 }),
+    ];
+    const r1 = runRatings(games, HS_2025_V1, ['A', 'B', 'C', 'D', 'E']);
+    const r2 = runRatings(games, HS_2025_V1, ['E', 'D', 'B', 'C', 'A']);
+    for (const id of ['A', 'B', 'C', 'D', 'E']) {
+      expect(r1.teams.get(id)!.rating).toBeCloseTo(r2.teams.get(id)!.rating, 3);
+    }
+    const mean = (ids: string[]) => ids.reduce((s, id) => s + r1.teams.get(id)!.rating, 0) / ids.length;
+    expect(mean(['A', 'B'])).toBeCloseTo(HS_2025_V1.solver.startRating, 6);
+    expect(mean(['C', 'D', 'E'])).toBeCloseTo(HS_2025_V1.solver.startRating, 6);
+    expect(r1.connectedComponents).toHaveLength(2);
+  });
 });

@@ -130,6 +130,20 @@ export function runRatings(games: NormalizedGame[], rules: Ruleset, teamIds?: st
     }
   }
 
+  // Center each connected component on startRating. Within a component the
+  // converged gaps are fixed, but the component's overall level is not: games
+  // pin only differences, and the in-place pass lets whichever team updates
+  // first set the level, so input order moved whole regions by hundreds of
+  // points. Teams that never connect have no evidence ranking one group over
+  // another; centering makes the assumption explicit (each group's average
+  // team = startRating) and the result independent of input order.
+  const connectedComponents = findComponents(ids, ratedGames, ignored);
+  for (const comp of connectedComponents) {
+    const idx = comp.map((id) => index.get(id)!);
+    const mean = idx.reduce((s, i) => s + ratings[i], 0) / idx.length;
+    for (const i of idx) ratings[i] += rules.solver.startRating - mean;
+  }
+
   // Build contributions
   const teams = new Map<string, TeamRating>();
   ids.forEach((id, i) => {
@@ -163,8 +177,6 @@ export function runRatings(games: NormalizedGame[], rules: Ruleset, teamIds?: st
     const used = contributions.filter((c) => !c.ignored).length;
     teams.set(id, { teamId: id, rating, gamesUsed: used, contributions });
   });
-
-  const connectedComponents = findComponents(ids, ratedGames, ignored);
 
   return { teams, ignoredGameIds: ignored, iterations, converged, finalRms, connectedComponents };
 }
